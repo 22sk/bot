@@ -98,19 +98,19 @@
       <file leaf-file-name="User.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/in/User.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5715726">
-              <caret line="42" column="38" selection-start-line="42" selection-start-column="38" selection-end-line="42" selection-end-column="38" />
+            <state vertical-scroll-proportion="0.6219758">
+              <caret line="42" column="24" selection-start-line="42" selection-start-column="24" selection-end-line="42" selection-end-column="24" />
               <folding>
-                <marker date="1454600070855" expanded="true" signature="742:779" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454600070855" expanded="true" signature="1019:1038" placeholder="UPDATE userd..." />
-                <marker date="1454600070855" expanded="true" signature="1019:1039" placeholder="UPDATE userd..." />
-                <marker date="1454600070855" expanded="true" signature="1019:1111" placeholder="UPDATE userd..." />
-                <marker date="1454600070855" expanded="true" signature="1019:1116" placeholder="UPDATE userd..." />
-                <marker date="1454600070855" expanded="true" signature="1146:1168" placeholder="INSERT INTO userdata..." />
-                <marker date="1454600070855" expanded="true" signature="1146:1256" placeholder="INSERT INTO userdata..." />
-                <marker date="1454600070855" expanded="true" signature="1146:1320" placeholder="INSERT INTO userdata..." />
-                <marker date="1454600070855" expanded="true" signature="1146:1321" placeholder="INSERT INTO userdata..." />
-                <marker date="1454600070855" expanded="true" signature="1146:1376" placeholder="INSERT INTO userdata..." />
+                <marker date="1454600334771" expanded="true" signature="721:753" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454600334771" expanded="true" signature="959:978" placeholder="UPDATE userd..." />
+                <marker date="1454600334771" expanded="true" signature="959:979" placeholder="UPDATE userd..." />
+                <marker date="1454600334771" expanded="true" signature="959:1051" placeholder="UPDATE userd..." />
+                <marker date="1454600334771" expanded="true" signature="959:1062" placeholder="UPDATE userd..." />
+                <marker date="1454600334771" expanded="true" signature="1092:1114" placeholder="INSERT INTO userdata..." />
+                <marker date="1454600334771" expanded="true" signature="1092:1202" placeholder="INSERT INTO userdata..." />
+                <marker date="1454600334771" expanded="true" signature="1092:1266" placeholder="INSERT INTO userdata..." />
+                <marker date="1454600334771" expanded="true" signature="1092:1267" placeholder="INSERT INTO userdata..." />
+                <marker date="1454600334771" expanded="true" signature="1092:1322" placeholder="INSERT INTO userdata..." />
               </folding>
             </state>
           </provider>
@@ -364,7 +364,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-10" y="0" width="1697" height="1774" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Database Console" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32975364" sideWeight="0.49850187" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2013673" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -643,19 +643,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/in/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5715726">
-          <caret line="42" column="38" selection-start-line="42" selection-start-column="38" selection-end-line="42" selection-end-column="38" />
+        <state vertical-scroll-proportion="0.6219758">
+          <caret line="42" column="24" selection-start-line="42" selection-start-column="24" selection-end-line="42" selection-end-column="24" />
           <folding>
-            <marker date="1454600070855" expanded="true" signature="742:779" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454600070855" expanded="true" signature="1019:1038" placeholder="UPDATE userd..." />
-            <marker date="1454600070855" expanded="true" signature="1019:1039" placeholder="UPDATE userd..." />
-            <marker date="1454600070855" expanded="true" signature="1019:1111" placeholder="UPDATE userd..." />
-            <marker date="1454600070855" expanded="true" signature="1019:1116" placeholder="UPDATE userd..." />
-            <marker date="1454600070855" expanded="true" signature="1146:1168" placeholder="INSERT INTO userdata..." />
-            <marker date="1454600070855" expanded="true" signature="1146:1256" placeholder="INSERT INTO userdata..." />
-            <marker date="1454600070855" expanded="true" signature="1146:1320" placeholder="INSERT INTO userdata..." />
-            <marker date="1454600070855" expanded="true" signature="1146:1321" placeholder="INSERT INTO userdata..." />
-            <marker date="1454600070855" expanded="true" signature="1146:1376" placeholder="INSERT INTO userdata..." />
+            <marker date="1454600334771" expanded="true" signature="721:753" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454600334771" expanded="true" signature="959:978" placeholder="UPDATE userd..." />
+            <marker date="1454600334771" expanded="true" signature="959:979" placeholder="UPDATE userd..." />
+            <marker date="1454600334771" expanded="true" signature="959:1051" placeholder="UPDATE userd..." />
+            <marker date="1454600334771" expanded="true" signature="959:1062" placeholder="UPDATE userd..." />
+            <marker date="1454600334771" expanded="true" signature="1092:1114" placeholder="INSERT INTO userdata..." />
+            <marker date="1454600334771" expanded="true" signature="1092:1202" placeholder="INSERT INTO userdata..." />
+            <marker date="1454600334771" expanded="true" signature="1092:1266" placeholder="INSERT INTO userdata..." />
+            <marker date="1454600334771" expanded="true" signature="1092:1267" placeholder="INSERT INTO userdata..." />
+            <marker date="1454600334771" expanded="true" signature="1092:1322" placeholder="INSERT INTO userdata..." />
           </folding>
         </state>
       </provider>

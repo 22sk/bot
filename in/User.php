@@ -26,19 +26,17 @@ class User {
 
   public function updateUser($user) {
     $mysqli = db_connect();
-    $id = $user->id;
 
-    $result = $mysqli->query("SELECT * FROM userdata WHERE chat_id={$this->user_id}");
+    $result = $mysqli->query("SELECT * FROM userdata WHERE id={$this->id}");
 
     if(mysqli_num_rows($result)>0) {
-      unset($this->user_id);
       $array = array();
       foreach(get_object_vars($this) as $item => $value) {
         array_push($array, "{$item}={$value}");
       }
       $sql = "UPDATE userdata SET "
-        . implode(", ", get_object_vars($this))
-        . "WHERE id = {$id}";
+        . implode("', '", get_object_vars($this))
+        . "WHERE id={$this->id}";
     } else {
       $sql = "INSERT INTO userdata ('"
         . implode("', '", array_keys(get_object_vars($this)))
