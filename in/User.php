@@ -52,6 +52,18 @@ class User {
     }
     echo "\n".$sql."\n";
     $mysqli->query($sql);
+  }
 
+  public function getID() {
+    return $this->id;
+  }
+  public function getUsername() {
+    return $this->username;
+  }
+  public function getFirstName() {
+    return $this->first_name;
+  }
+  public function getLastName() {
+    return $this->last_name;
   }
 }

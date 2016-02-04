@@ -34,22 +34,41 @@ class Command {
     return \out\Message::auto("Hoster: `".gethostname()."`", "Markdown");
   }
 
+  /**
+   * @param null $args
+   * @param \in\Command|null $cmd
+   */
   public static function cmdUser($args = null, $cmd = null) {
     if(isset($args)) {
       $mysqli = db_connect();
       if(intval($args)) {
         $id = intval($args);
-        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE id = {$id}"));
+        $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
       } else {
-        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE username = {$args}"));
+        $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
       }
+      if(mysqli_num_rows($result)>0) {
+        $result = mysqli_fetch_assoc($result);
+        \out\Message::auto(
+          "Username: @{$result['username']}\n" .
+          "First name: `{$result['first_name']}`\n" .
+          "Last name: `{$result['last_name']}`\n" .
+          "User ID: `{$result['id']}`\n" .
+          "Last updated: `{$result['last_updated']}`\n",
+          "Markdown"
+        );
+      }
+      else \out\Message::auto("Unknown user.");
+    } else {
+      if(array_key_exists('reply_to_message', $cmd->message)) $user = $cmd->message['reply_to_message']['from'];
+      else $user = $cmd->message['from'];
+
+      $user = new \in\User($user);
       \out\Message::auto(
-        "Username: @{$result['username']}\n".
-        "First name: `{$result['first_name']}`\n".
-        "Last name: `{$result['last_name']}`\n".
-        "User ID: `{$result['id']}`\n".
-        "Last updated: `{$result['last_updated']}`\n",
-        "Markdown"
+        "Username: @{$user->getUsername()}\n".
+        "First name: `{$user->getFirstName()}`\n".
+        "Last name: `{$user->getLastName()}`\n".
+        "User ID: `{$user->getID()}`\n"
       );
     }
   }

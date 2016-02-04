@@ -1,6 +1,5 @@
 <?php
 namespace in;
-use \cmd;
 
 class Command implements \JsonSerializable {
   private $message;

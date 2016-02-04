@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/in/Command.php" afterPath="$PROJECT_DIR$/in/Command.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/in/User.php" afterPath="$PROJECT_DIR$/in/User.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/Command.php" afterPath="$PROJECT_DIR$/out/Command.php" />
     </list>
     <ignored path="bot.iws" />
@@ -55,23 +57,23 @@
       <file leaf-file-name="Command.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/out/Command.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.92470276">
-              <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.8586526">
+              <caret line="70" column="39" selection-start-line="70" selection-start-column="39" selection-end-line="70" selection-end-column="39" />
               <folding>
-                <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454606610429" expanded="true" signature="1315:1349" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454606610429" expanded="true" signature="1315:1354" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454606610429" expanded="true" signature="1407:1447" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454606610429" expanded="true" signature="1407:1454" placeholder="SELECT * FRO..userdata..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="console.sql" pinned="false" current-in-tab="false">
-        <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/073571d3-2d6d-44d5-90c9-e4ce49db6e54/console.sql">
+      <file leaf-file-name="bot.php" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Google Drive/AppEngine/sk22bot/bot.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.1904762">
-              <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+            <state vertical-scroll-proportion="-21.375">
+              <caret line="207" column="48" selection-start-line="207" selection-start-column="48" selection-end-line="207" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -100,19 +102,19 @@
       <file leaf-file-name="User.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/in/User.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-30.46875">
-              <caret line="39" column="18" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
+            <state vertical-scroll-proportion="-45.75">
+              <caret line="66" column="28" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="28" />
               <folding>
-                <marker date="1454602533537" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454602533537" expanded="true" signature="1234:1253" placeholder="UPDATE userd..." />
-                <marker date="1454602533537" expanded="true" signature="1234:1254" placeholder="UPDATE userd..." />
-                <marker date="1454602533537" expanded="true" signature="1234:1309" placeholder="UPDATE userd..." />
-                <marker date="1454602533537" expanded="true" signature="1234:1320" placeholder="UPDATE userd..." />
-                <marker date="1454602533537" expanded="true" signature="1350:1372" placeholder="INSERT INTO userdata..." />
-                <marker date="1454602533537" expanded="true" signature="1350:1456" placeholder="INSERT INTO userdata..." />
-                <marker date="1454602533537" expanded="true" signature="1350:1520" placeholder="INSERT INTO userdata..." />
-                <marker date="1454602533537" expanded="true" signature="1350:1521" placeholder="INSERT INTO userdata..." />
-                <marker date="1454602533537" expanded="true" signature="1350:1586" placeholder="INSERT INTO userdata..." />
+                <marker date="1454606585756" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454606585756" expanded="true" signature="1234:1253" placeholder="UPDATE userd..." />
+                <marker date="1454606585756" expanded="true" signature="1234:1254" placeholder="UPDATE userd..." />
+                <marker date="1454606585756" expanded="true" signature="1234:1309" placeholder="UPDATE userd..." />
+                <marker date="1454606585756" expanded="true" signature="1234:1320" placeholder="UPDATE userd..." />
+                <marker date="1454606585756" expanded="true" signature="1350:1372" placeholder="INSERT INTO userdata..." />
+                <marker date="1454606585756" expanded="true" signature="1350:1456" placeholder="INSERT INTO userdata..." />
+                <marker date="1454606585756" expanded="true" signature="1350:1520" placeholder="INSERT INTO userdata..." />
+                <marker date="1454606585756" expanded="true" signature="1350:1521" placeholder="INSERT INTO userdata..." />
+                <marker date="1454606585756" expanded="true" signature="1350:1842" placeholder="INSERT INTO userdata..." />
               </folding>
             </state>
           </provider>
@@ -121,8 +123,8 @@
       <file leaf-file-name="Command.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/in/Command.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="-0.78125">
+              <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -180,6 +182,7 @@
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/073571d3-2d6d-44d5-90c9-e4ce49db6e54/console.sql" />
         <option value="$PROJECT_DIR$/in/Update.php" />
         <option value="$PROJECT_DIR$/in/Message.php" />
+        <option value="$PROJECT_DIR$/in/Command.php" />
         <option value="$PROJECT_DIR$/in/User.php" />
         <option value="$PROJECT_DIR$/out/Command.php" />
       </list>
@@ -305,7 +308,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Google Drive/AppEngine/sk22bot/bot.php" />
     <property name="WebServerToolWindowFactoryState" value="false" />
   </component>
   <component name="RunManager">
@@ -415,7 +418,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454605387376</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Fixed /user">
+      <created>1454605477928</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1454605477928</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -480,10 +489,10 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1315:1349" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1315:1354" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1407:1447" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1407:1454" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>
@@ -572,6 +581,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.35648754">
           <caret line="298" column="30" selection-start-line="298" selection-start-column="30" selection-end-line="298" selection-end-column="30" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -619,14 +629,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-35.1875">
           <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/in/Command.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -689,34 +691,50 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/Google Drive/AppEngine/sk22bot/bot.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-21.375">
+          <caret line="207" column="48" selection-start-line="207" selection-start-column="48" selection-end-line="207" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/in/Command.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.78125">
+          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/in/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-30.46875">
-          <caret line="39" column="18" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
+        <state vertical-scroll-proportion="-45.75">
+          <caret line="66" column="28" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="28" />
           <folding>
-            <marker date="1454602533537" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454602533537" expanded="true" signature="1234:1253" placeholder="UPDATE userd..." />
-            <marker date="1454602533537" expanded="true" signature="1234:1254" placeholder="UPDATE userd..." />
-            <marker date="1454602533537" expanded="true" signature="1234:1309" placeholder="UPDATE userd..." />
-            <marker date="1454602533537" expanded="true" signature="1234:1320" placeholder="UPDATE userd..." />
-            <marker date="1454602533537" expanded="true" signature="1350:1372" placeholder="INSERT INTO userdata..." />
-            <marker date="1454602533537" expanded="true" signature="1350:1456" placeholder="INSERT INTO userdata..." />
-            <marker date="1454602533537" expanded="true" signature="1350:1520" placeholder="INSERT INTO userdata..." />
-            <marker date="1454602533537" expanded="true" signature="1350:1521" placeholder="INSERT INTO userdata..." />
-            <marker date="1454602533537" expanded="true" signature="1350:1586" placeholder="INSERT INTO userdata..." />
+            <marker date="1454606585756" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606585756" expanded="true" signature="1234:1253" placeholder="UPDATE userd..." />
+            <marker date="1454606585756" expanded="true" signature="1234:1254" placeholder="UPDATE userd..." />
+            <marker date="1454606585756" expanded="true" signature="1234:1309" placeholder="UPDATE userd..." />
+            <marker date="1454606585756" expanded="true" signature="1234:1320" placeholder="UPDATE userd..." />
+            <marker date="1454606585756" expanded="true" signature="1350:1372" placeholder="INSERT INTO userdata..." />
+            <marker date="1454606585756" expanded="true" signature="1350:1456" placeholder="INSERT INTO userdata..." />
+            <marker date="1454606585756" expanded="true" signature="1350:1520" placeholder="INSERT INTO userdata..." />
+            <marker date="1454606585756" expanded="true" signature="1350:1521" placeholder="INSERT INTO userdata..." />
+            <marker date="1454606585756" expanded="true" signature="1350:1842" placeholder="INSERT INTO userdata..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/out/Command.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.92470276">
-          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8586526">
+          <caret line="70" column="39" selection-start-line="70" selection-start-column="39" selection-end-line="70" selection-end-column="39" />
           <folding>
-            <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1315:1349" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1315:1354" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1407:1447" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454606610429" expanded="true" signature="1407:1454" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>
