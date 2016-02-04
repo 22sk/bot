@@ -9,6 +9,7 @@ class Update {
     foreach($update as $key => $value) {
       $this->$key = $value;
     }
+    echo "Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n";
   }
 
   public function getType() {

@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/Command.php" afterPath="$PROJECT_DIR$/out/Command.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/in/Update.php" afterPath="$PROJECT_DIR$/in/Update.php" />
     </list>
     <ignored path="bot.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -52,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Command.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Command.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/out/Command.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.37252313">
-              <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
+            <state vertical-scroll-proportion="-18.40625">
+              <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
               <folding>
                 <marker date="1454608443330" expanded="true" signature="1737:1771" placeholder="SELECT * FRO..userdata..." />
                 <marker date="1454608443330" expanded="true" signature="1737:1776" placeholder="SELECT * FRO..userdata..." />
@@ -67,11 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Update.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Update.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/in/Update.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.40625">
-              <caret line="21" column="39" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
+            <state vertical-scroll-proportion="0.18163805">
+              <caret line="11" column="66" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -157,12 +157,12 @@
         <option value="$PROJECT_DIR$/gui/index.php" />
         <option value="$PROJECT_DIR$/functions.php" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/073571d3-2d6d-44d5-90c9-e4ce49db6e54/console.sql" />
-        <option value="$PROJECT_DIR$/in/Update.php" />
         <option value="$PROJECT_DIR$/in/User.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/in/Command.php" />
         <option value="$PROJECT_DIR$/in/Message.php" />
         <option value="$PROJECT_DIR$/out/Command.php" />
+        <option value="$PROJECT_DIR$/in/Update.php" />
       </list>
     </option>
   </component>
@@ -444,7 +444,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454608282218</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Debugging">
+      <created>1454608527034</created>
+      <option name="number" value="00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1454608527034</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -452,7 +458,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975364" sideWeight="0.49850187" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18263811" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18263811" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975364" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3272727" sideWeight="0.5014981" order="7" side_tool="true" content_ui="tabs" />
@@ -690,14 +696,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/in/Update.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.40625">
-          <caret line="21" column="39" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Google Drive/AppEngine/sk22bot/bot.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-21.375">
@@ -721,16 +719,6 @@
             <marker date="1454606585756" expanded="true" signature="1350:1520" placeholder="INSERT INTO userdata..." />
             <marker date="1454606585756" expanded="true" signature="1350:1521" placeholder="INSERT INTO userdata..." />
             <marker date="1454606585756" expanded="true" signature="1350:1842" placeholder="INSERT INTO userdata..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.5625">
-          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
-          <folding>
-            <marker date="1454607253587" expanded="true" signature="532:554" placeholder="SELECT usern..userdata..." />
           </folding>
         </state>
       </provider>
@@ -761,14 +749,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/out/Command.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37252313">
-          <caret line="42" column="46" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
+        <state vertical-scroll-proportion="-18.40625">
+          <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
           <folding>
             <marker date="1454608443330" expanded="true" signature="1737:1771" placeholder="SELECT * FRO..userdata..." />
             <marker date="1454608443330" expanded="true" signature="1737:1776" placeholder="SELECT * FRO..userdata..." />
             <marker date="1454608443330" expanded="true" signature="1829:1869" placeholder="SELECT * FRO..userdata..." />
             <marker date="1454608443330" expanded="true" signature="1829:1876" placeholder="SELECT * FRO..userdata..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.5625">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+          <folding>
+            <marker date="1454607253587" expanded="true" signature="532:554" placeholder="SELECT usern..userdata..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/in/Update.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18163805">
+          <caret line="11" column="66" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
+          <folding />
         </state>
       </provider>
     </entry>
