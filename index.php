@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 function __autoload($class) { include(implode('/', explode('\\', $class)).'.php'); }
 
 if(!isset($_ENV['API_URL'])) $_ENV['API_URL'] = file_get_contents('api_url');
