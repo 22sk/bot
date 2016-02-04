@@ -24,10 +24,12 @@ class User {
     return $result->result;
   }
 
-  public function updateUser($user) {
+  public function updateUser() {
     $mysqli = db_connect();
 
     $result = $mysqli->query("SELECT * FROM userdata WHERE id={$this->id}");
+    echo "\nResult: ". json_encode(mysqli_fetch_assoc($result), JSON_PRETTY_PRINT)."\n";
+
 
     if(mysqli_num_rows($result)>0) {
       $array = array();

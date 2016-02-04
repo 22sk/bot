@@ -2,6 +2,11 @@
 namespace in;
 
 class Message {
+  private $message_id;
+  private $chat;
+  private $from;
+  private $date;
+  
   private $types;
 
   public function __construct($message) {
@@ -32,7 +37,7 @@ class Message {
         }
         break;
     }
-    $user = new \in\User($this->user);
-    $user->updateUser($user);
+    $user = new \in\User($this->from);
+    $user->updateUser();
   }
 }
