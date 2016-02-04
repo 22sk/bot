@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="" />
+    <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
+    </list>
     <ignored path="bot.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -76,9 +78,9 @@
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.2785059">
-              <caret line="17" column="59" selection-start-line="17" selection-start-column="59" selection-end-line="17" selection-end-column="59" />
+              <caret line="17" column="78" selection-start-line="17" selection-start-column="78" selection-end-line="17" selection-end-column="78" />
               <folding>
-                <marker date="1454594294956" expanded="true" signature="458:487" placeholder="SELECT usern..userdata..." />
+                <marker date="1454594674075" expanded="true" signature="477:506" placeholder="SELECT usern..userdata..." />
               </folding>
             </state>
           </provider>
@@ -547,9 +549,9 @@
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2785059">
-          <caret line="17" column="59" selection-start-line="17" selection-start-column="59" selection-end-line="17" selection-end-column="59" />
+          <caret line="17" column="78" selection-start-line="17" selection-start-column="78" selection-end-line="17" selection-end-column="78" />
           <folding>
-            <marker date="1454594294956" expanded="true" signature="458:487" placeholder="SELECT usern..userdata..." />
+            <marker date="1454594674075" expanded="true" signature="477:506" placeholder="SELECT usern..userdata..." />
           </folding>
         </state>
       </provider>

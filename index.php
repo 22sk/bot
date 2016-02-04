@@ -15,6 +15,6 @@ $update->process();
 echo "MySQL:\n";
 $mysqli = db_connect();
 
-var_dump($mysqli->query("SELECT username FROM userdata;"));
+var_dump(mysqli_fetch_assoc($mysqli->query("SELECT username FROM userdata;")));
 
 echo("</pre>\n");
