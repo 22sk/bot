@@ -12,4 +12,9 @@ $update = new in\Update();
 
 $update->process();
 
+echo "MySQL:\n";
+$mysqli = db_connect();
+
+var_dump($mysqli->query("SELECT username FROM userdata;"));
+
 echo("</pre>\n");
