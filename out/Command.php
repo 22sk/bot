@@ -23,9 +23,8 @@ class Command {
     return \out\Message::auto("Maybe, some day, I'll help you.", "Markdown");
   }
 
-  /**
-   * @todo implement memes.json (https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json)
-   */
+
+  // TODO: implement memes.json (https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json)
   public static function cmdMeme($args = null, $cmd = null) {
     return \out\Message::auto("Coming soon!");
   }
@@ -41,7 +40,7 @@ class Command {
   public static function cmdUser($args = null, $cmd = null) {
     $mysqli = db_connect();
     if(empty($args)) {
-      if(isset($cmd->message->reply_to_message_id)) $user = $cmd->message->reply_to_message->from;
+      if(isset($cmd->message->reply_to_message)) $user = $cmd->message->reply_to_message->from;
       else $user = $cmd->message->from;
 
       $user = new \in\User($user);
