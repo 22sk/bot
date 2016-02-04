@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/in/Message.php" afterPath="$PROJECT_DIR$/in/Message.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/Command.php" afterPath="$PROJECT_DIR$/out/Command.php" />
     </list>
     <ignored path="bot.iws" />
@@ -56,13 +55,13 @@
       <file leaf-file-name="Command.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/out/Command.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2734478">
-              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.35601056">
+              <caret line="40" column="61" selection-start-line="40" selection-start-column="61" selection-end-line="40" selection-end-column="61" />
               <folding>
-                <marker date="1454608013602" expanded="true" signature="1720:1754" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454608013602" expanded="true" signature="1720:1759" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454608013602" expanded="true" signature="1808:1848" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454608013602" expanded="true" signature="1808:1855" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454608117563" expanded="true" signature="1718:1752" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454608117563" expanded="true" signature="1718:1757" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454608117563" expanded="true" signature="1806:1846" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454608117563" expanded="true" signature="1806:1853" placeholder="SELECT * FRO..userdata..." />
               </folding>
             </state>
           </provider>
@@ -162,8 +161,8 @@
         <option value="$PROJECT_DIR$/in/User.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/in/Command.php" />
-        <option value="$PROJECT_DIR$/out/Command.php" />
         <option value="$PROJECT_DIR$/in/Message.php" />
+        <option value="$PROJECT_DIR$/out/Command.php" />
       </list>
     </option>
   </component>
@@ -427,7 +426,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454607606128</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Debugging">
+      <created>1454608105588</created>
+      <option name="number" value="00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1454608105588</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -494,10 +499,10 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1454608013602" expanded="true" signature="1720:1754" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1720:1759" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1808:1848" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1808:1855" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1718:1752" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1718:1757" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1806:1846" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1806:1853" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>
@@ -741,13 +746,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/out/Command.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2734478">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.35601056">
+          <caret line="40" column="61" selection-start-line="40" selection-start-column="61" selection-end-line="40" selection-end-column="61" />
           <folding>
-            <marker date="1454608013602" expanded="true" signature="1720:1754" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1720:1759" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1808:1848" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454608013602" expanded="true" signature="1808:1855" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1718:1752" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1718:1757" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1806:1846" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454608117563" expanded="true" signature="1806:1853" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>

@@ -42,7 +42,7 @@ class Command {
     $mysqli = db_connect();
     if(empty($args)) {
       if(isset($cmd->message->reply_to_message_id)) $user = $cmd->message->reply_to_message->from;
-      else $user = $cmd->message['from'];
+      else $user = $cmd->message->from;
 
       $user = new \in\User($user);
       \out\Message::auto(
