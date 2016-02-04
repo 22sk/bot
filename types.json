@@ -1,0 +1,52 @@
+{
+  "chat_id": "Chat",
+  "reply_to_message_id": "Reply",
+  "reply_markup": "Reply Markup",
+
+  "Message": {
+    "text": "Text",
+    "parse_mode": "Parse mode",
+    "disable_web_page_preview": "Disable web page preview"
+  },
+
+  "Forward": {
+    "from_chat_id": "From Chat ID",
+    "message_id": "Message ID"
+  },
+
+  "Document": {
+    "document": "Document File ID"
+  },
+
+  "Photo": {
+    "photo": "Photo File ID",
+    "caption": "Caption"
+  },
+
+  "Audio": {
+    "audio": "Audio File ID",
+    "title": "Title",
+    "performer": "Performer",
+    "duration": "Duration"
+  },
+
+  "Sticker": {
+    "sticker": "Sticker File ID"
+  },
+
+  "Video": {
+    "video": "Video File ID",
+    "caption": "Caption",
+    "duration": "Duration"
+  },
+
+  "Voice": {
+    "voice": "Voice File ID",
+    "duration": "Duration"
+  },
+
+  "Location": {
+    "latitude": "Latitude",
+    "longitude": "Longitude"
+  }
+}

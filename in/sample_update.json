@@ -1,0 +1,19 @@
+{
+  "update_id": 857666002,
+  "message": {
+    "message_id": 87337,
+    "from": {
+      "id": 20894631,
+      "first_name": "Samuel",
+      "username": "samuelk22"
+    },
+    "chat": {
+      "id": 20894631,
+      "first_name": "Samuel",
+      "username": "samuelk22",
+      "type": "private"
+    },
+    "date": 1453983431,
+    "text": "\/update"
+  }
+}
