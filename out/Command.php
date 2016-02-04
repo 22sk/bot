@@ -47,7 +47,7 @@ class Command {
         "Username: @{$result['username']}\n".
         "First name: `{$result['first_name']}`\n".
         "Last name: `{$result['last_name']}`\n".
-        "User ID: `{$result['user_id']}`\n".
+        "User ID: `{$result['id']}`\n".
         "Last updated: `{$result['last_updated']}`\n",
         "Markdown"
       );

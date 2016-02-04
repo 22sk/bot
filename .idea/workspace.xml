@@ -55,13 +55,13 @@
       <file leaf-file-name="Command.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/out/Command.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6770145">
-              <caret line="41" column="46" selection-start-line="41" selection-start-column="46" selection-end-line="41" selection-end-column="46" />
+            <state vertical-scroll-proportion="0.92470276">
+              <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
               <folding>
-                <marker date="1454605373474" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605373474" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605373474" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454605373474" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
               </folding>
             </state>
           </provider>
@@ -409,7 +409,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454602540252</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fixed /user">
+      <created>1454605387376</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1454605387376</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -453,7 +459,8 @@
     <MESSAGE value="Added MySQL database." />
     <MESSAGE value="SQL testing." />
     <MESSAGE value="Debugging." />
-    <option name="LAST_COMMIT_MESSAGE" value="Debugging." />
+    <MESSAGE value="Fixed /user" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed /user" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -473,10 +480,10 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1454605373474" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>
@@ -703,13 +710,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/out/Command.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6770145">
-          <caret line="41" column="46" selection-start-line="41" selection-start-column="46" selection-end-line="41" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.92470276">
+          <caret line="56" column="0" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
           <folding>
-            <marker date="1454605373474" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454605373474" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1265:1299" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1265:1304" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1377:1417" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454605467277" expanded="true" signature="1377:1424" placeholder="SELECT * FRO..userdata..." />
           </folding>
         </state>
       </provider>
