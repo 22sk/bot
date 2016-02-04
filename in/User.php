@@ -41,7 +41,7 @@ class User {
         array_push($array, "{$item}='{$value}'");
       }
       $sql = "UPDATE userdata SET '"
-        . implode("', '", $array)
+        . implode(", ", $array)
         . "' WHERE id={$this->id}";
     } else {
       $sql = "INSERT INTO userdata ('"
