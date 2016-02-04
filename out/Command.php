@@ -43,13 +43,12 @@ class Command {
       } else {
         $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE username = {$args}"));
       }
-      $date = date("Y/m/d", $result['last_updated']);
       \out\Message::auto(
         "Username: @{$result['username']}\n".
         "First name: `{$result['first_name']}`\n".
         "Last name: `{$result['last_name']}`\n".
         "User ID: `{$result['user_id']}`\n".
-        "Last updated: `{$date}`\n",
+        "Last updated: `{$result['last_updated']}`\n",
         "Markdown"
       );
     }

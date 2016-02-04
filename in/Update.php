@@ -23,5 +23,6 @@ class Update {
       case 'inline_query': $update = new InlineQuery(get_object_vars($this)['inline_query']); break;
       case 'chosen_inline_result': $update = new ChosenInlineResult(get_object_vars($this)['chosen_inline_result']); break;
     } $update->process();
+    \in\User->update
   }
 }
