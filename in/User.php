@@ -9,6 +9,7 @@ class User {
 
   public function __construct($user) {
     if(gettype($user) == 'array') foreach($user as $item => $value) $this->item = $value;
+    else foreach(get_object_vars($user) as $item => $value) $this->item = $value;
   }
 
   /**
@@ -24,12 +25,15 @@ class User {
     return $result->result;
   }
 
-  public function updateUser() {
+  public function updateUserData() {
     $mysqli = db_connect();
 
-    $result = $mysqli->query("SELECT * FROM userdata WHERE id={$this->id}");
-    echo "\nResult: ". json_encode(mysqli_fetch_assoc($result), JSON_PRETTY_PRINT)."\n";
+    $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
+    echo "\nSQL: {$sql}";
+    $result = $mysqli->query($sql);
 
+    echo "\nResult: ". json_encode(mysqli_fetch_assoc($result), JSON_PRETTY_PRINT)."\n";
+    echo "\nNum Rows: ".mysqli_num_rows($result)."\n";
 
     if(mysqli_num_rows($result)>0) {
       $array = array();

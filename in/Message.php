@@ -6,7 +6,7 @@ class Message {
   private $chat;
   private $from;
   private $date;
-  
+
   private $types;
 
   public function __construct($message) {
@@ -38,6 +38,7 @@ class Message {
         break;
     }
     $user = new \in\User($this->from);
-    $user->updateUser();
+    var_dump($user);
+    $user->updateUserData();
   }
 }
