@@ -40,8 +40,7 @@ class Command {
   public static function cmdUser($args = null, $cmd = null) {
     $mysqli = db_connect();
     if(empty($args)) {
-      if(property_exists($cmd->message, 'reply_to_message')
-        and isset($cmd->message)) $user = $cmd->message->reply_to_message->from;
+      if($cmd->message->reply_to_message != null) $user = $cmd->message->reply_to_message->from;
       else $user = $cmd->message->from;
 
       $user = new \in\User($user);
