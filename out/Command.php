@@ -2,7 +2,7 @@
 namespace out;
 
 class Command {
-  public static function __call($name, $args) {
+  public static function __callStatic($name, $args) {
     if(strpos($name, 'cmd') !== 0) {
       $name = 'cmd' . $name;
       self::$name($args);
@@ -40,6 +40,7 @@ class Command {
   public static function cmdUser($args = null, $cmd = null) {
     $mysqli = db_connect();
     if(empty($args)) {
+      var_dump($cmd->message);
       if(isset($cmd->message->reply_to_message)) $user = $cmd->message->reply_to_message->from;
       else $user = $cmd->message->from;
 
