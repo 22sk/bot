@@ -21,6 +21,9 @@ class Command implements \JsonSerializable {
   public function __get($name) {
     return $this->$name;
   }
+  public function __isset($name) {
+    return isset($this->$name);
+  }
 
   /**
    * Used to separate a Message into an array containing all necessary information.
