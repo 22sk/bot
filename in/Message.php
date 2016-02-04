@@ -32,5 +32,7 @@ class Message {
         }
         break;
     }
+    $user = new \in\User($this->user);
+    $user->updateUser($user);
   }
 }
