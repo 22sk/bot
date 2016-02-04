@@ -40,9 +40,9 @@ class User {
       foreach(get_object_vars($this) as $item => $value) {
         array_push($array, "{$item}={$value}");
       }
-      $sql = "UPDATE userdata SET "
-        . implode("', '", get_object_vars($this))
-        . "WHERE id={$this->id}";
+      $sql = "UPDATE userdata SET '"
+        . implode("', '", $array)
+        . "' WHERE id={$this->id}";
     } else {
       $sql = "INSERT INTO userdata ('"
         . implode("', '", array_keys(get_object_vars($this)))

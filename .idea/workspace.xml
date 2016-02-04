@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="">
+    <list default="true" id="10ed3728-0f26-4075-9b66-290a72c7f6a1" name="Default" comment="Debugging.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/in/User.php" afterPath="$PROJECT_DIR$/in/User.php" />
     </list>
@@ -99,19 +99,19 @@
       <file leaf-file-name="User.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/in/User.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.18163805">
-              <caret line="11" column="82" selection-start-line="11" selection-start-column="82" selection-end-line="11" selection-end-column="82" />
+            <state vertical-scroll-proportion="0.7100396">
+              <caret line="43" column="32" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
               <folding>
-                <marker date="1454601613848" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
-                <marker date="1454601613848" expanded="true" signature="1232:1251" placeholder="UPDATE userd..." />
-                <marker date="1454601613848" expanded="true" signature="1232:1252" placeholder="UPDATE userd..." />
-                <marker date="1454601613848" expanded="true" signature="1232:1324" placeholder="UPDATE userd..." />
-                <marker date="1454601613848" expanded="true" signature="1232:1335" placeholder="UPDATE userd..." />
-                <marker date="1454601613848" expanded="true" signature="1365:1387" placeholder="INSERT INTO userdata..." />
-                <marker date="1454601613848" expanded="true" signature="1365:1475" placeholder="INSERT INTO userdata..." />
-                <marker date="1454601613848" expanded="true" signature="1365:1539" placeholder="INSERT INTO userdata..." />
-                <marker date="1454601613848" expanded="true" signature="1365:1540" placeholder="INSERT INTO userdata..." />
-                <marker date="1454601613848" expanded="true" signature="1365:1595" placeholder="INSERT INTO userdata..." />
+                <marker date="1454601754880" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
+                <marker date="1454601754880" expanded="true" signature="1232:1251" placeholder="UPDATE userd..." />
+                <marker date="1454601754880" expanded="true" signature="1232:1252" placeholder="UPDATE userd..." />
+                <marker date="1454601754880" expanded="true" signature="1232:1311" placeholder="UPDATE userd..." />
+                <marker date="1454601754880" expanded="true" signature="1232:1322" placeholder="UPDATE userd..." />
+                <marker date="1454601754880" expanded="true" signature="1352:1374" placeholder="INSERT INTO userdata..." />
+                <marker date="1454601754880" expanded="true" signature="1352:1462" placeholder="INSERT INTO userdata..." />
+                <marker date="1454601754880" expanded="true" signature="1352:1526" placeholder="INSERT INTO userdata..." />
+                <marker date="1454601754880" expanded="true" signature="1352:1527" placeholder="INSERT INTO userdata..." />
+                <marker date="1454601754880" expanded="true" signature="1352:1582" placeholder="INSERT INTO userdata..." />
               </folding>
             </state>
           </provider>
@@ -372,7 +372,13 @@
       <option name="project" value="LOCAL" />
       <updated>1454601534421</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Debugging.">
+      <created>1454601619959</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1454601619959</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -382,7 +388,7 @@
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975364" sideWeight="0.49850187" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2013673" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975364" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3272727" sideWeight="0.5014981" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2623853" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975364" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -658,19 +664,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/in/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18163805">
-          <caret line="11" column="82" selection-start-line="11" selection-start-column="82" selection-end-line="11" selection-end-column="82" />
+        <state vertical-scroll-proportion="0.7100396">
+          <caret line="43" column="32" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
           <folding>
-            <marker date="1454601613848" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
-            <marker date="1454601613848" expanded="true" signature="1232:1251" placeholder="UPDATE userd..." />
-            <marker date="1454601613848" expanded="true" signature="1232:1252" placeholder="UPDATE userd..." />
-            <marker date="1454601613848" expanded="true" signature="1232:1324" placeholder="UPDATE userd..." />
-            <marker date="1454601613848" expanded="true" signature="1232:1335" placeholder="UPDATE userd..." />
-            <marker date="1454601613848" expanded="true" signature="1365:1387" placeholder="INSERT INTO userdata..." />
-            <marker date="1454601613848" expanded="true" signature="1365:1475" placeholder="INSERT INTO userdata..." />
-            <marker date="1454601613848" expanded="true" signature="1365:1539" placeholder="INSERT INTO userdata..." />
-            <marker date="1454601613848" expanded="true" signature="1365:1540" placeholder="INSERT INTO userdata..." />
-            <marker date="1454601613848" expanded="true" signature="1365:1595" placeholder="INSERT INTO userdata..." />
+            <marker date="1454601754880" expanded="true" signature="786:831" placeholder="SELECT * FRO..userdata..." />
+            <marker date="1454601754880" expanded="true" signature="1232:1251" placeholder="UPDATE userd..." />
+            <marker date="1454601754880" expanded="true" signature="1232:1252" placeholder="UPDATE userd..." />
+            <marker date="1454601754880" expanded="true" signature="1232:1311" placeholder="UPDATE userd..." />
+            <marker date="1454601754880" expanded="true" signature="1232:1322" placeholder="UPDATE userd..." />
+            <marker date="1454601754880" expanded="true" signature="1352:1374" placeholder="INSERT INTO userdata..." />
+            <marker date="1454601754880" expanded="true" signature="1352:1462" placeholder="INSERT INTO userdata..." />
+            <marker date="1454601754880" expanded="true" signature="1352:1526" placeholder="INSERT INTO userdata..." />
+            <marker date="1454601754880" expanded="true" signature="1352:1527" placeholder="INSERT INTO userdata..." />
+            <marker date="1454601754880" expanded="true" signature="1352:1582" placeholder="INSERT INTO userdata..." />
           </folding>
         </state>
       </provider>
