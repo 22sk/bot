@@ -56,7 +56,7 @@ class Command {
         $id = intval($args);
         $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
       } else {
-        $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
+        $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$args}')");
       }
       if (mysqli_num_rows($result) > 0) {
         $result = mysqli_fetch_assoc($result);
