@@ -39,7 +39,7 @@ class Command {
    * @param \in\Command|null $cmd
    */
   public static function cmdUser($args = null, $cmd = null) {
-    if(isset($args)) {
+    if(!empty($args)) {
       $mysqli = db_connect();
       if(intval($args)) {
         $id = intval($args);
