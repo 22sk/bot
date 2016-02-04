@@ -49,25 +49,27 @@ class Command {
         "Username: @{$user->getUsername()}\n".
         "First name: `{$user->getFirstName()}`\n".
         "Last name: `{$user->getLastName()}`\n".
-        "User ID: `{$user->getID()}`\n"
-      );
-    }
-    if (intval($args)) {
-      $id = intval($args);
-      $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
-    } else {
-      $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
-    }
-    if (mysqli_num_rows($result) > 0) {
-      $result = mysqli_fetch_assoc($result);
-      \out\Message::auto(
-        "Username: @{$result['username']}\n" .
-        "First name: `{$result['first_name']}`\n" .
-        "Last name: `{$result['last_name']}`\n" .
-        "User ID: `{$result['id']}`\n" .
-        "Last updated: `{$result['last_updated']}`\n",
+        "User ID: `{$user->getID()}`\n",
         "Markdown"
       );
-    } else \out\Message::auto("Unknown user.");
+    } else {
+      if (intval($args)) {
+        $id = intval($args);
+        $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
+      } else {
+        $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
+      }
+      if (mysqli_num_rows($result) > 0) {
+        $result = mysqli_fetch_assoc($result);
+        \out\Message::auto(
+          "Username: @{$result['username']}\n" .
+          "First name: `{$result['first_name']}`\n" .
+          "Last name: `{$result['last_name']}`\n" .
+          "User ID: `{$result['id']}`\n" .
+          "Last updated: `{$result['last_updated']}`\n",
+          "Markdown"
+        );
+      } else \out\Message::auto("Unknown user.");
+    }
   }
 }
