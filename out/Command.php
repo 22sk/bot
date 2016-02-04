@@ -38,8 +38,8 @@ class Command {
     if(isset($args)) {
       $mysqli = db_connect();
       if(intval($args)) {
-        $user_id = intval($args);
-        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE user_id = {$user_id}"));
+        $id = intval($args);
+        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE id = {$id}"));
       } else {
         $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE username = {$args}"));
       }
