@@ -33,4 +33,24 @@ class Command {
   public static function cmdHost($args = null, $cmd = null) {
     return \out\Message::auto("Hoster: `".gethostname()."`", "Markdown");
   }
+
+  public static function cmdUser($args = null, $cmd = null) {
+    if(isset($args)) {
+      $mysqli = db_connect();
+      if(intval($args)) {
+        $user_id = intval($args);
+        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE user_id = {$user_id}"));
+      } else {
+        $result = mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata WHERE username = {$args}"));
+      }
+      $date = date("Y/m/d", $result['last_updated']);
+      \out\Message::auto(
+        "Username: `{$result['username']}`".
+        "First name: `{$result['first_name']}`".
+        "Last name: `{$result['last_name']}`".
+        "User ID: `{$result['user_id']}`".
+        "Last updated: `{$date}`"
+      );
+    }
+  }
 }
