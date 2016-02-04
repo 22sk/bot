@@ -18,6 +18,10 @@ class Command implements \JsonSerializable {
     }
   }
 
+  public function __get($name) {
+    return $this->$name;
+  }
+
   /**
    * Used to separate a Message into an array containing all necessary information.
    * @param \in\Message|string $msg
@@ -45,21 +49,8 @@ class Command implements \JsonSerializable {
     return array_filter($cmd);
   }
 
-  public function __get($name) {
-    return $this->$name;
-  }
 
-  public function jsonSerialize() {
-    return get_object_vars($this);
-  }
 
-  public static function parseText($text) {
-
-  }
-
-  /**
-   * @todo implement replys.json (https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json)
-   */
   public function process() {
     global $bot;
     echo "Command:\n".json_encode($this, JSON_PRETTY_PRINT)."\n";
@@ -68,10 +59,14 @@ class Command implements \JsonSerializable {
       if(method_exists('\out\Command', $func))
         \out\Command::$func($this->args, clone $this);
       elseif(array_key_exists($this->cmd, array())) {
-        // REPLYS.JSON
+        // TODO: implement replys.json (https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json)
       } elseif($this->bot == \in\User::getMe()->username) {
         \out\Message::auto("That command does not exist or has not been implemented yet.");
       }
     }
+  }
+
+  public function jsonSerialize() {
+    return get_object_vars($this);
   }
 }

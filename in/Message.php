@@ -20,6 +20,10 @@ class Message {
     else throw new \Exception("Invalid message type! Allowed: Array or Object.", 415);
   }
 
+  public function __get($name) {
+    return $this->$name;
+  }
+
   public function getType() {
     $this->types = json_decode(file_get_contents('in/types.json'));
     foreach($this->types as $value) {
