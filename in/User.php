@@ -2,7 +2,7 @@
 namespace in;
 
 class User {
-  private $user_id;
+  private $id;
   private $username;
   private $first_name;
   private $last_name;
@@ -26,7 +26,7 @@ class User {
 
   public function updateUser($user) {
     $mysqli = db_connect();
-    $user_id = $user->user_id;
+    $id = $user->id;
 
     $result = $mysqli->query("SELECT * FROM userdata WHERE chat_id={$this->user_id}");
 
@@ -38,7 +38,7 @@ class User {
       }
       $sql = "UPDATE userdata SET "
         . implode(", ", get_object_vars($this))
-        . "WHERE user_id = {$user_id}";
+        . "WHERE id = {$id}";
     } else {
       $sql = "INSERT INTO userdata ('"
         . implode("', '", array_keys(get_object_vars($this)))
