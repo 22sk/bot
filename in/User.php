@@ -8,8 +8,10 @@ class User {
   private $last_name;
 
   public function __construct($user) {
+    echo "Passed user: ".json_encode($user, JSON_PRETTY_PRINT);
     if(gettype($user) == 'array') foreach($user as $item => $value) $this->item = $value;
     else foreach(get_object_vars($user) as $item => $value) $this->item = $value;
+    echo "User: ".json_encode($this, JSON_PRETTY_PRINT);
   }
 
   /**
