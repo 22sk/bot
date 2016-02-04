@@ -6,6 +6,7 @@ class Message {
   private $chat;
   private $from;
   private $date;
+  private $reply_to_message;
 
   private $types;
 

@@ -35,32 +35,13 @@ class Command {
   }
 
   /**
-   * @param null $args
+   * @param string|null $args
    * @param \in\Command|null $cmd
    */
   public static function cmdUser($args = null, $cmd = null) {
-    if(!empty($args)) {
-      $mysqli = db_connect();
-      if(intval($args)) {
-        $id = intval($args);
-        $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
-      } else {
-        $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
-      }
-      if(mysqli_num_rows($result)>0) {
-        $result = mysqli_fetch_assoc($result);
-        \out\Message::auto(
-          "Username: @{$result['username']}\n" .
-          "First name: `{$result['first_name']}`\n" .
-          "Last name: `{$result['last_name']}`\n" .
-          "User ID: `{$result['id']}`\n" .
-          "Last updated: `{$result['last_updated']}`\n",
-          "Markdown"
-        );
-      }
-      else \out\Message::auto("Unknown user.");
-    } else {
-      if(array_key_exists('reply_to_message', $cmd->message)) $user = $cmd->message['reply_to_message']['from'];
+    $mysqli = db_connect();
+    if(empty($args)) {
+      if(isset($cmd->message->reply_to_message_id)) $user = $cmd->message->reply_to_message->from;
       else $user = $cmd->message['from'];
 
       $user = new \in\User($user);
@@ -71,5 +52,22 @@ class Command {
         "User ID: `{$user->getID()}`\n"
       );
     }
+    if (intval($args)) {
+      $id = intval($args);
+      $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
+    } else {
+      $result = $mysqli->query("SELECT * FROM userdata WHERE username = {$args}");
+    }
+    if (mysqli_num_rows($result) > 0) {
+      $result = mysqli_fetch_assoc($result);
+      \out\Message::auto(
+        "Username: @{$result['username']}\n" .
+        "First name: `{$result['first_name']}`\n" .
+        "Last name: `{$result['last_name']}`\n" .
+        "User ID: `{$result['id']}`\n" .
+        "Last updated: `{$result['last_updated']}`\n",
+        "Markdown"
+      );
+    } else \out\Message::auto("Unknown user.");
   }
 }
