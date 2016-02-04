@@ -45,11 +45,12 @@ class Command {
       }
       $date = date("Y/m/d", $result['last_updated']);
       \out\Message::auto(
-        "Username: `{$result['username']}`".
-        "First name: `{$result['first_name']}`".
-        "Last name: `{$result['last_name']}`".
-        "User ID: `{$result['user_id']}`".
-        "Last updated: `{$date}`"
+        "Username: `{$result['username']}`\n".
+        "First name: `{$result['first_name']}`\n".
+        "Last name: `{$result['last_name']}`\n".
+        "User ID: `{$result['user_id']}`\n".
+        "Last updated: `{$date}`\n",
+        "Markdown"
       );
     }
   }
