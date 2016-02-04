@@ -44,13 +44,13 @@ class User {
         . implode(", ", $array)
         . " WHERE id={$this->id}";
     } else {
-      $sql = "INSERT INTO userdata ('"
-        . implode("', '", array_keys(get_object_vars($this)))
-        . "') VALUES ('"
+      $sql = "INSERT INTO userdata ("
+        . implode(", ", array_keys(get_object_vars($this)))
+        . ") VALUES ('"
         . implode("', '", get_object_vars($this))
         ."')";
     }
-    echo $sql;
+    echo "\n".$sql."\n";
     $mysqli->query($sql);
 
   }
