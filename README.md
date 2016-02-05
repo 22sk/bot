@@ -1,2 +1,2 @@
 # Telegram Bot
-## by 22sk
+by 22sk
