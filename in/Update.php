@@ -3,12 +3,14 @@ namespace in;
 
 class Update {
   public function __construct($update = null) {
-    if(!isset($update))
-      if(file_get_contents('php://input') != null) $update = json_decode(file_get_contents('php://input'));
-      else $update = json_decode(file_get_contents('in/sample_update.json'));
+    if(!isset($update) and file_get_contents('php://input') != null) {
+      $update = json_decode(file_get_contents('php://input'));
+    } else $update = json_decode(file_get_contents('in/sample_update.json'));
+
     foreach($update as $key => $value) {
       $this->$key = $value;
     }
+    $GLOBALS['update'] = $update;
     echo "Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n";
   }
 

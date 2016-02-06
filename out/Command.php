@@ -19,12 +19,15 @@ class Command {
     return \out\Message::auto("*Ping!* -{$time}s", "Markdown");
   }
 
+  public static function cmdUpdate($args = null, $cmd = null) {
+    global $update;
+    return Message::auto(json_encode($update, JSON_PRETTY_PRINT));
+  }
+
   public static function cmdHelp($args = null, $cmd = null) {
     return \out\Message::auto("Maybe, some day, I'll help you.", "Markdown");
   }
 
-
-  // TODO: implement memes.json (https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json)
   public static function cmdMeme($args = null, $cmd = null) {
     $memes = json_decode(
       file_get_contents('https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json'), true
