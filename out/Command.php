@@ -32,7 +32,7 @@ class Command {
     $name = str_clean($args);
 
     if(empty($args)) {
-      Message::auto("Available memes: `".implode(", ", array_keys($memes))."`");
+      Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
     } else if(array_key_exists($name, $memes)) {
       $types = json_decode(file_get_contents('types.json'));
       $type = $memes[$name]['type'];
