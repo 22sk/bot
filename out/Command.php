@@ -9,13 +9,23 @@ class Command {
     }
   }
 
+  /**
+   * @param null $args
+   * @param \in\Command $cmd
+   * @return Update
+   */
   public static function cmdPing($args = null, $cmd) {
-    $time = time() - $cmd->message->date;
+    $time = time() - $cmd->getMessage()->date;
     return Message::auto("*Pong!* {$time}s", "Markdown");
   }
 
+  /**
+   * @param null $args
+   * @param \in\Command $cmd
+   * @return Update
+   */
   public static function cmdPong($args = null, $cmd) {
-    $time = $cmd->message->date - time();
+    $time = $cmd->getMessage()->date - time();
     return Message::auto("*Ping!* {$time}s", "Markdown");
   }
 
@@ -62,7 +72,6 @@ class Command {
     if(empty($args)) {
       if($cmd->getMessage()->reply_to_message != null) $user = $cmd->getMessage()->reply_to_message->from;
       else $user = $cmd->getMessage()->from;
-
       $user = new \in\User($user);
       Message::auto(
         "Username: @{$user->getUsername()}\n".
