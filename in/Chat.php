@@ -20,7 +20,8 @@ class Chat implements \JsonSerializable {
 
   public function updateGroupData() {
     echo "Attempting to update group data.\n";
-    echo "Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n";
+    $vars = array_filter(get_object_vars($this));
+    echo "Object vars: ".json_encode($vars, JSON_PRETTY_PRINT)."\n";
     $mysqli = db_connect();
     $sql = "SELECT * FROM groupdata WHERE id={$this->id}";
     echo "SQL: {$sql}\n";
@@ -29,7 +30,7 @@ class Chat implements \JsonSerializable {
     echo "Num Rows: ".mysqli_num_rows($result)."\n";
     if(mysqli_num_rows($result)>0) {
       $array = array();
-      foreach (get_object_vars($this) as $item => $value) {
+      foreach ($vars as $item => $value) {
         array_push($array, "{$item}='{$value}''");
       }
       $sql = "UPDATE groupdata SET "
@@ -38,9 +39,9 @@ class Chat implements \JsonSerializable {
       echo "SQL: {$sql}\n";
     } else {
       $sql = "INSERT INTO groupdata ("
-        . implode(", ", array_keys(get_object_vars($this)))
+        . implode(", ", array_keys($vars))
         . ") VALUES ('"
-        . implode("', '", get_object_vars($this))
+        . implode("', '", $vars)
         . "')";
       echo "SQL: {$sql}\n";
     }
