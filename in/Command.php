@@ -1,6 +1,8 @@
 <?php
 namespace in;
 
+use out\Message;
+
 class Command implements \JsonSerializable {
   private $message;
   private $text;
@@ -60,11 +62,16 @@ class Command implements \JsonSerializable {
     if(!isset($this->bot) or $this->bot == \in\User::getMe()->username) {
       $func = 'cmd'.$this->cmd;
       if(method_exists('\out\Command', $func))
-        \out\Command::$func($this->args, clone $this);
-      elseif(array_key_exists($this->cmd, array())) {
-        // TODO: implement replys.json (https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json)
-      } elseif($this->bot == \in\User::getMe()->username) {
-        \out\Message::auto("That command does not exist or has not been implemented yet.");
+        return \out\Command::$func($this->args, clone $this);
+      elseif(array_key_exists(strtolower($this->cmd), json_decode(
+        file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
+      ))) {
+        $replys = json_decode(
+          file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
+        );
+        return Message::auto(array_rand($replys['command'][strtolower($this->cmd)]['texts']));
+      } elseif($this->bot == User::getMe()->username) {
+        return \out\Message::auto("That command does not exist or has not been implemented yet.");
       }
     }
   }

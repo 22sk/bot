@@ -21,7 +21,7 @@ class Command {
 
   public static function cmdUpdate($args = null, $cmd = null) {
     global $update;
-    return Message::auto(json_encode($update, JSON_PRETTY_PRINT));
+    return Message::auto("```\n".json_encode($update, JSON_PRETTY_PRINT)."\n```");
   }
 
   public static function cmdHelp($args = null, $cmd = null) {
