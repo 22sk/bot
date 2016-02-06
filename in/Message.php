@@ -8,8 +8,6 @@ class Message {
   private $date;
   private $reply_to_message;
 
-  private $types;
-
   public function __construct($message) {
     if(gettype($message) == 'object')
       foreach(get_object_vars($message) as $key => $value) {
@@ -26,8 +24,8 @@ class Message {
   }
 
   public function getType() {
-    $this->types = json_decode(file_get_contents('in/types.json'));
-    foreach($this->types as $value) {
+    $types = array_keys(json_decode(file_get_contents('types.json'), true));
+    foreach($types as $value) {
       if(property_exists($this, $value)) return $value;
     }
     throw new \Exception("No valid message field found.", 406);

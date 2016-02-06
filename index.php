@@ -13,8 +13,3 @@ $bot = new out\Bot($_ENV['API_URL']);
 $update = new in\Update();
 
 $update->process();
-
-echo "MySQL:\n";
-$mysqli = db_connect();
-
-var_dump(mysqli_fetch_assoc($mysqli->query("SELECT * FROM userdata;")));

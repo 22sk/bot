@@ -26,7 +26,21 @@ class Command {
 
   // TODO: implement memes.json (https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json)
   public static function cmdMeme($args = null, $cmd = null) {
-    return \out\Message::auto("Coming soon!");
+    $memes = json_decode(
+      file_get_contents('https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json'), true
+    );
+    $name = str_clean($args);
+    if(empty($args)) {
+      Message::auto("Available memes:".implode(", ", array_keys($memes)));
+    } else if(array_key_exists($name, $memes)) {
+      $types = json_decode(file_get_contents('types.json'));
+      $type = $memes[$name]['type'];
+      $method = $types->$type;
+      $update = array($type => $memes[$name]['id']);
+      Update::auto($update, $method);
+    } else {
+      Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
+    }
   }
 
   public static function cmdHost($args = null, $cmd = null) {

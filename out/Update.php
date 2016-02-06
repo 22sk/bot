@@ -62,26 +62,31 @@ class Update implements \JsonSerializable {
     return $array;
   }
 
-  public static function send($update = array(), $method = null) {
-    global $bot;
-    if($update instanceof Update) return $bot->send($update);
-    else if(gettype($update) == 'array')
+  public static function send($update, $method = null) {
+    global $bot, $chat;
+    if ($update instanceof Update) return $bot->send($update);
+    elseif (gettype($update) == 'array') {
+      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->id;
       return $bot->send(new self($update, $method));
-    else throw new \Exception("Invalid update!", 415);
+    } else throw new \Exception("Invalid update!", 415);
   }
 
   public static function reply($update, $method = null, $reply_to_message_id = null) {
-    global $bot, $message_id;
-    if(!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
-    $update['reply_to_message_id'] = $reply_to_message_id;
-    return Update::send($update, $method);
+    global $bot, $message_id, $chat;
+    if ($update instanceof Update) return $bot->send($update);
+    elseif (gettype($update) == 'array') {
+      if (!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
+      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->id;
+      $update['reply_to_message_id'] = $reply_to_message_id;
+      return Update::send($update, $method);
+    } else throw new \Exception("Invalid update!", 415);
   }
 
-  public static function auto($text, $parse_mode = "") {
+  public static function auto($update, $method = null) {
     global $chat;
     if($chat->type == 'group')
-      return self::reply($text, $parse_mode);
+      return self::reply($update, $method);
     else
-      return self::send($text, $parse_mode);
+      return self::send($update, $method);
   }
 }
