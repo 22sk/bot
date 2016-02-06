@@ -12,7 +12,7 @@ class Command implements \JsonSerializable {
 
   /**
    * Command constructor.
-   * @param \in\Message|string $message
+   * @param Message|string $message
    */
   public function __construct($message) {
     foreach (self::parseMessage($message) as $key => $value) {
@@ -29,7 +29,7 @@ class Command implements \JsonSerializable {
 
   /**
    * Used to separate a Message into an array containing all necessary information.
-   * @param \in\Message|string $msg
+   * @param Message|string $msg
    *   Message to generate the Command from.
    * @param bool $del_message
    *   Set to true to not include the Message object in the returned array.
@@ -39,7 +39,7 @@ class Command implements \JsonSerializable {
    */
   public static function parseMessage($msg, $del_message = false) {
     if(gettype($msg) == 'string') {
-      $msg = new \in\Message(array('text' => $msg));
+      $msg = new Message(array('text' => $msg));
       $del_message = true;
     }
     $keys = array('message', 'text', 'cmd', 'bot', 'args');
@@ -59,7 +59,7 @@ class Command implements \JsonSerializable {
   public function process() {
     global $bot;
     echo "Command:\n".json_encode($this, JSON_PRETTY_PRINT)."\n";
-    if(!isset($this->bot) or $this->bot == \in\User::getMe()->username) {
+    if(!isset($this->bot) or $this->bot == User::getMe()->username) {
       $func = 'cmd'.$this->cmd;
       if(method_exists('\out\Command', $func))
         return \out\Command::$func($this->args, clone $this);

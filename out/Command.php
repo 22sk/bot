@@ -11,21 +11,23 @@ class Command {
 
   public static function cmdPing($args = null, $cmd) {
     $time = time() - $cmd->message->date;
-    return \out\Message::auto("*Pong!* {$time}s", "Markdown");
+    return Message::auto("*Pong!* {$time}s", "Markdown");
   }
 
   public static function cmdPong($args = null, $cmd) {
-    $time = time() - $cmd->message->date;
-    return \out\Message::auto("*Ping!* -{$time}s", "Markdown");
+    $time = $cmd->message->date - time();
+    return Message::auto("*Ping!* {$time}s", "Markdown");
   }
 
   public static function cmdUpdate($args = null, $cmd = null) {
     global $update;
-    return Message::auto("```\n".json_encode($update, JSON_PRETTY_PRINT)."\n```");
+    return Message::auto("```\n".json_encode($update, JSON_PRETTY_PRINT)."\n```", "Markdown");
   }
 
   public static function cmdHelp($args = null, $cmd = null) {
-    return \out\Message::auto("Maybe, some day, I'll help you.", "Markdown");
+    return Message::auto(
+      "*Not all commands have already been implemented yet!*\n".
+      file_get_contents('https://gist.githubusercontent.com/22sk/7cc3f6e109779353aa2b/raw/commands.txt'), "Markdown");
   }
 
   public static function cmdMeme($args = null, $cmd = null) {
@@ -35,20 +37,20 @@ class Command {
     $name = str_clean($args);
 
     if(empty($args)) {
-      Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
+      return Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
     } else if(array_key_exists($name, $memes)) {
       $types = json_decode(file_get_contents('types.json'));
       $type = $memes[$name]['type'];
       $method = $types->$type;
       $update = array($type => $memes[$name]['id']);
-      Update::auto($update, $method);
+      return Update::auto($update, $method);
     } else {
-      Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
+      return Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
     }
   }
 
   public static function cmdHost($args = null, $cmd = null) {
-    return \out\Message::auto("Hoster: `".gethostname()."`", "Markdown");
+    return Message::auto("Hoster: `".gethostname()."`", "Markdown");
   }
 
   /**
@@ -62,7 +64,7 @@ class Command {
       else $user = $cmd->message->from;
 
       $user = new \in\User($user);
-      \out\Message::auto(
+      Message::auto(
         "Username: @{$user->getUsername()}\n".
         "First name: `{$user->getFirstName()}`\n".
         "Last name: `{$user->getLastName()}`\n".
@@ -78,7 +80,7 @@ class Command {
       }
       if (mysqli_num_rows($result) > 0) {
         $result = mysqli_fetch_assoc($result);
-        \out\Message::auto(
+        Message::auto(
           "Username: @{$result['username']}\n" .
           "First name: `{$result['first_name']}`\n" .
           "Last name: `{$result['last_name']}`\n" .
@@ -86,7 +88,7 @@ class Command {
           "Last updated: `{$result['last_updated']}`\n",
           "Markdown"
         );
-      } else \out\Message::auto("Unknown user.");
+      } else Message::auto("Unknown user.");
     }
   }
 }
