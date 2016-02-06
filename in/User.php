@@ -7,6 +7,10 @@ class User {
   private $first_name;
   private $last_name;
 
+  /**
+   * User constructor.
+   * @param array|Object $user
+   */
   public function __construct($user) {
     if(gettype($user) == 'array') foreach($user as $item => $value) $this->$item = $value;
     else foreach(get_object_vars($user) as $item => $value) $this->$item = $value;
@@ -52,7 +56,10 @@ class User {
     }
     echo "\n".$sql."\n";
     $mysqli->query($sql);
+
+    $mysqli->close();
   }
+
 
   public function getID() {
     return $this->id;

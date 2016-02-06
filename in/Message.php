@@ -40,8 +40,12 @@ class Message {
         }
         break;
     }
-    $user = new \in\User($this->from);
-    var_dump($user);
+    $user = new User($this->from);
+    echo "User:\n".json_encode($user, JSON_PRETTY_PRINT)."\n";
     $user->updateUserData();
+
+    $chat = new Chat($this->chat);
+    echo "Chat:\n".json_encode($chat, JSON_PRETTY_PRINT)."\n";
+    if($chat->getType() != 'private') $chat->updateGroupData();
   }
 }
