@@ -88,7 +88,7 @@ class Command {
         $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$args}')");
       }
       if (mysqli_num_rows($result) > 0) {
-        $result = mysqli_fetch_assoc($result);
+        $result = markdown_escape(mysqli_fetch_assoc($result));
         Message::auto(
           "Username: @{$result['username']}\n" .
           "First name: `{$result['first_name']}`\n" .

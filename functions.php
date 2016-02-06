@@ -56,6 +56,8 @@ function db_connect() {
   return $mysqli;
 }
 function markdown_escape($str) {
-  echo "Escaping '{$str}': ".preg_replace('/(?=[*_`])/', '\\', $str)."\n";
-  return preg_replace('/(?=[*_`])/', '\\', $str);
+  if(gettype($str) == 'array') {
+    foreach($str as &$value) $value = markdown_escape($value);
+    return $str;
+  } else return preg_replace('/(?=[*_`])/', '\\', $str);
 }
