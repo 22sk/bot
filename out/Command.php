@@ -9,6 +9,15 @@ class Command {
     }
   }
 
+  public static function cmdAbout($args = null, $cmd = null) {
+    # DO NOT EDIT:
+    return Message::auto(
+      "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).\n"
+    # EDIT here if needed:
+    # ."Modified by @you."
+    );
+  }
+
   /**
    * @param null $args
    * @param \in\Command $cmd
