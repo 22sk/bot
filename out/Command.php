@@ -60,8 +60,8 @@ class Command {
   public static function cmdUser($args = null, $cmd = null) {
     $mysqli = db_connect();
     if(empty($args)) {
-      if($cmd->message->reply_to_message != null) $user = $cmd->message->reply_to_message->from;
-      else $user = $cmd->message->from;
+      if($cmd->getMessage()->reply_to_message != null) $user = $cmd->getMessage()->reply_to_message->from;
+      else $user = $cmd->getMessage()->from;
 
       $user = new \in\User($user);
       Message::auto(

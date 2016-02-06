@@ -20,9 +20,19 @@ class Command implements \JsonSerializable {
     }
   }
 
-  public function __get($name) {
-    return $this->$name;
+  public function getMessage() {
+    return $this->message;
   }
+  public function getText() {
+    return $this->text;
+  }
+  public function getBot() {
+    return $this->bot;
+  }
+  public function getArgs() {
+    return $this->args;
+  }
+
   public function __isset($name) {
     return isset($this->$name);
   }

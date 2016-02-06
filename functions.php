@@ -50,8 +50,11 @@ function db_connect() {
     getenv('OPENSHIFT_MYSQL_DB_HOST'),
     getenv('OPENSHIFT_MYSQL_DB_USERNAME'),
     getenv('OPENSHIFT_MYSQL_DB_PASSWORD'),
-    "bot",
+    getenv('DB_NAME'),
     getenv('OPENSHIFT_MYSQL_DB_PORT')
   );
   return $mysqli;
+}
+function markdown_escape($str) {
+  return preg_replace('/(?=[*_`])/', '\\', $str);
 }

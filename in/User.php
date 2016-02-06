@@ -58,12 +58,12 @@ class User {
     return $this->id;
   }
   public function getUsername() {
-    return $this->username;
+    return markdown_escape($this->username);
   }
   public function getFirstName() {
-    return $this->first_name;
+    return markdown_escape($this->first_name);
   }
   public function getLastName() {
-    return $this->last_name;
+    return markdown_escape($this->last_name);
   }
 }
