@@ -69,7 +69,9 @@ class Command implements \JsonSerializable {
         $replys = json_decode(
           file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
         );
-        return Message::auto(array_rand($replys['command'][strtolower($this->cmd)]['texts'])[0]);
+        return Message::auto($replys['command'][strtolower($this->cmd)]['texts'][
+          array_rand($replys['command'][strtolower($this->cmd)]['texts'])
+        ]);
       } elseif($this->bot == User::getMe()->username) {
         return \out\Message::auto("That command does not exist or has not been implemented yet.");
       }
