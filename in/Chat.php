@@ -1,7 +1,7 @@
 <?php
 namespace in;
 
-class Chat {
+class Chat implements \JsonSerializable {
   private $id;
   private $type;
   private $title;
@@ -18,11 +18,12 @@ class Chat {
     else foreach(get_object_vars($chat) as $item => $value) $this->$item = $value;
   }
 
-
   public function updateGroupData() {
+    echo "Attempting to update group data.\n";
+    echo "Object vars: ".json_encode(get_object_vars(), JSON_PRETTY_PRINT)."\n";
     $mysqli = db_connect();
-
     $sql = "SELECT * FROM groupdata WHERE id='{$this->id}'";
+    echo "SQL: {$sql}\n";
     $result = $mysqli->query($sql);
 
     if(mysqli_num_rows($result)>0) {
@@ -62,5 +63,11 @@ class Chat {
   }
   public function getLastName() {
     return markdown_escape($this->last_name);
+  }
+
+  public function jsonSerialize() {
+    $array = obj2array($this);
+    unset($array['method']);
+    return $array;
   }
 }

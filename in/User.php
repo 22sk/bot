@@ -1,7 +1,7 @@
 <?php
 namespace in;
 
-class User {
+class User implements \JsonSerializable {
   private $id;
   private $username;
   private $first_name;
@@ -30,6 +30,7 @@ class User {
   }
 
   public function updateUserData() {
+    echo "Object vars: ".json_encode(get_object_vars(), JSON_PRETTY_PRINT)."\n";
     $mysqli = db_connect();
 
     $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
@@ -72,5 +73,11 @@ class User {
   }
   public function getLastName() {
     return markdown_escape($this->last_name);
+  }
+
+  public function jsonSerialize() {
+    $array = obj2array($this);
+    unset($array['method']);
+    return $array;
   }
 }
