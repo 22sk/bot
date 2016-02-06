@@ -30,7 +30,7 @@ class User implements \JsonSerializable {
   }
 
   public function updateUserData() {
-    echo "Object vars: ".json_encode(get_object_vars(), JSON_PRETTY_PRINT)."\n";
+    echo "Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n";
     $mysqli = db_connect();
 
     $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
