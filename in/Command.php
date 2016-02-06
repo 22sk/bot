@@ -65,7 +65,7 @@ class Command implements \JsonSerializable {
         return \out\Command::$func($this->args, clone $this);
       elseif(array_key_exists(strtolower($this->cmd), json_decode(
         file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
-      ))) {
+      )['command'])) {
         $replys = json_decode(
           file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
         );
