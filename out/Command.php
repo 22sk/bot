@@ -30,8 +30,9 @@ class Command {
       file_get_contents('https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json'), true
     );
     $name = str_clean($args);
+
     if(empty($args)) {
-      Message::auto("Available memes:".implode(", ", array_keys($memes)));
+      Message::auto("Available memes: `".implode(", ", array_keys($memes))."`");
     } else if(array_key_exists($name, $memes)) {
       $types = json_decode(file_get_contents('types.json'));
       $type = $memes[$name]['type'];
