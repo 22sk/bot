@@ -39,7 +39,7 @@ class Command implements \JsonSerializable {
    */
   public static function parseMessage($msg, $del_message = false) {
     if(gettype($msg) == 'string') {
-      $msg = new Message(array('text' => $msg));
+      $msg = new \in\Message(array('text' => $msg));
       $del_message = true;
     }
     $keys = array('message', 'text', 'cmd', 'bot', 'args');
