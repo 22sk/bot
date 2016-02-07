@@ -32,11 +32,10 @@ class Command {
     $user = new \in\User($cmd->getMessage()->from);
 
     if($user->isSkipped($mysqli)) {
-      msg::auto("Disabling automatic replys for you.");
-      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='0' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
-
-    } else {
       msg::auto("Welcome back!");
+      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='0' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
+    } else {
+      msg::auto("Disabling automatic replys for you.");
       $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='1' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
     }
     if(!$mysqli->query($sql))
