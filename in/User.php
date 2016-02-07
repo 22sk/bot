@@ -91,7 +91,7 @@ class User implements \JsonSerializable {
     $result = $mysqli->query($sql);
     if($close) $mysqli->close();
 
-    if($result['skipped']) return true;
+    if($result->fetch_assoc()['skipped']) return true;
     else return false;
   }
 }
