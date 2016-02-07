@@ -54,11 +54,12 @@ class Message {
       );
       $reply = null;
       foreach($replys['text'] as $key => $value)
-        if(strpos($this->text, $key)) $reply = $key;
-      if(isset($reply) strpos($replys['text'], $this->text))
+        if(strpos(strtolower($this->text), $key)) $reply = $key;
+      if(isset($reply))
         Message::auto($replys['text'][$reply]['texts'][
           array_rand($replys['text'][$reply]['texts'])
         ], 'Markdown');
+      else return false;
     }
 
 
