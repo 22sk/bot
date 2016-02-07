@@ -60,6 +60,8 @@ class Message {
     $chat = new Chat($this->chat);
     echo "Chat:\n".json_encode($chat, JSON_PRETTY_PRINT)."\n";
     if($chat->getType() != 'private') $chat->updateGroupData();
+
+    return $done;
   }
 
   public function textReply() {

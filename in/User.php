@@ -94,4 +94,18 @@ class User implements \JsonSerializable {
     if($result->fetch_assoc()['skipped']) return true;
     else return false;
   }
+
+  public function isBanned($mysqli = null) {
+    if(!isset($mysqli)) {
+      $close = true;
+      $mysqli = db_connect();
+    } else $close = false;
+
+    $sql = "SELECT banned FROM userdata WHERE id={$this->id}";
+    $result = $mysqli->query($sql);
+    if($close) $mysqli->close();
+
+    if($result->fetch_assoc()['banned']) return true;
+    else return false;
+  }
 }
