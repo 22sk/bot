@@ -52,9 +52,11 @@ class Message {
       $replys = json_decode(
         file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
       );
+      echo "Replys: ".json_encode($replys, JSON_PRETTY_PRINT)."\n";
       $reply = null;
       foreach($replys['text'] as $key => $value)
         if(strpos(strtolower($this->text), $key)) $reply = $key;
+      echo "Reply:\n"; var_dump($reply);
       if(isset($reply))
         \out\Message::auto($replys['text'][$reply]['texts'][
           array_rand($replys['text'][$reply]['texts'])
