@@ -83,7 +83,8 @@ class Command implements \JsonSerializable {
           array_rand($replys['command'][strtolower($this->cmd)]['texts'])
         ], "Markdown");
       } elseif($this->bot == User::getMe()->username) {
-        return \out\Message::auto("That command does not exist or has not been implemented yet.");
+        Message::auto("That command does not exist or has not been implemented yet.");
+        return false;
       }
     }
   }

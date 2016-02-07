@@ -8,6 +8,14 @@ class Message {
   private $date;
   private $reply_to_message;
 
+  private $text;
+  private $audio;
+  private $document;
+  private $photo;
+  private $sticker;
+  private $video;
+  private $voice;
+
   public function __construct($message) {
     if(gettype($message) == 'object')
       foreach(get_object_vars($message) as $key => $value) {
@@ -32,14 +40,28 @@ class Message {
   }
 
   public function process() {
+    $done = false;
     switch($this->getType()) {
       case 'text':
         if(Command::parseMessage(get_object_vars($this)['text'])) {
           $cmd = new Command($this);
-          $cmd->process();
-        }
-        break;
+          $done = $cmd->process();
+        } break;
     }
+    if(!$done) {
+      $replys = json_decode(
+        file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
+      );
+      $reply = null;
+      foreach($replys['text'] as $key => $value)
+        if(strpos($this->text, $key)) $reply = $key;
+      if(isset($reply) strpos($replys['text'], $this->text))
+        Message::auto($replys['text'][$reply]['texts'][
+          array_rand($replys['text'][$reply]['texts'])
+        ], 'Markdown');
+    }
+
+
     $user = new User($this->from);
     echo "User:\n".json_encode($user, JSON_PRETTY_PRINT)."\n";
     $user->updateUserData();
