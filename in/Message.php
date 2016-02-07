@@ -54,8 +54,10 @@ class Message {
       );
       echo "Replys: ".json_encode($replys, JSON_PRETTY_PRINT)."\n";
       $reply = null;
-      foreach($replys['text'] as $key => $value)
-        if(strpos(strtolower($this->text), $key)) $reply = $key;
+      foreach($replys['text'] as $key => $value) {
+        echo "Key: {$key}, Text: {$this->text}, StrPos: ".strpos(strtolower($this->text), $key)."\n";
+        if (strpos(strtolower($this->text), $key)) $reply = $key;
+      }
       echo "Reply:\n"; var_dump($reply);
       if(isset($reply))
         \out\Message::auto($replys['text'][$reply]['texts'][
