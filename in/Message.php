@@ -56,7 +56,7 @@ class Message {
       foreach($replys['text'] as $key => $value)
         if(strpos(strtolower($this->text), $key)) $reply = $key;
       if(isset($reply))
-        Message::auto($replys['text'][$reply]['texts'][
+        \out\Message::auto($replys['text'][$reply]['texts'][
           array_rand($replys['text'][$reply]['texts'])
         ], 'Markdown');
       else return false;
