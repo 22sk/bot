@@ -48,20 +48,7 @@ class Message {
           $done = $cmd->process();
         } break;
     }
-    if(!$done) {
-      $replys = json_decode(
-        file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
-      );
-      $reply = null;
-      foreach($replys['text'] as $key => $value) {
-        if (strpos(strtolower($this->text), $key) !== false) $reply = $key;
-      }
-      if(isset($reply))
-        \out\Message::auto($replys['text'][$reply]['texts'][
-          array_rand($replys['text'][$reply]['texts'])
-        ], 'Markdown');
-      else return false;
-    }
+    if(!$done) $this->textReply();
 
 
     $user = new User($this->from);
@@ -71,5 +58,20 @@ class Message {
     $chat = new Chat($this->chat);
     echo "Chat:\n".json_encode($chat, JSON_PRETTY_PRINT)."\n";
     if($chat->getType() != 'private') $chat->updateGroupData();
+  }
+
+  public function textReply() {
+    $replys = json_decode(
+      file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
+    );
+    $reply = null;
+    foreach($replys['text'] as $key => $value) {
+      if (strpos(strtolower($this->text), $key) !== false) $reply = $key;
+    }
+    if(isset($reply))
+      return \out\Message::auto($replys['text'][$reply]['texts'][
+      array_rand($replys['text'][$reply]['texts'])
+      ], 'Markdown');
+    else return false;
   }
 }
