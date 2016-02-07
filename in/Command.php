@@ -53,7 +53,7 @@ class Command implements \JsonSerializable {
       $del_message = true;
     }
     $keys = array('message', 'text', 'cmd', 'bot', 'args');
-    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", get_object_vars($msg)['text'], $array);
+    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg->text, $array);
     if (empty($array)) return false;
 
     $cmd = array('message' => $msg);
