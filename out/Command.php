@@ -1,5 +1,6 @@
 <?php
 namespace out;
+use \out\Message as msg;
 
 class Command {
   public static function __callStatic($name, $args) {
@@ -18,6 +19,30 @@ class Command {
       .$you, "Markdown"
     );
     # -----------
+  }
+
+  /**
+   * @param null $args
+   * @param \in\Command $cmd
+   */
+  public static function cmdSkip($args = null, $cmd) {
+    $mysqli = db_connect();
+    $sql = "SELECT skipped FROM userdata WHERE id={$cmd->getMessage()->from->id}";
+    $result = $mysqli->query($sql);
+    $db_name = getenv("DB_NAME");
+
+    $user = new \in\User($cmd->getMessage()->from);
+
+    if($user->isSkipped($mysqli)) {
+      msg::auto("Welcome back!");
+      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='1' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
+    } else {
+      msg::auto("Disabling automatic replys for you.");
+      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='0' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
+    }
+    if(!$mysqli->query($sql))
+      msg::auto("Something went wrong!\n".$mysqli->errno.": ".$mysqli->error);
+    $mysqli->close();
   }
 
   /**

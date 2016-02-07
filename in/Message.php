@@ -40,6 +40,7 @@ class Message {
   }
 
   public function process() {
+    global $from;
     $done = false;
     switch($this->getType()) {
       case 'text':
@@ -48,7 +49,8 @@ class Message {
           $done = $cmd->process();
         } break;
     }
-    if(!$done) $this->textReply();
+    $user = new User($from);
+    if(!$done and !$user->isSkipped()) $this->textReply();
 
 
     $user = new User($this->from);

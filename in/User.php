@@ -80,4 +80,18 @@ class User implements \JsonSerializable {
     unset($array['method']);
     return $array;
   }
+
+  public function isSkipped($mysqli = null) {
+    if(!isset($mysqli)) {
+      $close = true;
+      $mysqli = db_connect();
+    } else $close = false;
+
+    $sql = "SELECT skipped FROM userdata WHERE id={$this->id}";
+    $result = $mysqli->query($sql);
+    if($close) $mysqli->close();
+
+    if($result['skipped']) return true;
+    else return false;
+  }
 }
