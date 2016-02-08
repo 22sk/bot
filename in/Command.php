@@ -97,7 +97,7 @@ class Command implements \JsonSerializable {
       $reply = $replys['command'][strtolower($this->cmd)];
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->chat_id, $reply)))
-      return Message::auto($reply['texts'][array_rand($reply)['texts'], "Markdown");
+      return Message::auto($reply['texts'][array_rand($reply)['texts']], "Markdown");
       else throw new \Exception("Permission denied.", 403);
     } else return false;
   }
