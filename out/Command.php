@@ -94,7 +94,7 @@ class Command {
   }
 
   public static function cmdHost($args = null, $cmd = null) {
-    return Message::auto("Hoster: `".gethostname()."`", "Markdown");
+    return Message::auto("Hoster: `".getHostname()."`", "Markdown");
   }
 
   /**
