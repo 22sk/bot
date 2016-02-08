@@ -74,13 +74,17 @@ class Command implements \JsonSerializable {
     echo "Command:\n".json_encode($this, JSON_PRETTY_PRINT)."\n";
     if(!isset($this->bot) or $this->bot == User::getMe()->username) {
       $func = 'cmd'.$this->cmd;
-      if(method_exists('\out\Command', $func))
-        return \out\Command::$func($this->args, clone $this);
-      elseif($result = $this->textReply()) {
-        return $result;
-      } elseif($this->bot == User::getMe()->username) {
-        Message::auto("That command does not exist or has not been implemented yet.");
-        return false;
+      try {
+        if (method_exists('\out\Command', $func))
+          return \out\Command::$func($this->args, clone $this);
+        elseif ($result = $this->textReply()) {
+          return $result;
+        } elseif ($this->bot == User::getMe()->username) {
+          Message::auto("That command does not exist or has not been implemented yet.");
+          return false;
+        }
+      } catch (\Exception $e) {
+        return Message::auto($e->getCode().': '.$e->getMessage());
       }
     }
   }
@@ -90,15 +94,12 @@ class Command implements \JsonSerializable {
       file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
     );
     if(array_key_exists(strtolower($this->cmd), $replys['command'])) {
-      return Message::auto($replys['command'][strtolower($this->cmd)]['texts'][
-      array_rand($replys['command'][strtolower($this->cmd)]['texts'])
-      ], "Markdown");
-    } elseif(array_key_exists(strtolower($this->cmd),
-      $replys['chat'][$this->getMessage()->chat_id]['command'])) {
-      $reply = $replys['chat'][$this->getMessage()->chat_id]['command'][strtolower($this->cmd)];
-      return Message::auto($reply[array_rand($reply)]);
-    }
-    else return false;
+      $reply = $replys['command'][strtolower($this->cmd)];
+      if(!array_key_exists('allowed', $reply) or
+        (array_key_exists('allowed', $reply) and in_array($this->getMessage()->chat_id, $reply)))
+      return Message::auto($reply['texts'][array_rand($reply)['texts'], "Markdown");
+      else throw new \Exception("Permission denied.", 403);
+    } else return false;
   }
 
   public function jsonSerialize() {
