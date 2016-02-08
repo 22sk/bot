@@ -55,6 +55,7 @@ function db_connect() {
   );
   return $mysqli;
 }
+
 function markdown_escape($str) {
   if(gettype($str) == 'array') {
     foreach($str as &$value) $value = markdown_escape($value);

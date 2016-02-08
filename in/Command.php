@@ -4,6 +4,9 @@ namespace in;
 use out\Message;
 
 class Command implements \JsonSerializable {
+  /**
+   * @var \in\Message $message
+   */
   private $message;
   private $text;
   private $cmd;
@@ -73,20 +76,29 @@ class Command implements \JsonSerializable {
       $func = 'cmd'.$this->cmd;
       if(method_exists('\out\Command', $func))
         return \out\Command::$func($this->args, clone $this);
-      elseif(array_key_exists(strtolower($this->cmd), json_decode(
-        file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
-      )['command'])) {
-        $replys = json_decode(
-          file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
-        );
-        return Message::auto($replys['command'][strtolower($this->cmd)]['texts'][
-          array_rand($replys['command'][strtolower($this->cmd)]['texts'])
-        ], "Markdown");
+      elseif($result = $this->textReply()) {
+        return $result;
       } elseif($this->bot == User::getMe()->username) {
         Message::auto("That command does not exist or has not been implemented yet.");
         return false;
       }
     }
+  }
+
+  public function textReply() {
+    $replys = json_decode(
+      file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
+    );
+    if(array_key_exists(strtolower($this->cmd), $replys['command'])) {
+      return Message::auto($replys['command'][strtolower($this->cmd)]['texts'][
+      array_rand($replys['command'][strtolower($this->cmd)]['texts'])
+      ], "Markdown");
+    } elseif(array_key_exists(strtolower($this->cmd),
+      $replys['chat'][$this->getMessage()->chat_id]['command'])) {
+      $reply = $replys['chat'][$this->getMessage()->chat_id]['command'][strtolower($this->cmd)];
+      return Message::auto($reply[array_rand($reply)]);
+    }
+    else return false;
   }
 
   public function jsonSerialize() {
