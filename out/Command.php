@@ -142,9 +142,9 @@ class Command {
   public static function cmdId($args = null, $cmd = null) {
     if(empty($args) and is_null($cmd->getMessage()->getReplyToMessage())) {
       if($cmd->getMessage()->getChat()->type != 'private') {
-        msg::auto("Group ID:"); msg::auto('`'.$cmd->getMessage()->getChat()->id.'`', "Markdown");
+        msg::auto("Group ID:"); msg::sendMessage('`'.$cmd->getMessage()->getChat()->id.'`', "Markdown");
       } else {
-        msg::auto("User ID:"); msg::auto('`'.$cmd->getMessage()->getFrom()->id.'`', "Markdown");
+        msg::auto("User ID:"); msg::sendMessage('`'.$cmd->getMessage()->getFrom()->id.'`', "Markdown");
       }
     }
   }
