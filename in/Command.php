@@ -94,6 +94,7 @@ class Command implements \JsonSerializable {
       file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
     );
     if(array_key_exists(strtolower($this->cmd), $replys['command'])) {
+      Message::auto("ID: ".$this->getMessage()->chat->id);
       $reply = $replys['command'][strtolower($this->cmd)];
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->chat->id, $reply['allowed'])))
