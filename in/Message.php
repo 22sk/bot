@@ -31,6 +31,22 @@ class Message {
     return $this->$name;
   }
 
+  public function getMessageId() {
+    return $this->message_id;
+  }
+  public function getChat() {
+    return $this->chat;
+  }
+  public function getFrom() {
+    return $this->from;
+  }
+  public function getReplyToMessage() {
+    return $this->reply_to_message;
+  }
+  public function getDate() {
+    return $this->date;
+  }
+
   public function getType() {
     $types = array_keys(json_decode(file_get_contents('types.json'), true));
     foreach($types as $value) {
