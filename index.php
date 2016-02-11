@@ -11,8 +11,5 @@ require('functions.php');
 
 $bot = new out\Bot($_ENV['API_URL']);
 $update = new in\Update();
-try {
-  $update->process();
-} catch(Exception $e) {
-  \out\Message::auto($e->getCode().": ".$e->getMessage());
-}
+
+$update->process();
