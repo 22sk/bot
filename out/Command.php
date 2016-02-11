@@ -86,7 +86,7 @@ class Command {
       $types = json_decode(file_get_contents('types.json'));
       $type = $memes[$name]['type'];
       $method = $types->$type;
-      $update = array($type => $memes[$name]['id']);
+      $update = $memes[$name];
       return Update::auto($update, $method);
     } else {
       return Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
