@@ -62,7 +62,7 @@ class User implements \JsonSerializable {
   }
 
 
-  public function getID() {
+  public function getId() {
     return $this->id;
   }
   public function getUsername() {
