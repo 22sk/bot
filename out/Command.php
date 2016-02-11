@@ -84,8 +84,10 @@ class Command {
       return Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
     } else if(array_key_exists($name, $memes)) {
       $types = json_decode(file_get_contents('types.json'));
-      $type = $memes[$name]['type'];
-      $method = $types->$type;
+      $method = '';
+      foreach(array_keys($memes) as $meme) {
+        if(array_key_exists('meme', $types)) $method = $types->$meme;
+      }
       $update = $memes[$name];
       return Update::auto($update, $method);
     } else {
@@ -104,8 +106,8 @@ class Command {
   public static function cmdUser($args = null, $cmd = null) {
     $mysqli = db_connect();
     if(empty($args)) {
-      if($cmd->getMessage()->reply_to_message != null) $user = $cmd->getMessage()->reply_to_message->from;
-      else $user = $cmd->getMessage()->from;
+      if($cmd->getMessage()->getReplyToMessage() != null) $user = $cmd->getMessage()->getReplyToMessage()->from;
+      else $user = $cmd->getMessage()->getFrom();
       $user = new \in\User($user);
       Message::auto(
         "Username: @{$user->getUsername()}\n".
