@@ -11,11 +11,13 @@ class Audio extends Update {
 
   public function __construct($chat_id, $audio, $performer = null, $title = null, $duration = null) {
     parent::__construct($chat_id);
-    $this->setPhoto($audio);
-    $this->set
+    $this->setAudio($audio);
+    $this->setPerformer($performer);
+    $this->setTitle($title);
+    $this->setDuration($duration);
   }
 
-  private function setPhoto($audio) {
+  private function setAudio($audio) {
     $this->audio = $audio;
   }
 
