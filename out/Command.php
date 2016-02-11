@@ -83,13 +83,9 @@ class Command {
     if(empty($args)) {
       return Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
     } else if(array_key_exists($name, $memes)) {
-      $types = json_decode(file_get_contents('types.json'));
-      $method = '';
-      foreach(array_keys($memes) as $meme) {
-        if(array_key_exists('meme', $types)) $method = $types->$meme;
-      }
-      $update = $memes[$name];
-      return Update::auto($update, $method);
+      $method = Update::getMethodIn($memes[$name]);
+      if(!isset($method)) throw new \Exception("Invalid meme!");
+      return Update::auto($memes[$name], Update::getMethodIn($memes[$name]));
     } else {
       return Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
     }

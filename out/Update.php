@@ -89,4 +89,11 @@ class Update implements \JsonSerializable {
     else
       return self::send($update, $method);
   }
+
+  public static function getMethodIn($meme) {
+    $types = json_decode(file_get_contents('https://bot-22sk.rhcloud.com/types.json'));
+    foreach($meme as $item => $value) {
+      if(isset($types->$item)) return $types->$item;
+    }
+  }
 }

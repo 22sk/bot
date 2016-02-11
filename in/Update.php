@@ -38,7 +38,7 @@ class Update {
       }
       return $update->process();
     } catch(\Exception $e) {
-      \out\Message::auto($e->getCode().": ".$e->getMessage());
+      \out\Message::auto((isset($e->getCode))?($e->getCode().": "):''.$e->getMessage());
     }
   }
 }
