@@ -37,7 +37,7 @@ class CommandPing extends Command {
 class CommandPong extends Command {
   protected function process() {
     $time = $this->cmd->getMessage()->getDate() - time();
-    return msg::auto("*Pong!* {$time}s", "Markdown");
+    return msg::auto("*Ping!* {$time}s", "Markdown");
   }
 }
 
