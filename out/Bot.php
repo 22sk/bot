@@ -15,9 +15,9 @@ class Bot {
   /**
    * Sends an Update to the Telegram API
    * @param Update $update An Update-object
-   * @return Update Response by the Telegram API
+   * @return object Response by the Telegram API
    */
-  public function send($update, $silent = false) {
+  public function send($update) {
     $context = stream_context_create( array(
       'http' => array(
         // http://www.php.net/manual/de/context.http.php
@@ -28,9 +28,9 @@ class Bot {
       )
     ));
     $url = $this->url . $update->getMethod();
-    if(!$silent) echo "Sending update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n";
+    debug("Sending update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n");
     $response = file_get_contents($url, false, $context);
-    if(!$silent) echo "Response:\n".json_encode(json_decode($response), JSON_PRETTY_PRINT)."\n";
+    debug("Response:\n".json_encode(json_decode($response), JSON_PRETTY_PRINT)."\n");
     return json_decode($response);
   }
 }

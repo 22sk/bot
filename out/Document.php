@@ -8,7 +8,7 @@ class Document extends Update {
 
   public function __construct($chat_id, $document) {
     parent::__construct($chat_id);
-    $this->document = $document;
+    $this->setDocument($document);
   }
 
   private function setDocument($document) {

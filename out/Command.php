@@ -2,86 +2,109 @@
 namespace out;
 use \out\Message as msg;
 
-class Command {
-  public static function __callStatic($name, $args) {
-    if(strpos($name, 'cmd') !== 0) {
-      $name = 'cmd' . $name;
-      self::$name($args);
-    }
-  }
-
-  public static function cmdAbout($args = null, $cmd = null) {
-    $you = ""; // "Modified by @yourusername";
-
-    # DO NOT EDIT:
-    return Message::auto(
-      "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).\n"
-      .$you, "Markdown"
-    );
-    # -----------
-  }
+abstract class Command {
+  protected $cmd;
+  protected $args;
+  protected $result;
 
   /**
-   * @param null $args
+   * Command constructor.
    * @param \in\Command $cmd
    */
-  public static function cmdSkip($args = null, $cmd) {
-    $mysqli = db_connect();
+  public function __construct($cmd) {
+    $this->cmd = $cmd;
+    $this->args = $cmd->getArgs();
+    $this->result = $this->process();
+  }
+
+  protected function process() { return false; }
+
+  public function getCmd() { return $this->cmd; }
+
+  public function getArgs() { return $this->args; }
+
+  public function getResult() { return $this->result; }
+
+}
+
+class CommandPing extends Command {
+  protected function process() {
+    $time = time() - $this->cmd->getMessage()->getDate();
+    return msg::auto("*Pong!* {$time}s", "Markdown");
+  }
+}
+
+class CommandPong extends Command {
+  protected function process() {
+    $time = $this->cmd->getMessage()->getDate() - time();
+    return msg::auto("*Pong!* {$time}s", "Markdown");
+  }
+}
+
+class CommandAbout extends Command {
+  private $you; // "Modified by @yourusername";
+  # DO NOT EDIT:
+  private $message = "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).";
+  # -----------
+  protected function process() {
+    return msg::auto(
+      # DO NOT REMOVE $this->message!
+      $this->message."\n".isset($this->you) ? $this->you : '', "Markdown"
+    );
+  }
+}
+
+class CommandSkip extends Command {
+  protected function process() {
+    $user = new \in\User($this->cmd->getMessage()->getFrom());
+    $this->skip($user);
+  }
+  /**
+   * @param \in\User $user
+   * @throws \Exception MySQLi error
+   */
+  private function skip($user) {
     $db_name = getenv("DB_NAME");
-
-    $user = new \in\User($cmd->getMessage()->from);
-
+    $mysqli = db_connect();
     if($user->isSkipped($mysqli)) {
       msg::auto("Welcome back!");
-      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='0' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
+      $sql = "UPDATE {$db_name}.userdata SET skipped='0' WHERE userdata.id = "
+      .$this->cmd->getMessage()->getFrom()->getId();
     } else {
       msg::auto("Disabling automatic replys for you.");
-      $sql = "UPDATE `{$db_name}`.`userdata` SET `skipped`='1' WHERE `userdata`.`id` = {$cmd->getMessage()->from->id}";
+      $sql = "UPDATE {$db_name}.userdata SET skipped='1' WHERE userdata.id = "
+      .$this->cmd->getMessage()->getFrom()->getId();
     }
     if(!$mysqli->query($sql))
-      msg::auto("Something went wrong!\n".$mysqli->errno.": ".$mysqli->error);
+      throw new \Exception($mysqli->error, $mysqli->errno);
     $mysqli->close();
   }
+}
 
-  /**
-   * @param null $args
-   * @param \in\Command $cmd
-   * @return Update
-   */
-  public static function cmdPing($args = null, $cmd) {
-    $time = time() - $cmd->getMessage()->date;
-    return Message::auto("*Pong!* {$time}s", "Markdown");
-  }
-
-  /**
-   * @param null $args
-   * @param \in\Command $cmd
-   * @return Update
-   */
-  public static function cmdPong($args = null, $cmd) {
-    $time = $cmd->getMessage()->date - time();
-    return Message::auto("*Ping!* {$time}s", "Markdown");
-  }
-
-  public static function cmdUpdate($args = null, $cmd = null) {
+class CommandUpdate extends Command {
+  protected function process() {
     global $update;
-    return Message::auto("```\n".json_encode($update, JSON_PRETTY_PRINT)."\n```", "Markdown");
+    return msg::auto("```\n".json_encode($update, JSON_PRETTY_PRINT)."\n```", "Markdown");
   }
+}
 
-  public static function cmdHelp($args = null, $cmd = null) {
-    return Message::auto(
+class CommandHelp extends Command {
+  protected function process() {
+    return msg::auto(
       "*Not all commands have already been implemented yet!*\n".
       file_get_contents('https://gist.githubusercontent.com/22sk/7cc3f6e109779353aa2b/raw/commands.txt'), "Markdown");
   }
+}
 
-  public static function cmdMeme($args = null, $cmd = null) {
+class CommandMeme extends Command {
+  protected function process() {
     $memes = json_decode(
       file_get_contents('https://gist.githubusercontent.com/22sk/92e7e0d2577ac3e1c167/raw/memes.json'), true
     );
-    $name = str_clean($args);
+    $name = str_clean($this->args);
 
-    if(empty($args)) {
-      return Message::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
+    if(empty($this->args)) {
+      return msg::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
     } else if(array_key_exists($name, $memes)) {
       $method = Update::getMethodIn($memes[$name]);
       if(!isset($method)) throw new \Exception("Invalid meme!");
@@ -90,22 +113,24 @@ class Command {
       return Message::auto("Unknown meme! Use /meme to get a list of all available memes.");
     }
   }
+}
 
-  public static function cmdHost($args = null, $cmd = null) {
+class CommandHost extends Command {
+  protected function process() {
     return Message::auto("Hoster: `".getHostname()."`", "Markdown");
   }
+}
 
-  /**
-   * @param string|null $args
-   * @param \in\Command|null $cmd
-   */
-  public static function cmdUser($args = null, $cmd = null) {
+
+class CommandUser extends Command {
+  protected function process() {
     $mysqli = db_connect();
-    if(empty($args)) {
-      if($cmd->getMessage()->getReplyToMessage() != null) $user = $cmd->getMessage()->getReplyToMessage()->from;
-      else $user = $cmd->getMessage()->getFrom();
+    if(empty($this->args)) {
+      if($this->cmd->getMessage()->getReplyToMessage() != null)
+        $user = $this->cmd->getMessage()->getReplyToMessage()->getFrom();
+      else $user = $this->cmd->getMessage()->getFrom();
       $user = new \in\User($user);
-      Message::auto(
+      msg::auto(
         "Username: @{$user->getUsername()}\n".
         "First name: `{$user->getFirstName()}`\n".
         "Last name: `{$user->getLastName()}`\n".
@@ -113,15 +138,15 @@ class Command {
         "Markdown"
       );
     } else {
-      if (intval($args)) {
-        $id = intval($args);
+      if (intval($this->args)) {
+        $id = intval($this->args);
         $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
       } else {
         $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$args}')");
       }
       if (mysqli_num_rows($result) > 0) {
         $result = markdown_escape(mysqli_fetch_assoc($result));
-        Message::auto(
+        msg::auto(
           "Username: @{$result['username']}\n" .
           "First name: `{$result['first_name']}`\n" .
           "Last name: `{$result['last_name']}`\n" .
@@ -129,20 +154,18 @@ class Command {
           "Last updated: `{$result['last_updated']}`\n",
           "Markdown"
         );
-      } else Message::auto("Unknown user.");
+      } else msg::auto("Unknown user.");
     }
   }
+}
 
-  /**
-   * @param string $args
-   * @param \in\Command $cmd
-   */
-  public static function cmdId($args = null, $cmd = null) {
-    if(empty($args) and is_null($cmd->getMessage()->getReplyToMessage())) {
-      if($cmd->getMessage()->getChat()->type != 'private') {
-        msg::auto("Group ID:"); msg::sendMessage('`'.$cmd->getMessage()->getChat()->id.'`', "Markdown");
+class CommandId extends Command {
+  protected function process() {
+    if(empty($args) and is_null($this->cmd->getMessage()->getReplyToMessage())) {
+      if($this->cmd->getMessage()->getChat()->getType() != 'private') {
+        msg::auto("Group ID:"); msg::sendMessage('`'.$this->cmd->getMessage()->getChat()->getId().'`', "Markdown");
       } else {
-        msg::auto("User ID:"); msg::sendMessage('`'.$cmd->getMessage()->getFrom()->id.'`', "Markdown");
+        msg::auto("User ID:"); msg::sendMessage('`'.$this->cmd->getMessage()->getFrom()->getId().'`', "Markdown");
       }
     }
   }

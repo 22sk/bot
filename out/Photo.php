@@ -10,7 +10,7 @@ class Photo extends Update {
   public function __construct($chat_id, $photo, $caption = null) {
     parent::__construct($chat_id);
     $this->setPhoto($photo);
-    if(isset($caption)) $this->setCaption($caption);
+    $this->setCaption($caption);
   }
 
   private function setPhoto($photo) {

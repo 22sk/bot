@@ -1,15 +1,22 @@
 <?php
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-function __autoload($class) { include(implode('/', explode('\\', $class)).'.php'); }
+define('ROOT', dirname(__FILE__));
+define('DEBUG', getenv('DEBUG'));
 
-if(!isset($_ENV['API_URL'])) $_ENV['API_URL'] = file_get_contents('api_url');
+function __autoload($class) { include(ROOT.'/'.implode('/', explode('\\', $class)).'.php'); }
 
-if(!array_key_exists('url', $_GET) or $_GET['url']!=$_ENV['API_URL']) exit("Invalid URL.");
+if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')) {
+  http_response_code(403);
+  exit("Unauthorized URL");
+}
 require('functions.php');
 
-$bot = new out\Bot($_ENV['API_URL']);
+$bot = new out\Bot(getenv('API_URL'));
 $update = new in\Update();
 
 $update->process();
+
+$db = db_connect();

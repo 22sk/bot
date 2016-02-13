@@ -27,6 +27,10 @@ function str_clean($str) {
   return preg_replace('/[^A-Za-z0-9\-\s]/', '', strtolower($str));
 }
 
+function debug($str) {
+  if(getenv('DEBUG')) echo $str;
+}
+
 function get_list($array, $usekeys) {
   $x = false; $text = "";
   if($usekeys) {
@@ -61,4 +65,15 @@ function markdown_escape($str) {
     foreach($str as &$value) $value = markdown_escape($value);
     return $str;
   } else return preg_replace('/(?=[*_`])/', '\\', $str);
+}
+
+function array_remove(&$array) {
+  if(gettype($array) == 'object') $array = get_object_vars($array);
+  foreach($array as $item => &$value) {
+    if(gettype($value) == 'array' or gettype($value) == 'object') array_remove($value);
+    elseif(strpos($item, '__') === 0) {
+      debug("Unset $item\n");
+      unset($array[$item]);
+    }
+  } return $array;
 }

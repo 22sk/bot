@@ -9,7 +9,7 @@ class User implements \JsonSerializable {
 
   /**
    * User constructor.
-   * @param array|Object $user
+   * @param array|object $user
    */
   public function __construct($user) {
     if(gettype($user) == 'array') foreach($user as $item => $value) $this->$item = $value;
@@ -30,17 +30,16 @@ class User implements \JsonSerializable {
   }
 
   public function updateUserData() {
-    echo "Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n";
+    debug("Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n");
     $mysqli = db_connect();
 
     $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
-    echo "\nSQL: {$sql}";
+    debug("\nSQL: {$sql}");
     $result = $mysqli->query($sql);
 
-    echo "\nResult: ". json_encode(mysqli_fetch_assoc($result), JSON_PRETTY_PRINT)."\n";
-    echo "\nNum Rows: ".mysqli_num_rows($result)."\n";
+    debug("\nResult -> Num Rows: ". $result->num_rows);
 
-    if(mysqli_num_rows($result)>0) {
+    if($result and mysqli_num_rows($result)>0) {
       $array = array();
       foreach(get_object_vars($this) as $item => $value) {
         array_push($array, "{$item}='{$value}'");
@@ -49,16 +48,15 @@ class User implements \JsonSerializable {
         . implode(", ", $array)
         . " WHERE id={$this->id}";
     } else {
-      $sql = "INSERT INTO userdata ("
-        . implode(", ", array_keys(get_object_vars($this)))
-        . ") VALUES ('"
-        . implode("', '", get_object_vars($this))
-        ."')";
+      $keys = implode(", ", array_keys(get_object_vars($this)));
+      $values = "'".implode("', '", get_object_vars($this))."'";
+      $sql = "INSERT INTO userdata ($keys) VALUES ($values)";
     }
-    echo "\n".$sql."\n";
-    $mysqli->query($sql);
-
+    debug("\n".$sql."\n");
+    $result = $mysqli->query($sql);
+    debug("Result: "); if(DEBUG) var_dump($result);
     $mysqli->close();
+    return $result;
   }
 
 
@@ -75,24 +73,31 @@ class User implements \JsonSerializable {
     return markdown_escape($this->last_name);
   }
 
-  public function jsonSerialize() {
-    $array = obj2array($this);
-    unset($array['method']);
-    return $array;
-  }
-
   public function isSkipped($mysqli = null) {
     if(!isset($mysqli)) {
       $close = true;
       $mysqli = db_connect();
     } else $close = false;
 
-    $sql = "SELECT skipped FROM userdata WHERE id={$this->id}";
-    $result = $mysqli->query($sql);
+    if($this->userExists($mysqli)) {
+      $sql = "SELECT skipped FROM userdata WHERE id={$this->id}";
+      $result = $mysqli->query($sql);
+    } else return false;
     if($close) $mysqli->close();
 
     if($result->fetch_assoc()['skipped']) return true;
     else return false;
+  }
+
+  public function userExists($mysqli = null) {
+    if(!isset($mysqli)) {
+      $close = true;
+      $mysqli = db_connect();
+    } else $close = false;
+    $sql = "SELECT id FROM userdata WHERE id={$this->id}";
+    $result = $mysqli->query($sql);
+    if($close) $mysqli->close();
+    return ($result and $result->num_rows>0) ? true : false;
   }
 
   public function isBanned($mysqli = null) {
@@ -101,11 +106,19 @@ class User implements \JsonSerializable {
       $mysqli = db_connect();
     } else $close = false;
 
-    $sql = "SELECT banned FROM userdata WHERE id={$this->id}";
-    $result = $mysqli->query($sql);
+    if($this->userExists($mysqli)) {
+      $sql = "SELECT banned FROM userdata WHERE id={$this->id}";
+      $result = $mysqli->query($sql);
+    } else return false;
     if($close) $mysqli->close();
 
     if($result->fetch_assoc()['banned']) return true;
     else return false;
+  }
+
+  public function jsonSerialize() {
+    $array = obj2array($this);
+    unset($array['method']);
+    return $array;
   }
 }

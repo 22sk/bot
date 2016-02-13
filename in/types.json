@@ -1,0 +1,55 @@
+{
+  "update_id": { "__type":  "integer" },
+
+  "message": {
+    "__class":    "\\in\\Message",
+
+    "message_id": { "__type": "integer" },
+    "date":       { "__type": "integer" },
+
+    "from": {
+      "__class":    "\\in\\User",
+
+      "id":         { "__type": "string" },
+      "username":   { "__type": "string" },
+      "first_name": { "__type": "string" },
+      "last_name":  { "__type": "string" }
+    },
+
+    "chat": {
+      "__class":    "\\in\\User",
+
+      "id":         { "__type": "string" },
+      "username":   { "__type": "string" },
+      "first_name": { "__type": "string" },
+      "last_name":  { "__type": "string" },
+      "title":      { "__type": "string" },
+      "type":       { "__type": "string" }
+    },
+
+    "text":     { "__method": "sendMessage",  "__class": "\\out\\Message",  "__type": "string" },
+    "audio":    { "__method": "sendAudio",    "__class": "\\out\\Audio",    "__type": "string" },
+    "document": { "__method": "sendDocument", "__class": "\\out\\Document", "__type": "string" },
+    "photo":    { "__method": "sendPhoto",    "__class": "\\out\\Photo",    "__type": "string" },
+    "sticker":  { "__method": "sendSticker",  "__class": "\\out\\Sticker",  "__type": "string" },
+    "video":    { "__method": "sendVideo",    "__class": "\\out\\Video",    "__type": "string" },
+    "voice":    { "__method": "sendVoice",    "__class": "\\out\\Voice",    "__type": "string" }
+  },
+
+  "inline_query": {
+    "__class": "\\in\\InlineQuery",
+
+    "id":     { "__type":  "string" },
+    "from":   { "__class": "\\in\\User" },
+    "query":  { "__type":  "string" },
+    "offset": { "__type":  "integer" }
+  },
+
+  "chosen_inline_result": {
+    "__class":   "\\in\\ChosenInlineResult",
+
+    "result_id": { "__type": "string" },
+    "from":      { "__class": "\\in\\User" },
+    "query":     { "__type": "string" }
+  }
+}

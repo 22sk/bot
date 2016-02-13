@@ -27,32 +27,88 @@ class Message {
     else throw new \Exception("Invalid message type! Allowed: Array or Object.", 415);
   }
 
-  public function __get($name) {
-    return $this->$name;
+  /**
+   * @return string
+   */
+  public function getText() {
+    return $this->text;
   }
 
+  /**
+   * @return string
+   */
+  public function getAudio() {
+    return $this->audio;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDocument() {
+    return $this->document;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPhoto() {
+    return $this->photo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSticker() {
+    return $this->sticker;
+  }
+
+  /**
+   * @return string
+   */
+  public function getVideo() {
+    return $this->video;
+  }
+
+  /**
+   * @return string
+   */
+  public function getVoice() {
+    return $this->voice;
+  }
+
+  /**
+   * @return integer
+   */
   public function getMessageId() {
     return $this->message_id;
   }
+
+  /**
+   * @return \in\Chat
+   */
   public function getChat() {
     return $this->chat;
   }
+
+  /**
+   * @return \in\Chat
+   */
   public function getFrom() {
     return $this->from;
   }
+
+  /**
+   * @return \in\Message
+   */
   public function getReplyToMessage() {
     return $this->reply_to_message;
   }
+
+  /**
+   * @return integer
+   */
   public function getDate() {
     return $this->date;
-  }
-
-  public function getType() {
-    $types = array_keys(json_decode(file_get_contents('types.json'), true));
-    foreach($types as $value) {
-      if(property_exists($this, $value)) return $value;
-    }
-    throw new \Exception("No valid message field found.", 406);
   }
 
   public function process() {
@@ -70,14 +126,22 @@ class Message {
 
 
     $user = new User($this->from);
-    echo "User:\n".json_encode($user, JSON_PRETTY_PRINT)."\n";
+    debug("User:\n".json_encode($user, JSON_PRETTY_PRINT)."\n");
     $user->updateUserData();
 
     $chat = new Chat($this->chat);
-    echo "Chat:\n".json_encode($chat, JSON_PRETTY_PRINT)."\n";
+    debug("Chat:\n".json_encode($chat, JSON_PRETTY_PRINT)."\n");
     if($chat->getType() != 'private') $chat->updateGroupData();
 
     return $done;
+  }
+
+  public function getType() {
+    if(DEBUG) var_dump(json_decode(file_get_contents('in/types.json'), true));
+    $types = array_keys(json_decode(file_get_contents('in/types.json'), true)['message']);
+    foreach($types as $item) {
+      if(property_exists($this, $item)) return $item;
+    } return false;
   }
 
   public function textReply() {

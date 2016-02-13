@@ -2,26 +2,57 @@
 namespace in;
 
 class Update {
+  private $update_id;
+  private $message;
+  private $inline_query;
+  private $chosen_inline_result;
+
+
   public function __construct($update = null) {
     if(!isset($update) and file_get_contents('php://input') != null) {
       $update = json_decode(file_get_contents('php://input'));
     } else $update = json_decode(file_get_contents('in/sample_update.json'));
 
-    foreach($update as $key => $value) {
+    foreach(get_object_vars($update) as $key => $value) {
       $this->$key = $value;
     }
-    $GLOBALS['update'] = $update;
-    echo "Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n";
+    $GLOBALS['update'] = $this;
+    debug("Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n");
   }
 
-  public function getType() {
-    $array = array_keys(get_object_vars($this));
-    return end($array);
+  /**
+   * @return integer
+   */
+  public function getUpdateId() {
+    return $this->update_id;
+  }
+
+  /**
+   * @return Message
+   */
+  public function getMessage() {
+    return $this->message;
+  }
+
+  /**
+   * @return InlineQuery
+   */
+  public function getInlineQuery() {
+    return $this->inline_query;
+  }
+
+  /**
+   * @return ChosenInlineResult
+   */
+  public function getChosenInlineResult() {
+    return $this->chosen_inline_result;
   }
 
   public function process() {
     try {
       $type = $this->getType();
+      debug("Type: $type\n");
+      if(DEBUG) var_dump($this);
       $user = new User($this->$type->from);
       if ($user->isBanned()) return false;
       $update = null;
@@ -39,6 +70,13 @@ class Update {
       return $update->process();
     } catch(\Exception $e) {
       \out\Message::auto((isset($e->getCode))?($e->getCode().": "):''.$e->getMessage());
+      http_response_code($e->getCode());
+      exit($e->getMessage());
     }
+  }
+
+  public function getType() {
+    $array = array_keys(array_filter(get_object_vars($this)));
+    return end($array);
   }
 }
