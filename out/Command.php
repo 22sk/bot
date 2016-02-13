@@ -42,14 +42,19 @@ class CommandPong extends Command {
 }
 
 class CommandAbout extends Command {
-  private $you; // "Modified by @yourusername";
-  # DO NOT EDIT:
-  private $message = "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).";
-  # -----------
+  private $you;
+  private $message;
+  public function __construct(\in\Command $cmd) {
+    parent::__construct($cmd);
+    $this->you = null; // "Modified by @yourusername";
+    $this->message = file_get_contents(
+      'https://gist.githubusercontent.com/22sk/655d8aaa39c947ea79dc/raw/about.md'
+    ); // DO NOT EDIT
+  }
   protected function process() {
     return msg::auto(
-      # DO NOT REMOVE $this->message!
-      $this->message."\n".isset($this->you) ? $this->you : '', "Markdown"
+    # DO NOT REMOVE $this->message!
+      $this->message."\n".(isset($this->you) ? $this->you : ''), "Markdown"
     );
   }
 }
