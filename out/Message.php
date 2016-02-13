@@ -44,18 +44,22 @@ class Message extends Update {
   }
 
   /**
-   * Sends a regular message to the incoming message's chat.
-   * @param array $text
+   * Sends a message to the incoming message's chat.
+   * Automatically decides if the given text should be sent as a
+   * regular message or as a reply to the incoming message.
+   * Depends on the chat type: group -> reply, else -> regular message
+   * @param $text
    * @param string $parse_mode
    * @return Update
    */
-  public static function sendMessage($text, $parse_mode = "") {
-    /**
-     * @var \in\Chat $chat
-     * @var \out\Bot $bot
-     */
-    global $chat, $bot;
-    return $bot->send(new self($chat->getId(), $text, $parse_mode));
+
+  public static function auto($text, $parse_mode = "") {
+    /** @var \in\Chat $chat */
+    global $chat;
+    if($chat->getType() == 'group')
+      return self::replyMessage($text, $parse_mode);
+    else
+      return self::sendMessage($text, $parse_mode);
   }
 
   /**
@@ -89,21 +93,5 @@ class Message extends Update {
      */
     global $chat, $bot;
     return $bot->send(new self($chat->getId(), $text, $parse_mode));
-  }  /**
-   * Sends a message to the incoming message's chat.
-   * Automatically decides if the given text should be sent as a
-   * regular message or as a reply to the incoming message.
-   * Depends on the chat type: group -> reply, else -> regular message
-   * @param $text
-   * @param string $parse_mode
-   * @return Update
-   */
-  public static function auto($text, $parse_mode = "") {
-    /** @var \in\Chat $chat */
-    global $chat;
-    if($chat->getType() == 'group')
-      return self::replyMessage($text, $parse_mode);
-    else
-      return self::sendMessage($text, $parse_mode);
   }
 }
