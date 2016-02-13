@@ -142,7 +142,7 @@ class CommandUser extends Command {
         $id = intval($this->args);
         $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
       } else {
-        $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$args}')");
+        $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$this->args}')");
       }
       if (mysqli_num_rows($result) > 0) {
         $result = markdown_escape(mysqli_fetch_assoc($result));

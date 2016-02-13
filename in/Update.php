@@ -14,7 +14,9 @@ class Update {
     } else $update = json_decode(file_get_contents('in/sample_update.json'));
 
     foreach(get_object_vars($update) as $key => $value) {
-      $this->$key = $value;
+      $types = json_decode(file_get_contents('in/types.json'), true);
+      if(isset($types[$key]['__class'])) $this->$key = new $types[$key]['__class']($value);
+      else $this->$key = $value;
     }
     $GLOBALS['update'] = $this;
     debug("Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n");
@@ -53,9 +55,10 @@ class Update {
       $type = $this->getType();
       debug("Type: $type\n");
       if(DEBUG) var_dump($this);
-      $user = new User($this->$type->from);
-      if ($user->isBanned()) return false;
+      $user = new User($this->$type->getFrom());
+      if($user->isBanned()) return false;
       $update = null;
+
       switch ($type) {
         case 'message':
           $update = new Message(get_object_vars($this)['message']);
@@ -68,6 +71,7 @@ class Update {
           break;
       }
       return $update->process();
+
     } catch(\Exception $e) {
       \out\Message::auto((isset($e->getCode))?($e->getCode().": "):''.$e->getMessage());
       http_response_code($e->getCode());

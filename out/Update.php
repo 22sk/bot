@@ -38,29 +38,40 @@ class Update implements \JsonSerializable {
   }
 
   public static function auto($update, $method = null) {
+    /**
+     * @var \in\Chat $chat
+     */
     global $chat;
-    if($chat->type == 'group')
+    if($chat->getType() == 'group')
       return self::reply($update, $method);
     else
       return self::send($update, $method);
   }
 
   public static function reply($update, $method = null, $reply_to_message_id = null) {
+    /**
+     * @var \in\Chat $chat
+     * @var \out\Bot $bot
+     */
     global $bot, $message_id, $chat;
     if ($update instanceof Update) return $bot->send($update);
     elseif (gettype($update) == 'array') {
       if (!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
-      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->id;
+      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->getId();
       $update['reply_to_message_id'] = $reply_to_message_id;
       return Update::send($update, $method);
     } else throw new \Exception("Invalid update!", 415);
   }
 
   public static function send($update, $method = null) {
+    /**
+     * @var \in\Chat $chat
+     * @var \out\Bot $bot
+     */
     global $bot, $chat;
     if ($update instanceof Update) return $bot->send($update);
     elseif (gettype($update) == 'array') {
-      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->id;
+      if (!isset($update['chat_id'])) $update['chat_id'] = $chat->getId();
       return $bot->send(new self($update, $method));
     } else throw new \Exception("Invalid update!", 415);
   }

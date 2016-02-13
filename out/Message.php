@@ -50,8 +50,12 @@ class Message extends Update {
    * @return Update
    */
   public static function sendMessage($text, $parse_mode = "") {
+    /**
+     * @var \in\Chat $chat
+     * @var \out\Bot $bot
+     */
     global $chat, $bot;
-    return $bot->send(new self($chat->id, $text, $parse_mode));
+    return $bot->send(new self($chat->getId(), $text, $parse_mode));
   }
 
   /**
@@ -63,12 +67,29 @@ class Message extends Update {
    * @return Update
    */
   public static function replyMessage($text, $parse_mode = "", $reply_to_message_id = null) {
+    /**
+     * @var \in\Chat $chat
+     * @var \out\Bot $bot
+     */
     global $chat, $bot, $message_id;
     if(!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
-    return $bot->send(new self($chat->id, $text, $parse_mode, $reply_to_message_id));
+    return $bot->send(new self($chat->getId(), $text, $parse_mode, $reply_to_message_id));
   }
 
   /**
+   * Sends a regular message to the incoming message's chat.
+   * @param array $text
+   * @param string $parse_mode
+   * @return Update
+   */
+  public static function sendMessage($text, $parse_mode = "") {
+    /**
+     * @var \in\Chat $chat
+     * @var \out\Bot $bot
+     */
+    global $chat, $bot;
+    return $bot->send(new self($chat->getId(), $text, $parse_mode));
+  }  /**
    * Sends a message to the incoming message's chat.
    * Automatically decides if the given text should be sent as a
    * regular message or as a reply to the incoming message.
@@ -78,8 +99,9 @@ class Message extends Update {
    * @return Update
    */
   public static function auto($text, $parse_mode = "") {
+    /** @var \in\Chat $chat */
     global $chat;
-    if($chat->type == 'group')
+    if($chat->getType() == 'group')
       return self::replyMessage($text, $parse_mode);
     else
       return self::sendMessage($text, $parse_mode);

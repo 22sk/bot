@@ -17,7 +17,7 @@
     },
 
     "chat": {
-      "__class":    "\\in\\User",
+      "__class":    "\\in\\Chat",
 
       "id":         { "__type": "string" },
       "username":   { "__type": "string" },
@@ -27,13 +27,13 @@
       "type":       { "__type": "string" }
     },
 
-    "text":     { "__method": "sendMessage",  "__class": "\\out\\Message",  "__type": "string" },
-    "audio":    { "__method": "sendAudio",    "__class": "\\out\\Audio",    "__type": "string" },
-    "document": { "__method": "sendDocument", "__class": "\\out\\Document", "__type": "string" },
-    "photo":    { "__method": "sendPhoto",    "__class": "\\out\\Photo",    "__type": "string" },
-    "sticker":  { "__method": "sendSticker",  "__class": "\\out\\Sticker",  "__type": "string" },
-    "video":    { "__method": "sendVideo",    "__class": "\\out\\Video",    "__type": "string" },
-    "voice":    { "__method": "sendVoice",    "__class": "\\out\\Voice",    "__type": "string" }
+    "text":     { "__method": "sendMessage",  "__out_class": "\\out\\Message",  "__type": "string" },
+    "audio":    { "__method": "sendAudio",    "__out_class": "\\out\\Audio",    "__type": "string" },
+    "document": { "__method": "sendDocument", "__out_class": "\\out\\Document", "__type": "string" },
+    "photo":    { "__method": "sendPhoto",    "__out_class": "\\out\\Photo",    "__type": "string" },
+    "sticker":  { "__method": "sendSticker",  "__out_class": "\\out\\Sticker",  "__type": "string" },
+    "video":    { "__method": "sendVideo",    "__out_class": "\\out\\Video",    "__type": "string" },
+    "voice":    { "__method": "sendVoice",    "__out_class": "\\out\\Voice",    "__type": "string" }
   },
 
   "inline_query": {

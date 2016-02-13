@@ -1,11 +1,10 @@
 <?php
 namespace in;
-
-use out\Message;
+use \out\Message as msg;
 
 class Command implements \JsonSerializable {
   /**
-   * @var \in\Message $message
+   * @var Message $message
    */
   private $message;
   private $text;
@@ -39,7 +38,7 @@ class Command implements \JsonSerializable {
       $del_message = true;
     }
     $keys = array('message', 'text', 'cmd', 'bot', 'args');
-    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg->text, $array);
+    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg->getText(), $array);
     if (empty($array)) return false;
 
     $cmd = array('message' => $msg);
@@ -67,20 +66,20 @@ class Command implements \JsonSerializable {
   public function process() {
     debug("Command:\n".json_encode($this, JSON_PRETTY_PRINT)."\n");
     if(!isset($this->bot) or $this->bot == User::getMe()->username) {
-      $class = '\out\Command'.$this->cmd;
-      try {
-        if(class_exists($class, true)) {
-          /** @var \out\Command $cmd */
-          $cmd = new $class(clone $this);
-          return $cmd->getResult();
-        } elseif ($result = $this->textReply()) {
-          return $result;
-        } elseif($this->bot == User::getMe()->username) {
-          Message::auto("That command does not exist or has not been implemented yet.");
-          return false;
-        }
-      } catch (\Exception $e) {
-        return Message::auto($e->getCode().': '.$e->getMessage());
+      include(dirname(__FILE__).'/../out/Command.php');
+      $class = '\out\command'.$this->cmd;
+      debug("Class name: ".$class."\n");
+      debug("Class exists: "); if(DEBUG) var_dump(class_exists($class));
+      if(class_exists($class)) {
+        /** @var \out\Command $cmd */
+        $cmd = new $class($this);
+        if(DEBUG) var_dump($cmd);
+        return $cmd->getResult();
+      } elseif ($result = $this->textReply()) {
+        return $result;
+      } elseif($this->bot == User::getMe()->username) {
+        msg::auto("That command does not exist or has not been implemented yet.");
+        return false;
       }
     } return false;
   }
@@ -93,7 +92,7 @@ class Command implements \JsonSerializable {
       $reply = $replys['command'][strtolower($this->cmd)];
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->getChat()->getId(), $reply['allowed'])))
-      return Message::auto($reply['texts'][array_rand($reply['texts'])], "Markdown");
+      return msg::auto($reply['texts'][array_rand($reply['texts'])], "Markdown");
       else throw new \Exception("Permission denied.", 403);
     } else return false;
   }

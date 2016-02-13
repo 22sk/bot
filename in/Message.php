@@ -19,8 +19,11 @@ class Message {
   public function __construct($message) {
     if(gettype($message) == 'object')
       foreach(get_object_vars($message) as $key => $value) {
-        $this->$key = $value;
-        $GLOBALS[$key] = $value;
+        $types = json_decode(file_get_contents('in/types.json'), true);
+        if(isset($types['message'][$key]['__class'])) {
+          $this->$key = new $types['message'][$key]['__class']($value);
+        } else $this->$key = $value;
+        $GLOBALS[$key] = $this->$key;
       }
     else if(gettype($message) == 'array')
       foreach($message as $item => $value) $this->$item = $value;
@@ -114,6 +117,7 @@ class Message {
   public function process() {
     global $from;
     $done = false;
+    debug("Message Type: ".$this->getType()."\n");
     switch($this->getType()) {
       case 'text':
         if(Command::parseMessage(get_object_vars($this)['text'])) {
@@ -137,8 +141,7 @@ class Message {
   }
 
   public function getType() {
-    if(DEBUG) var_dump(json_decode(file_get_contents('in/types.json'), true));
-    $types = array_keys(json_decode(file_get_contents('in/types.json'), true)['message']);
+    $types = array_keys(json_decode(file_get_contents('types.json'), true));
     foreach($types as $item) {
       if(property_exists($this, $item)) return $item;
     } return false;
