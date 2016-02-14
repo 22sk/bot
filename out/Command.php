@@ -70,19 +70,22 @@ class CommandSkip extends Command {
    */
   private function skip($user) {
     $db_name = getenv("DB_NAME");
-    $mysqli = db_connect();
-    if($user->isSkipped($mysqli)) {
-      msg::auto("Welcome back!");
-      $sql = "UPDATE {$db_name}.userdata SET skipped='0' WHERE userdata.id = "
-      .$this->cmd->getMessage()->getFrom()->getId();
+    if($mysqli = db_connect()) {
+      if ($user->isSkipped($mysqli)) {
+        msg::auto("Welcome back!");
+        $sql = "UPDATE {$db_name}.userdata SET skipped='0' WHERE userdata.id = "
+          . $this->cmd->getMessage()->getFrom()->getId();
+      } else {
+        msg::auto("Disabling automatic replys for you.");
+        $sql = "UPDATE {$db_name}.userdata SET skipped='1' WHERE userdata.id = "
+          . $this->cmd->getMessage()->getFrom()->getId();
+      }
+      if (!$mysqli->query($sql))
+        throw new \Exception($mysqli->error, $mysqli->errno);
+      $mysqli->close();
     } else {
-      msg::auto("Disabling automatic replys for you.");
-      $sql = "UPDATE {$db_name}.userdata SET skipped='1' WHERE userdata.id = "
-      .$this->cmd->getMessage()->getFrom()->getId();
+      msg::auto("MySQL database not reachable!");
     }
-    if(!$mysqli->query($sql))
-      throw new \Exception($mysqli->error, $mysqli->errno);
-    $mysqli->close();
   }
 }
 
@@ -129,37 +132,40 @@ class CommandHost extends Command {
 
 class CommandUser extends Command {
   protected function process() {
-    $mysqli = db_connect();
-    if(empty($this->args)) {
-      if($this->cmd->getMessage()->getReplyToMessage() != null)
-        $user = $this->cmd->getMessage()->getReplyToMessage()->getFrom();
-      else $user = $this->cmd->getMessage()->getFrom();
-      $user = new \in\User($user);
-      msg::auto(
-        "Username: @{$user->getUsername()}\n".
-        "First name: `{$user->getFirstName()}`\n".
-        "Last name: `{$user->getLastName()}`\n".
-        "User ID: `{$user->getID()}`\n",
-        "Markdown"
-      );
-    } else {
-      if (intval($this->args)) {
-        $id = intval($this->args);
-        $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
-      } else {
-        $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$this->args}')");
-      }
-      if (mysqli_num_rows($result) > 0) {
-        $result = markdown_escape(mysqli_fetch_assoc($result));
+    if($mysqli = db_connect()) {
+      if (empty($this->args)) {
+        if ($this->cmd->getMessage()->getReplyToMessage() != null)
+          $user = $this->cmd->getMessage()->getReplyToMessage()->getFrom();
+        else $user = $this->cmd->getMessage()->getFrom();
+        $user = new \in\User($user);
         msg::auto(
-          "Username: @{$result['username']}\n" .
-          "First name: `{$result['first_name']}`\n" .
-          "Last name: `{$result['last_name']}`\n" .
-          "User ID: `{$result['id']}`\n" .
-          "Last updated: `{$result['last_updated']}`\n",
+          "Username: @{$user->getUsername()}\n" .
+          "First name: `{$user->getFirstName()}`\n" .
+          "Last name: `{$user->getLastName()}`\n" .
+          "User ID: `{$user->getID()}`\n",
           "Markdown"
         );
-      } else msg::auto("Unknown user.");
+      } else {
+        if (intval($this->args)) {
+          $id = intval($this->args);
+          $result = $mysqli->query("SELECT * FROM userdata WHERE id = {$id}");
+        } else {
+          $result = $mysqli->query("SELECT * FROM userdata WHERE LOWER(username) = LOWER('{$this->args}')");
+        }
+        if (mysqli_num_rows($result) > 0) {
+          $result = markdown_escape(mysqli_fetch_assoc($result));
+          msg::auto(
+            "Username: @{$result['username']}\n" .
+            "First name: `{$result['first_name']}`\n" .
+            "Last name: `{$result['last_name']}`\n" .
+            "User ID: `{$result['id']}`\n" .
+            "Last updated: `{$result['last_updated']}`\n",
+            "Markdown"
+          );
+        } else msg::auto("Unknown user.");
+      }
+    } else {
+      msg::auto("MySQL database not reachable!");
     }
   }
 }

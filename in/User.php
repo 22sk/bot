@@ -1,6 +1,8 @@
 <?php
 namespace in;
 
+use out\Message as msg;
+
 class User implements \JsonSerializable {
   private $id;
   private $username;
@@ -31,32 +33,34 @@ class User implements \JsonSerializable {
 
   public function updateUserData() {
     debug("Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n");
-    $mysqli = db_connect();
+    if($mysqli = db_connect()) {
 
-    $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
-    debug("\nSQL: {$sql}");
-    $result = $mysqli->query($sql);
+      $sql = "SELECT * FROM userdata WHERE id='{$this->id}'";
+      debug("\nSQL: {$sql}");
+      $result = $mysqli->query($sql);
 
-    debug("\nResult -> Num Rows: ". $result->num_rows);
+      debug("\nResult -> Num Rows: " . $result->num_rows);
 
-    if($result and mysqli_num_rows($result)>0) {
-      $array = array();
-      foreach(get_object_vars($this) as $item => $value) {
-        array_push($array, "{$item}='{$value}'");
+      if ($result and mysqli_num_rows($result) > 0) {
+        $array = array();
+        foreach (get_object_vars($this) as $item => $value) {
+          array_push($array, "{$item}='{$value}'");
+        }
+        $sql = "UPDATE userdata SET "
+          . implode(", ", $array)
+          . " WHERE id={$this->id}";
+      } else {
+        $keys = implode(", ", array_keys(get_object_vars($this)));
+        $values = "'" . implode("', '", get_object_vars($this)) . "'";
+        $sql = "INSERT INTO userdata ($keys) VALUES ($values)";
       }
-      $sql = "UPDATE userdata SET "
-        . implode(", ", $array)
-        . " WHERE id={$this->id}";
-    } else {
-      $keys = implode(", ", array_keys(get_object_vars($this)));
-      $values = "'".implode("', '", get_object_vars($this))."'";
-      $sql = "INSERT INTO userdata ($keys) VALUES ($values)";
-    }
-    debug("\n".$sql."\n");
-    $result = $mysqli->query($sql);
-    debug("Result: "); if(DEBUG) var_dump($result);
-    $mysqli->close();
-    return $result;
+      debug("\n" . $sql . "\n");
+      $result = $mysqli->query($sql);
+      debug("Result: ");
+      if (DEBUG) var_dump($result);
+      $mysqli->close();
+      return $result;
+    } else return false;
   }
 
 
@@ -74,46 +78,47 @@ class User implements \JsonSerializable {
   }
 
   public function isSkipped($mysqli = null) {
-    if(!isset($mysqli)) {
-      $close = true;
-      $mysqli = db_connect();
-    } else $close = false;
+    if(!isset($mysqli) and $mysqli = db_connect()) $close = true;
+    else $close = false;
 
-    if($this->userExists($mysqli)) {
-      $sql = "SELECT skipped FROM userdata WHERE id={$this->id}";
-      $result = $mysqli->query($sql);
-    } else return false;
-    if($close) $mysqli->close();
+    if($mysqli) {
+      if ($this->userExists($mysqli)) {
+        $sql = "SELECT skipped FROM userdata WHERE id={$this->id}";
+        $result = $mysqli->query($sql);
+      } else return false;
+      if ($close) $mysqli->close();
 
-    if($result->fetch_assoc()['skipped']) return true;
-    else return false;
+      if ($result->fetch_assoc()['skipped']) return true;
+      else return false;
+    } else return null;
   }
 
   public function userExists($mysqli = null) {
-    if(!isset($mysqli)) {
-      $close = true;
-      $mysqli = db_connect();
-    } else $close = false;
-    $sql = "SELECT id FROM userdata WHERE id={$this->id}";
-    $result = $mysqli->query($sql);
-    if($close) $mysqli->close();
-    return ($result and $result->num_rows>0) ? true : false;
+    if(!isset($mysqli) and $mysqli = db_connect()) $close = true;
+    else $close = false;
+
+    if($mysqli) {
+      $sql = "SELECT id FROM userdata WHERE id={$this->id}";
+      $result = $mysqli->query($sql);
+      if ($close) $mysqli->close();
+      return ($result and $result->num_rows > 0) ? true : false;
+    } else return null;
   }
 
   public function isBanned($mysqli = null) {
-    if(!isset($mysqli)) {
-      $close = true;
-      $mysqli = db_connect();
-    } else $close = false;
+    if(!isset($mysqli) and $mysqli = db_connect()) $close = true;
+    else $close = false;
 
-    if($this->userExists($mysqli)) {
-      $sql = "SELECT banned FROM userdata WHERE id={$this->id}";
-      $result = $mysqli->query($sql);
-    } else return false;
-    if($close) $mysqli->close();
+    if($mysqli) {
+      if ($this->userExists($mysqli)) {
+        $sql = "SELECT banned FROM userdata WHERE id={$this->id}";
+        $result = $mysqli->query($sql);
+      } else return false;
+      if ($close) $mysqli->close();
 
-    if($result->fetch_assoc()['banned']) return true;
-    else return false;
+      if ($result->fetch_assoc()['banned']) return true;
+      else return false;
+    } else return null;
   }
 
   public function jsonSerialize() {

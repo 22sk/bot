@@ -22,28 +22,30 @@ class Chat implements \JsonSerializable {
     debug("Attempting to update group data.\n");
     $vars = array_filter(get_object_vars($this));
     debug("Object vars: ".json_encode($vars, JSON_PRETTY_PRINT)."\n");
-    $mysqli = db_connect();
-    $sql = "SELECT * FROM groupdata WHERE id={$this->id}";
-    debug("SQL: {$sql}\n");
-    $result = $mysqli->query($sql);
+    if($mysqli = db_connect()) {
+      $sql = "SELECT * FROM groupdata WHERE id={$this->id}";
+      debug("SQL: {$sql}\n");
+      $result = $mysqli->query($sql);
 
-    debug("Num Rows: ".mysqli_num_rows($result)."\n");
-    if(mysqli_num_rows($result)>0) {
-      $array = array();
-      foreach ($vars as $item => $value) {
-        array_push($array, "{$item}='{$value}''");
+      debug("Num Rows: " . mysqli_num_rows($result) . "\n");
+      if (mysqli_num_rows($result) > 0) {
+        $array = array();
+        foreach ($vars as $item => $value) {
+          array_push($array, "{$item}='{$value}''");
+        }
+        $sql = "UPDATE groupdata SET "
+          . implode(", ", $array)
+          . " WHERE id={$this->id}";
+        debug("SQL: {$sql}\n");
+      } else {
+        $keys = implode(", ", array_keys($vars));
+        $values = "'" . implode("', '", $vars) . "'";
+        $sql = "INSERT INTO groupdata ($keys) VALUES ($values)";
+        debug("SQL: {$sql}\n");
       }
-      $sql = "UPDATE groupdata SET "
-        . implode(", ", $array)
-        . " WHERE id={$this->id}";
-      debug("SQL: {$sql}\n");
-    } else {
-      $keys = implode(", ", array_keys($vars)); $values = "'".implode("', '", $vars)."'";
-      $sql = "INSERT INTO groupdata ($keys) VALUES ($values)";
-      debug("SQL: {$sql}\n");
+      $mysqli->query($sql);
+      $mysqli->close();
     }
-    $mysqli->query($sql);
-    $mysqli->close();
   }
 
 

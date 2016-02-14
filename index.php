@@ -20,5 +20,3 @@ $bot = new out\Bot(getenv('API_URL'));
 $update = new in\Update();
 
 $update->process();
-
-$db = db_connect();

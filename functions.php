@@ -50,13 +50,19 @@ function get_list($array, $usekeys) {
 }
 
 function db_connect() {
-  $mysqli = new mysqli(
-    getenv('OPENSHIFT_MYSQL_DB_HOST'),
-    getenv('OPENSHIFT_MYSQL_DB_USERNAME'),
-    getenv('OPENSHIFT_MYSQL_DB_PASSWORD'),
-    getenv('DB_NAME'),
-    getenv('OPENSHIFT_MYSQL_DB_PORT')
-  );
+  try {
+    $mysqli = new mysqli(
+      getenv('OPENSHIFT_MYSQL_DB_HOST'),
+      getenv('OPENSHIFT_MYSQL_DB_USERNAME'),
+      getenv('OPENSHIFT_MYSQL_DB_PASSWORD'),
+      getenv('DB_NAME'),
+      getenv('OPENSHIFT_MYSQL_DB_PORT')
+    );
+    if ($mysqli->connect_errno) throw new \Exception($mysqli->connect_error, $mysqli->connect_errno);
+  } catch(\Exception $e) {
+    debug("MySQLi Connect Error {$e->getCode()}: {$e->getMessage()}");
+    return false;
+  }
   return $mysqli;
 }
 
