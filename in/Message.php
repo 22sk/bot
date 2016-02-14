@@ -1,7 +1,7 @@
 <?php
 namespace in;
 
-class Message {
+class Message implements \JsonSerializable {
   private $message_id;
   private $chat;
   private $from;
@@ -160,5 +160,11 @@ class Message {
       array_rand($replys['text'][$reply]['texts'])
       ], 'Markdown');
     else return false;
+  }
+
+  public function jsonSerialize() {
+    $array = obj2array($this);
+    unset($array['method']);
+    return $array;
   }
 }
