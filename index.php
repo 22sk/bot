@@ -12,7 +12,8 @@ function __autoload($class) {
 
 if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')) {
   http_response_code(403);
-  exit("Unauthorized URL");
+  echo getenv('API_URL')."\n";
+  exit("{$_GET['url']}: Unauthorized URL");
 }
 require('functions.php');
 
