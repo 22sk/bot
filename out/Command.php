@@ -45,11 +45,11 @@ class CommandAbout extends Command {
   private $you;
   private $message;
   public function __construct(\in\Command $cmd) {
-    parent::__construct($cmd);
     $this->you = null; // "Modified by @yourusername";
     $this->message = file_get_contents(
       'https://gist.githubusercontent.com/22sk/655d8aaa39c947ea79dc/raw/about.md'
     ); // DO NOT EDIT
+    parent::__construct($cmd);
   }
   protected function process() {
     return msg::auto(

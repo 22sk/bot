@@ -1,7 +1,7 @@
 <?php
 namespace in;
 
-class Update {
+class Update implements \JsonSerializable {
   private $update_id;
   private $message;
   private $inline_query;
@@ -82,5 +82,11 @@ class Update {
   public function getType() {
     $array = array_keys(array_filter(get_object_vars($this)));
     return end($array);
+  }
+
+  public function jsonSerialize() {
+    $array = obj2array($this);
+    unset($array['method']);
+    return $array;
   }
 }
