@@ -92,9 +92,8 @@ class Update implements \JsonSerializable {
   }
 
   public function setReply($reply_to_message_id) {
-    if(!isset($reply_to_message_id)) return;
-    if(gettype($reply_to_message_id) == 'integer') {
-      $this->reply_to_message_id = $reply_to_message_id;
+    if(intval($reply_to_message_id)) {
+      $this->reply_to_message_id = intval($reply_to_message_id);
     } else throw new \Exception('Invalid Message ID.', 415);
   }
 

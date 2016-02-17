@@ -17,6 +17,7 @@ class Update implements \JsonSerializable {
       $types = json_decode(file_get_contents('in/types.json'), true);
       if(isset($types[$key]['__class'])) $this->$key = new $types[$key]['__class']($value);
       else $this->$key = $value;
+      $GLOBALS[$key] = $this->$key;
     }
     $GLOBALS['update'] = $this;
     debug("Update:\n".json_encode($update, JSON_PRETTY_PRINT)."\n");

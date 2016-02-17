@@ -7,6 +7,8 @@
     "message_id": { "__type": "integer" },
     "date":       { "__type": "integer" },
 
+    "reply_to_message": { "__class": "\\in\\Message" },
+
     "from": {
       "__class":    "\\in\\User",
 

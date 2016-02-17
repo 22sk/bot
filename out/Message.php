@@ -61,7 +61,7 @@ class Message extends Update {
     global $chat, $message;
     if($chat->getType() == 'group')
       return self::replyMessage($text, $parse_mode);
-    elseif($message->getReplyToMessage() != null) {
+    elseif(null !== $message->getReplyToMessage()) {
       return self::replyMessage($text, $parse_mode, $message->getReplyToMessage()->getMessageId());
     } else return self::sendMessage($text, $parse_mode);
   }
