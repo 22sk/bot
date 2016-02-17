@@ -54,12 +54,16 @@ class Message extends Update {
    */
 
   public static function auto($text, $parse_mode = "") {
-    /** @var \in\Chat $chat */
-    global $chat;
+    /**
+     * @var \in\Chat $chat
+     * @var \in\Message $message
+     */
+    global $chat, $message;
     if($chat->getType() == 'group')
       return self::replyMessage($text, $parse_mode);
-    else
-      return self::sendMessage($text, $parse_mode);
+    elseif($message->getReplyToMessage() != null) {
+      return self::replyMessage($text, $parse_mode, $message->getReplyToMessage()->getMessageId());
+    } else return self::sendMessage($text, $parse_mode);
   }
 
   /**
