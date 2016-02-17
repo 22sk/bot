@@ -20,7 +20,7 @@ class Message implements \JsonSerializable {
     if(gettype($message) == 'object')
       foreach(get_object_vars($message) as $key => $value) {
         $types = json_decode(file_get_contents('in/types.json'), true);
-        if(isset($types['message'][$key]['__class'])) {
+        if(isset($types['message'][$key]['__class']) and isset($value)) {
           $this->$key = new $types['message'][$key]['__class']($value);
         } else $this->$key = $value;
         $GLOBALS[$key] = $this->$key;
