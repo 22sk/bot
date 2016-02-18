@@ -60,7 +60,7 @@ class Update implements \JsonSerializable {
       if (!isset($update['chat_id'])) $update['chat_id'] = $chat->getId();
       $update['reply_to_message_id'] = $reply_to_message_id;
       $result = Update::send($update, $method);
-      if(json_decode($result)->ok == 'false') {
+      if(json_decode($result)->ok ==  boolval(false)) {
         unset($update[$reply_to_message_id]);
         return Update::send($update, $method);
       } else return $result;
@@ -98,7 +98,7 @@ class Update implements \JsonSerializable {
   public function setReply($reply_to_message_id) {
     if(intval($reply_to_message_id)) {
       $this->reply_to_message_id = intval($reply_to_message_id);
-    } else throw new \Exception('Invalid Message ID.', 415);
+    }
   }
 
   public function setReplyMarkup($reply_markup) {
