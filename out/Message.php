@@ -59,10 +59,10 @@ class Message extends Update {
      * @var \in\Message $message
      */
     global $chat, $message;
-    if($chat->getType() == 'group')
-      return self::replyMessage($text, $parse_mode);
-    elseif(null !== $message->getReplyToMessage()) {
-      return self::replyMessage($text, $parse_mode, $message->getReplyToMessage()->getMessageId());
+    if($chat->getType() == 'group') {
+      if(null !== $message->getReplyToMessage())
+        return self::replyMessage($text, $parse_mode, $message->getReplyToMessage()->getMessageId());
+      else return self::replyMessage($text, $parse_mode);
     } else return self::sendMessage($text, $parse_mode);
   }
 
