@@ -28,7 +28,7 @@ function str_clean($str) {
 }
 
 function debug($str) {
-  if(getenv('DEBUG')) echo $str;
+  if(getenv('DEBUG')) echo $str."\n";
 }
 
 function get_list($array, $usekeys) {
@@ -47,6 +47,16 @@ function get_list($array, $usekeys) {
     }
   }
   return $text;
+}
+
+
+function find_alias($array, $needle, $aliaskey = "alias") {
+  debug("\nIN FIND ALIAS");
+  foreach($array as $value) {
+    var_dump($value);
+    echo "alias in array? "; var_dump(isset($value[$aliaskey]));
+    if(array_key_exists($aliaskey, $value) and in_array($needle, $value[$aliaskey])) return $value;
+  } return false;
 }
 
 function db_connect() {

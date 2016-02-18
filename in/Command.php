@@ -77,7 +77,7 @@ class Command implements \JsonSerializable {
         return $cmd->getResult();
       } elseif (class_exists("\\out\\Command{$this->args}") and $result = $this->textReply()) {
         return $result;
-      } elseif($this->bot == User::getMe()->username) {
+      } elseif($this->bot == User::getMe()->username or $this->getMessage()->getType() == 'private') {
         msg::auto("That command does not exist or has not been implemented yet.");
         return false;
       }
@@ -88,8 +88,12 @@ class Command implements \JsonSerializable {
     $replys = json_decode(
       file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
     );
-    if(array_key_exists(strtolower($this->cmd), $replys['command'])) {
-      $reply = $replys['command'][strtolower($this->cmd)];
+    debug("Found alias:");
+    if(DEBUG) var_dump(find_alias($replys['command'], strtolower($this->cmd)));
+    if(array_key_exists(strtolower($this->cmd), $replys['command'])
+      or $reply = find_alias($replys['command'], strtolower($this->cmd))) {
+      debug("FOUND");
+      if(!isset($reply)) $reply = $replys['command'][strtolower($this->cmd)];
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->getChat()->getId(), $reply['allowed'])))
       return msg::auto($reply['texts'][array_rand($reply['texts'])], "Markdown");
