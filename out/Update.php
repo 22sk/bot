@@ -59,7 +59,11 @@ class Update implements \JsonSerializable {
       if (!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
       if (!isset($update['chat_id'])) $update['chat_id'] = $chat->getId();
       $update['reply_to_message_id'] = $reply_to_message_id;
-      return Update::send($update, $method);
+      $result = Update::send($update, $method);
+      if(json_decode($result)->ok == 'false') {
+        unset($update[$reply_to_message_id]);
+        return Update::send($update, $method);
+      } else return $result;
     } else throw new \Exception("Invalid update!", 415);
   }
 

@@ -81,7 +81,10 @@ class Message extends Update {
      */
     global $chat, $bot, $message_id;
     if(!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
-    return $bot->send(new self($chat->getId(), $text, $parse_mode, $reply_to_message_id));
+    $result = $bot->send(new self($chat->getId(), $text, $parse_mode, $reply_to_message_id));
+    if(json_decode($result)->ok == 'false') {
+      return new self($chat->getId(), $text, $parse_mode);
+    } else return json_decode($result);
   }
 
   /**
