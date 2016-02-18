@@ -52,32 +52,25 @@ class Update implements \JsonSerializable {
   }
 
   public function process() {
-    try {
-      $type = $this->getType();
-      debug("Type: $type\n");
-      if(DEBUG) var_dump($this);
-      $user = new User($this->$type->getFrom());
-      if($user->isBanned()) return false;
-      $update = null;
+    $type = $this->getType();
+    debug("Type: $type\n");
+    if(DEBUG) var_dump($this);
+    $user = new User($this->$type->getFrom());
+    if($user->isBanned()) return false;
+    $update = null;
 
-      switch ($type) {
-        case 'message':
-          $update = new Message(get_object_vars($this)['message']);
-          break;
-        case 'inline_query':
-          $update = new InlineQuery(get_object_vars($this)['inline_query']);
-          break;
-        case 'chosen_inline_result':
-          $update = new ChosenInlineResult(get_object_vars($this)['chosen_inline_result']);
-          break;
-      }
-      return $update->process();
-
-    } catch(\Exception $e) {
-      \out\Message::auto((isset($e->getCode))?($e->getCode().": "):''.$e->getMessage());
-      http_response_code($e->getCode());
-      exit($e->getMessage());
+    switch ($type) {
+      case 'message':
+        $update = new Message(get_object_vars($this)['message']);
+        break;
+      case 'inline_query':
+        $update = new InlineQuery(get_object_vars($this)['inline_query']);
+        break;
+      case 'chosen_inline_result':
+        $update = new ChosenInlineResult(get_object_vars($this)['chosen_inline_result']);
+        break;
     }
+    return $update->process();
   }
 
   public function getType() {

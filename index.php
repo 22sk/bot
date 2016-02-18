@@ -7,7 +7,8 @@ define('ROOT', dirname(__FILE__));
 define('DEBUG', getenv('DEBUG'));
 
 function __autoload($class) {
-  include(ROOT.'/'.implode('/', explode('\\', $class)).'.php');
+  if(file_exists(ROOT.'/'.implode('/', explode('\\', $class)).'.php'))
+    include(ROOT.'/'.implode('/', explode('\\', $class)).'.php');
 }
 
 if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')) {

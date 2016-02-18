@@ -75,7 +75,7 @@ class Command implements \JsonSerializable {
         $cmd = new $class($this);
         if(DEBUG) var_dump($cmd);
         return $cmd->getResult();
-      } elseif ($result = $this->textReply()) {
+      } elseif (class_exists("\\out\\Command{$this->args}") and $result = $this->textReply()) {
         return $result;
       } elseif($this->bot == User::getMe()->username) {
         msg::auto("That command does not exist or has not been implemented yet.");
