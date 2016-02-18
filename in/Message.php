@@ -23,7 +23,7 @@ class Message implements \JsonSerializable {
         if(isset($types['message'][$key]['__class']) and isset($value)) {
           $this->$key = new $types['message'][$key]['__class']($value);
         } else $this->$key = $value;
-        $GLOBALS[$key] = $this->$key;
+        if(!isset($GLOBALS[$key])) $GLOBALS[$key] = $this->$key;
       }
     else if(gettype($message) == 'array')
       foreach($message as $item => $value) $this->$item = $value;
@@ -120,7 +120,7 @@ class Message implements \JsonSerializable {
     debug("Message Type: ".$this->getType()."\n");
     switch($this->getType()) {
       case 'text':
-        if(Command::parseMessage(get_object_vars($this)['text'])) {
+        if(Command::parseMessage($this->text)) {
           $cmd = new Command($this);
           $done = $cmd->process();
         } break;
