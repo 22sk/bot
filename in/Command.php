@@ -88,15 +88,13 @@ class Command implements \JsonSerializable {
     $replys = json_decode(
       file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
     );
-    debug("Found alias:");
-    if(DEBUG) var_dump(find_alias($replys['command'], strtolower($this->cmd)));
     if(array_key_exists(strtolower($this->cmd), $replys['command'])
       or $reply = find_alias($replys['command'], strtolower($this->cmd))) {
-      debug("FOUND");
       if(!isset($reply)) $reply = $replys['command'][strtolower($this->cmd)];
+      $text = (gettype($reply) == 'array') ? $reply['texts'][array_rand($reply['texts'])] : $reply['texts'];
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->getChat()->getId(), $reply['allowed'])))
-      return msg::auto($reply['texts'][array_rand($reply['texts'])], "Markdown");
+      return gettype($text) == 'string' ? msg::auto($text, 'Markdown') : false;
       else throw new \Exception("Permission denied.", 403);
     } else return false;
   }

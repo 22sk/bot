@@ -49,7 +49,12 @@ function get_list($array, $usekeys) {
   return $text;
 }
 
-
+/**
+ * @param $array
+ * @param $needle
+ * @param string $aliaskey
+ * @return bool
+ */
 function find_alias($array, $needle, $aliaskey = "alias") {
   debug("\nIN FIND ALIAS");
   foreach($array as $value) {
