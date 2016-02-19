@@ -94,15 +94,16 @@ class Command implements \JsonSerializable {
       or $reply = find_alias($replys['command'], strtolower($this->cmd))) {
       action::sendChatAction(action::TYPING);
       if(!isset($reply)) $reply = $replys['command'][strtolower($this->cmd)];
-      $text = (gettype($reply) == 'array') ? $reply['texts'][array_rand($reply['texts'])] : $reply['texts'];
-      if(gettype($text) != 'string') return false;
-
-      if(array_key_exists('encryped', $reply) and $reply['encrypted']) for($i=0; $i<count($reply['texts']); $i++) {
+      if(array_key_exists('encryped', $reply)) for($i=0; $i<count($reply['texts']); $i++) {
         $reply['texts'][$i] = decrypt($reply['texts'][$i], getenv('API_URL'));
+        debug($reply['texts'][$i]);
       }
+      $text = (gettype($reply['texts']) == 'array') ? $reply['texts'][array_rand($reply['texts'])] : $reply['texts'];
+      if(gettype($text) != 'string') return false;
+      debug("COUNT: ".count($reply['texts']));
       if(!array_key_exists('allowed', $reply) or
         (array_key_exists('allowed', $reply) and in_array($this->getMessage()->getChat()->getId(), $reply['allowed'])))
-      return msg::auto($text, 'Markdown');
+        return msg::auto($text, 'Markdown');
       else throw new \Exception("Permission denied.", 403);
     } else return false;
   }
