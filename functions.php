@@ -52,15 +52,18 @@ function get_list($array, $usekeys) {
 /**
  * @param $array
  * @param $needle
+ * @param bool $contain
  * @param string $aliaskey
  * @return array|false
  */
-function find_alias($array, $needle, $aliaskey = "alias") {
+function find_alias($array, $needle, $contain = false, $aliaskey = "alias") {
   debug("\nIN FIND ALIAS");
   foreach($array as $value) {
     var_dump($value);
     echo "alias in array? "; var_dump(isset($value[$aliaskey]));
-    if(array_key_exists($aliaskey, $value) and in_array($needle, $value[$aliaskey])) return $value;
+    if($contain) {
+      foreach($value[$aliaskey] as $alias) if(strpos($needle, $alias) !== false) return $value;
+    } elseif(array_key_exists($aliaskey, $value) and in_array($needle, $value[$aliaskey])) return $value;
   } return false;
 }
 
