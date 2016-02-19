@@ -1,6 +1,7 @@
 <?php
 namespace in;
 use \out\Message as msg;
+use \out\ChatAction as action;
 
 class Command implements \JsonSerializable {
   /**
@@ -72,6 +73,7 @@ class Command implements \JsonSerializable {
       debug("Class exists: "); if(DEBUG) var_dump(class_exists($class));
       if(class_exists($class)) {
         /** @var \out\Command $cmd */
+        action::sendChatAction(action::TYPING);
         $cmd = new $class($this);
         if(DEBUG) var_dump($cmd);
         return $cmd->getResult();
@@ -90,6 +92,7 @@ class Command implements \JsonSerializable {
     );
     if(array_key_exists(strtolower($this->cmd), $replys['command'])
       or $reply = find_alias($replys['command'], strtolower($this->cmd))) {
+      action::sendChatAction(action::TYPING);
       if(!isset($reply)) $reply = $replys['command'][strtolower($this->cmd)];
       $text = (gettype($reply) == 'array') ? $reply['texts'][array_rand($reply['texts'])] : $reply['texts'];
       if(gettype($text) != 'string') return false;
