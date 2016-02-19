@@ -181,3 +181,21 @@ class CommandId extends Command {
     }
   }
 }
+
+class CommandAll extends Command {
+  protected function process() {
+    /** @var \in\Chat $chat */
+    global $chat;
+    if($mysqli = db_connect()) {
+      $result = $mysqli->query("SELECT members FROM groupdata WHERE id={$chat->getId()}");
+      if($result->num_rows>0) {
+        $array = json_decode($result->fetch_assoc()['members'], true);
+        $usernames = array();
+        for($i=0; $i<count($array); $i++) {
+          array_push($usernames, \in\User::getUserDatabase($array[$i], $mysqli)->getUsername());
+        }
+        msg::sendMessage('@'.implode(', @', $usernames));
+      }
+    }
+  }
+}

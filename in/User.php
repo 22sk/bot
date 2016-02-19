@@ -31,6 +31,17 @@ class User implements \JsonSerializable {
     return $result->result;
   }
 
+  public static function getUserDatabase($id, $mysqli = null) {
+    if(!isset($mysqli) and $mysqli = db_connect()) $close = true;
+    else $close = false;
+
+    if($mysqli) {
+      $sql = "SELECT * FROM userdata WHERE id={$id}";
+      $result = $mysqli->query($sql);
+      return new \in\User($result->fetch_assoc());
+    }
+  }
+
   public function updateUserData() {
     debug("Object vars: ".json_encode(get_object_vars($this), JSON_PRETTY_PRINT)."\n");
     if($mysqli = db_connect()) {
@@ -63,16 +74,18 @@ class User implements \JsonSerializable {
     } else return false;
   }
 
-
   public function getId() {
     return $this->id;
   }
+
   public function getUsername() {
     return markdown_escape($this->username);
   }
+
   public function getFirstName() {
     return markdown_escape($this->first_name);
   }
+
   public function getLastName() {
     return markdown_escape($this->last_name);
   }
