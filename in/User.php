@@ -78,16 +78,16 @@ class User implements \JsonSerializable {
     return $this->id;
   }
 
-  public function getUsername() {
-    return markdown_escape($this->username);
+  public function getUsername($escape_markdown = true) {
+    return $escape_markdown ? markdown_escape($this->username) : $this->username;
   }
 
-  public function getFirstName() {
-    return markdown_escape($this->first_name);
+  public function getFirstName($escape_markdown = true) {
+    return $escape_markdown ? markdown_escape($this->first_name) : $this->first_name;
   }
 
-  public function getLastName() {
-    return markdown_escape($this->last_name);
+  public function getLastName($escape_markdown = true) {
+    return $escape_markdown ? markdown_escape($this->last_name) : $this->last_name;
   }
 
   public function isSkipped($mysqli = null) {

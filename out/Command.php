@@ -192,7 +192,7 @@ class CommandAll extends Command {
         $array = json_decode($result->fetch_assoc()['members'], true);
         $usernames = array();
         for($i=0; $i<count($array); $i++) {
-          array_push($usernames, \in\User::getUserDatabase($array[$i], $mysqli)->getUsername());
+          array_push($usernames, \in\User::getUserDatabase($array[$i], $mysqli)->getUsername(false));
         }
         msg::sendMessage('@'.implode(', @', $usernames));
       }
