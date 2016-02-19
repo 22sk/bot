@@ -148,16 +148,19 @@ class Message implements \JsonSerializable {
   }
 
   public function textReply() {
+    debug("IN TEXTREPLY");
     $replys = json_decode(
       file_get_contents('https://gist.githubusercontent.com/22sk/f2ab9f34b4cc1ee81b4a/raw/replys.json'), true
     );
     $reply = null;
     foreach($replys['text'] as $key => $value) {
-      if (strpos(strtolower($this->text), $key) !== false) $reply = $key;
+      var_dump($value);
+      if(strpos(strtolower($this->text), $key) !== false) $reply = $value;
     }
+    if(!isset($reply)) $reply = find_alias($replys['text'], strtolower($this->text));
     if(isset($reply))
-      return \out\Message::auto($replys['text'][$reply]['texts'][
-      array_rand($replys['text'][$reply]['texts'])
+      return \out\Message::auto($reply['texts'][
+      array_rand($reply['texts'])
       ], 'Markdown');
     else return false;
   }
