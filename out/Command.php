@@ -113,7 +113,7 @@ class CommandMeme extends Command {
 
     if(empty($this->args)) {
       return msg::auto("Available memes:\n`".implode(", ", array_keys($memes))."`", "Markdown");
-    } else if(array_key_exists($name, $memes)) {
+    } else if(array_key_exists($name, $memes) or find_alias($memes, strtolower($name))) {
       $method = Update::getMethodIn($memes[$name]);
       if(!isset($method)) throw new \Exception("Invalid meme!");
       return Update::auto($memes[$name], Update::getMethodIn($memes[$name]));
