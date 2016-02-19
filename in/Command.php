@@ -97,7 +97,7 @@ class Command implements \JsonSerializable {
       $text = (gettype($reply) == 'array') ? $reply['texts'][array_rand($reply['texts'])] : $reply['texts'];
       if(gettype($text) != 'string') return false;
 
-      if(array_key_exists('encryped', $reply) and $reply['encrypted']) foreach($i=0; $i<count($reply['texts']), $i++) {
+      if(array_key_exists('encryped', $reply) and $reply['encrypted']) for($i=0; $i<count($reply['texts']), $i++) {
         $reply['texts'][$i] = decrypt($reply['texts'][$i], getenv('API_URL'));
       }
       if(!array_key_exists('allowed', $reply) or
