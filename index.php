@@ -3,12 +3,12 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-define('ROOT', dirname(__FILE__));
+define('ROOT', dirname(__FILE__).'/');
 define('DEBUG', getenv('DEBUG'));
 
 function __autoload($class) {
-  if(file_exists(ROOT.'/'.implode('/', explode('\\', $class)).'.php'))
-    include(ROOT.'/'.implode('/', explode('\\', $class)).'.php');
+  if(file_exists(ROOT.implode('/', explode('\\', $class)).'.php'))
+    include(ROOT.implode('/', explode('\\', $class)).'.php');
 }
 
 if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')) {

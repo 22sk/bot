@@ -81,7 +81,7 @@ class Update implements \JsonSerializable {
   }
 
   public static function getMethodIn($meme) {
-    $types = json_decode(file_get_contents('https://bot-22sk.rhcloud.com/types.json'));
+    $types = json_decode(file_get_contents(ROOT.'types.json'));
     foreach($meme as $item => $value) {
       if(isset($types->$item)) return $types->$item;
     } return false;

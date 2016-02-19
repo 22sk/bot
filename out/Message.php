@@ -13,7 +13,7 @@ class Message extends Update {
    * @param array|int $chat_id
    * @param string $text
    * @param string $parse_mode
-   * @param int|null $reply_to_message_id
+   * @param int $reply_to_message_id
    * @param bool $disable_web_page_preview
    */
   public function __construct($chat_id, $text, $parse_mode = null,
@@ -31,12 +31,7 @@ class Message extends Update {
   }
 
   private function setParseMode($parse_mode) {
-    switch($parse_mode) {
-      case null: case 'Markdown': case 'HTML': case '':
-        $this->parse_mode = $parse_mode;
-        break;
-      default: throw new \Exception('Invalid parse mode. Allowed: Markdown and HTML.');
-    }
+    $this->parse_mode = $parse_mode;
   }
 
   private function setDisableWebPagePreview($disable_web_page_preview) {
@@ -71,7 +66,7 @@ class Message extends Update {
    * Uses the incoming message as the message to reply to if no ID is given.
    * @param $text
    * @param string $parse_mode
-   * @param int|null $reply_to_message_id
+   * @param int $reply_to_message_id
    * @return Update
    */
   public static function replyMessage($text, $parse_mode = "", $reply_to_message_id = null) {

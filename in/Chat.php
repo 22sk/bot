@@ -19,19 +19,34 @@ class Chat implements \JsonSerializable {
   }
 
   public function updateGroupData() {
+    /** @var \in\User $from */
+    global $from;
     debug("Attempting to update group data.\n");
-    $vars = array_filter(get_object_vars($this));
-    debug("Object vars: ".json_encode($vars, JSON_PRETTY_PRINT)."\n");
+
     if($mysqli = db_connect()) {
+      $vars = array_filter(get_object_vars($this));
+      debug("Object vars: ".json_encode($vars, JSON_PRETTY_PRINT)."\n");
       $sql = "SELECT * FROM groupdata WHERE id={$this->id}";
       debug("SQL: {$sql}\n");
       $result = $mysqli->query($sql);
-
       debug("Num Rows: " . mysqli_num_rows($result) . "\n");
+      $members = json_decode(mysqli_fetch_assoc($result)['members']);
+      debug("Members before: ".json_encode($members, JSON_PRETTY_PRINT));
+
+      if(empty($members)) {
+        $members = '[]';
+        $mysqli->query("UPDATE groupdata SET members='{$members}' WHERE id={$this->getId()}");
+        $members = json_decode($members);
+      }
+
+      if(!in_array($from->getId(), $members)) array_push($members, $from->getId());
+      debug("Members: ".json_encode($members, JSON_PRETTY_PRINT));
+      $vars['members'] = json_encode($members);
+
       if (mysqli_num_rows($result) > 0) {
         $array = array();
         foreach ($vars as $item => $value) {
-          array_push($array, "{$item}='{$value}''");
+          array_push($array, "{$item}='{$value}'");
         }
         $sql = "UPDATE groupdata SET "
           . implode(", ", $array)
