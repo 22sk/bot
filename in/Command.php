@@ -94,7 +94,7 @@ class Command implements \JsonSerializable {
       or $reply = find_alias($replys['command'], strtolower($this->cmd))) {
       action::sendChatAction(action::TYPING);
       if(!isset($reply)) $reply = $replys['command'][strtolower($this->cmd)];
-      if(array_key_exists('encryped', $reply)) for($i=0; $i<count($reply['texts']); $i++) {
+      if(array_key_exists('encrypted', $reply)) for($i=0; $i<count($reply['texts']); $i++) {
         $reply['texts'][$i] = decrypt($reply['texts'][$i], getenv('API_URL'));
         debug($reply['texts'][$i]);
       }
