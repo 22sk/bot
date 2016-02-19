@@ -82,7 +82,7 @@ class Message extends Update {
     global $chat, $bot, $message_id;
     if(!isset($reply_to_message_id)) $reply_to_message_id = $message_id;
     $result = $bot->send(new self($chat->getId(), $text, $parse_mode, $reply_to_message_id));
-    if($result->ok == boolval(false)) {
+    if(boolval($result->ok) === false) {
       return self::sendMessage($text, $parse_mode);
     } else return $result;
   }
