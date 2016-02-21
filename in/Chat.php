@@ -45,7 +45,7 @@ class Chat implements \JsonSerializable {
 
       if (mysqli_num_rows($result) > 0) {
         $array = array();
-        foreach ($vars as $item => $value) {
+        foreach (mysqli_escape_all($vars, $mysqli) as $item => $value) {
           array_push($array, "{$item}='{$value}'");
         }
         $sql = "UPDATE groupdata SET "

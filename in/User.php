@@ -55,7 +55,7 @@ class User implements \JsonSerializable {
 
       if ($result and mysqli_num_rows($result) > 0) {
         $array = array();
-        foreach (get_object_vars($this) as $item => $value) {
+        foreach (mysqli_escape_all(get_object_vars($this), $mysqli) as $item => $value) {
           array_push($array, "{$item}='{$value}'");
         }
         $sql = "UPDATE userdata SET "
