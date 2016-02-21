@@ -53,8 +53,9 @@ class Chat implements \JsonSerializable {
           . " WHERE id={$this->id}";
         debug("SQL: {$sql}\n");
       } else {
-        $keys = implode(", ", array_keys($vars));
-        $values = "'" . implode("', '", $vars) . "'";
+        $array = mysqli_escape_all($vars, $mysqli);
+        $keys = implode(", ", array_keys($array));
+        $values = "'" . implode("', '", $array) . "'";
         $sql = "INSERT INTO groupdata ($keys) VALUES ($values)";
         debug("SQL: {$sql}\n");
       }

@@ -132,3 +132,16 @@ function decrypt($encrypted, $password, $salt='jS*eJ9ZRE"=GMzra') {
   // Yay!
   return $decrypted;
 }
+
+/**
+ * @param array $array
+ * @param mysqli $mysqli
+ * @return array
+ */
+function mysqli_escape_all($array, $mysqli) {
+  $new = array();
+  foreach ($array as $key => $value) {
+    $new[$key] = $mysqli->real_escape_string($value);
+  }
+  return $new;
+}

@@ -1,7 +1,7 @@
 <?php
 namespace in;
 
-use out\Message as msg;
+# use out\Message as msg;
 
 class User implements \JsonSerializable {
   private $id;
@@ -38,8 +38,9 @@ class User implements \JsonSerializable {
     if($mysqli) {
       $sql = "SELECT * FROM userdata WHERE id={$id}";
       $result = $mysqli->query($sql);
+      if ($close) $mysqli->close();
       return new \in\User($result->fetch_assoc());
-    }
+    } return null;
   }
 
   public function updateUserData() {
@@ -61,8 +62,9 @@ class User implements \JsonSerializable {
           . implode(", ", $array)
           . " WHERE id={$this->id}";
       } else {
-        $keys = implode(", ", array_keys(get_object_vars($this)));
-        $values = "'" . implode("', '", get_object_vars($this)) . "'";
+        $array = mysqli_escape_all(get_object_vars($this), $mysqli);
+        $keys = implode(", ", array_keys($array));
+        $values = "'" . implode("', '", $array) . "'";
         $sql = "INSERT INTO userdata ($keys) VALUES ($values)";
       }
       debug("\n" . $sql . "\n");
@@ -103,7 +105,7 @@ class User implements \JsonSerializable {
 
       if ($result->fetch_assoc()['skipped']) return true;
       else return false;
-    } else return null;
+    } return null;
   }
 
   public function userExists($mysqli = null) {
