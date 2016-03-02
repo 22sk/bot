@@ -194,7 +194,7 @@ class CommandAll extends Command {
         for($i=0; $i<count($array); $i++) {
           array_push($usernames, \in\User::getUserDatabase($array[$i], $mysqli)->getUsername(false));
         }
-        msg::sendMessage('@'.implode(', @', $usernames));
+        msg::sendMessage(implode(', ', $usernames));
       }
     }
   }

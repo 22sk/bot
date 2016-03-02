@@ -19,6 +19,8 @@ class Chat implements \JsonSerializable {
   }
 
   public function updateGroupData() {
+    // TODO: https://wiki.selfhtml.org/wiki/Datenbank/Einf%C3%BChrung_in_Joins
+
     /** @var \in\User $from */
     global $from;
     debug("Attempting to update group data.\n");
