@@ -1,9 +1,0 @@
-{
-  "text": "sendMessage",
-  "audio": "sendAudio",
-  "document": "sendDocument",
-  "photo": "sendPhoto",
-  "sticker": "sendSticker",
-  "video": "sendVideo",
-  "voice": "sendVoice"
-}
