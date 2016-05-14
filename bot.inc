@@ -108,7 +108,7 @@ class Response {
     $array = array ();
     switch ($type) {
       case self::REPLY_TO_MESSAGE:
-        $array['reply_to_message_id'] = $req->message->id;
+        $array['reply_to_message_id'] = $req->message->message_id;
         $array['chat_id'] = $req->message->chat->id;
         break;
       case self::REPLY_TO_REPLIED:
