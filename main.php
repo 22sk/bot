@@ -19,7 +19,7 @@ $commands = array (
   "hello" => function($req) {
     return new Response("sendMessage", array (
       "text" => "hello you. :3",
-      "chat_id" => $req->message->from->id
+      "chat_id" => $req->message->chat->id
     ));
   },
 
@@ -27,7 +27,15 @@ $commands = array (
     return new Response("sendMessage", array (
       "text" => "I'm glad you asked! It's ".date("l").", the ".date('d').date('S')." of ".date('F')." ".date('Y')
         .", ".date('H').":".date('i').":".date('s'),
-      "chat_id" => $req->message->from->id
+      "chat_id" => $req->message->chat->id
+    ));
+  },
+
+  "echo" => function($req) {
+    return new Response("sendMessage", array (
+      "text" => $req->message->text,
+      "parse_mode" => "Markdown",
+      "chat_id" => $req->message->chat->id
     ));
   }
 );
