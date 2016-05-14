@@ -85,10 +85,11 @@ class Command {
 
 /** @see https://core.telegram.org/bots/api#available-methods */
 class Response {
-  const TO_CHAT   = 0;
-  const TO_SENDER = 1;
-  const REPLY_TO_MESSAGE = 2;
-  const REPLY_TO_REPLIED = 3;
+  const TO_CHAT   = 0,
+        TO_SENDER = 1,
+        REPLY_TO_MESSAGE = 2,
+        REPLY_IN_GROUP = 3,
+        REPLY_TO_REPLIED = 4;
   public function __construct($method, $content) {
     $this->method = $method;
     $this->content = $content;
@@ -104,11 +105,15 @@ class Response {
    *   Else, the original message is used instead.
    * @return Response
    */
-  public static function build($req, $type, $add = null, $bypass = true) {
+  public static function build($req, $add = null, $type = Response::REPLY_IN_GROUP, $bypass = true) {
     $array = array ();
     switch ($type) {
       case self::REPLY_TO_MESSAGE:
         $array['reply_to_message_id'] = $req->message->message_id;
+        $array['chat_id'] = $req->message->chat->id;
+        break;
+      case self::REPLY_IN_GROUP:
+        if($req->message->chat->type != 'private') $array['reply_to_message_id'] = $req->message->message_id;
         $array['chat_id'] = $req->message->chat->id;
         break;
       case self::REPLY_TO_REPLIED:
@@ -119,8 +124,7 @@ class Response {
       case self::TO_CHAT:   $array['chat_id'] = $req->message->chat->id; break;
       case self::TO_SENDER: $array['chat_id'] = $req->message->from->id; break;
     }
-
-    array_merge($array, $add);
+    $array = array_merge($array, $add);
     return new Response("sendMessage", $array);
   }
 
