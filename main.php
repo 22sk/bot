@@ -16,6 +16,9 @@ require("bot.inc");
 $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")));
 
 $commands = array (
+  "ping" => function($req) {
+    return Response::build($req, array("text" => "Hauptsache schneller als @Levon30bot! ;D"));
+  },
   "hello" => function($req) {
     return Response::build($req, array("text" => "hello you. :3"));
   },
