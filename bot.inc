@@ -105,7 +105,8 @@ class Response {
    *   Else, the original message is used instead.
    * @return Response
    */
-  public static function build($req, $add = null, $type = Response::REPLY_IN_GROUP, $bypass = true) {
+  public static function build($req, $add = null, $method = "sendMessage",
+                               $type = Response::REPLY_IN_GROUP, $bypass = true) {
     $array = array ();
     switch ($type) {
       case self::REPLY_TO_MESSAGE:
@@ -125,7 +126,7 @@ class Response {
       case self::TO_SENDER: $array['chat_id'] = $req->message->from->id; break;
     }
     $array = array_merge($array, $add);
-    return new Response("sendMessage", $array);
+    return new Response($method, $array);
   }
 
   public $method;

@@ -21,7 +21,7 @@ $commands = array (
   },
 
   "date" => function($req) {
-    return new Response("sendMessage", array (
+    return Response::build($req, array (
       "text" => "I'm glad you asked! It's ".date("l").", the ".date('d').date('S')." of ".date('F')." ".date('Y')
         .", ".date('H').":".date('i').":".date('s'),
       "chat_id" => $req->message->chat->id
@@ -29,18 +29,16 @@ $commands = array (
   },
 
   "echo" => function($req) {
-    return new Response("sendMessage", array (
+    return Response::build($req, array (
       "text" => $req->command->args,
-      "parse_mode" => "Markdown",
-      "chat_id" => $req->message->chat->id
+      "parse_mode" => "Markdown"
     ));
   },
 
   "about" => function($req) {
-    return new Response("sendMessage", array(
+    return Response::build($req, array(
       "text" => "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
-      "parse_mode" => "Markdown",
-      "chat_id" => $req->message->chat->id
+      "parse_mode" => "Markdown"
     ));
   }
 );
