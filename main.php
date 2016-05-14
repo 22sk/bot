@@ -33,7 +33,15 @@ $commands = array (
 
   "echo" => function($req) {
     return new Response("sendMessage", array (
-      "text" => $req->message->text,
+      "text" => $req->command->args,
+      "parse_mode" => "Markdown",
+      "chat_id" => $req->message->chat->id
+    ));
+  },
+
+  "about" => function($req) {
+    return new Response("sendMessage", array(
+      "text" => "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
       "parse_mode" => "Markdown",
       "chat_id" => $req->message->chat->id
     ));
