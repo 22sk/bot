@@ -13,12 +13,12 @@ class Bot {
 
   /**
    * Creates new Bot.
-   * @param Request $req
+   * @param string $url
+   * @param Request|stdClass $req
    */
   public function __construct($url, $req = null) {
     $this->url = $url;
-    $this->req = isset($req) ? Request::map($req) : Request::getRequest();
-    var_dump($this);
+    $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
   }
 
   /**
@@ -77,7 +77,7 @@ class Command {
     $this->valid = false;
     if (!empty($array)) {
       // Setting object's values
-      for ($cmd = array(), $i = 0; $i < count($array); $i++) $this->$keys[$i] = $array[$i];
+      for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
       $this->valid = true;
     }
   }
@@ -85,9 +85,43 @@ class Command {
 
 /** @see https://core.telegram.org/bots/api#available-methods */
 class Response {
+  const TO_CHAT   = 0;
+  const TO_SENDER = 1;
+  const REPLY_TO_MESSAGE = 2;
+  const REPLY_TO_REPLIED = 3;
   public function __construct($method, $content) {
     $this->method = $method;
     $this->content = $content;
+  }
+
+  /**
+   * @see Response::TO_CHAT, Response::TO_SENDER, Response::REPLY_TO_MESSAGE, Response::REPLY_TO_REPLIED
+   * @param integer $type   Type of response (class constants)
+   * @param Request $req    The Request to generate the Response from
+   * @param array   $add    Data to add to the generated Response
+   * @param bool    $bypass
+   *   If reply_to_message is non-existent, false is returned, if bypass is set to false.
+   *   Else, the original message is used instead.
+   * @return Response
+   */
+  public static function build($req, $type, $add = null, $bypass = true) {
+    $array = array ();
+    switch ($type) {
+      case self::REPLY_TO_MESSAGE:
+        $array['reply_to_message_id'] = $req->message->id;
+        $array['chat_id'] = $req->message->chat->id;
+        break;
+      case self::REPLY_TO_REPLIED:
+        if(isset($req->message->reply_to_message)) $array['reply_to_message_id'] = $req->message->reply_to_message->id;
+        else if(!$bypass) return false;
+        $array['chat_id'] = $req->message->chat->id;
+        break;
+      case self::TO_CHAT:   $array['chat_id'] = $req->message->chat->id; break;
+      case self::TO_SENDER: $array['chat_id'] = $req->message->from->id; break;
+    }
+
+    array_merge($array, $add);
+    return new Response("sendMessage", $array);
   }
 
   public $method;
@@ -102,8 +136,7 @@ class Request {
   public $command;
 
   /**
-   * @param $json
-   * @throws Exception
+   * @param stdClass $json json_decode()'d API request
    * @return Request
    */
   public static function map($json) {

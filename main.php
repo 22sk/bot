@@ -17,10 +17,7 @@ $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")))
 
 $commands = array (
   "hello" => function($req) {
-    return new Response("sendMessage", array (
-      "text" => "hello you. :3",
-      "chat_id" => $req->message->chat->id
-    ));
+    return Response::build($req, Response::REPLY_TO_MESSAGE, array("text" => "hello you. :3"));
   },
 
   "date" => function($req) {
