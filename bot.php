@@ -41,9 +41,10 @@ class Bot {
    * @param callable $callable
    */
   public function register($name, $register, $callable) {
-    if(gettype($register) == 'array') foreach($register as $r) $this->register($name, $r, $callable);
-    $array = &$this->$name;
-    $array[$register] = $callable;
+    if(gettype($register) != 'array') {
+      $array = &$this->$name;
+      $array[$register] = $callable;
+    } else foreach($register as $r) $this->register($name, $r, $callable);
   }
 
   public function run() {
@@ -97,6 +98,7 @@ class Command {
    * @return Response|false
    */
   public static function process($bot) {
+    if(!isset($bot->req->message)) return false;
     if($bot->req->command->valid and array_key_exists($bot->req->command->cmd, $bot->commands)
       and (empty($bot->req->command->bot) or $bot->req->command->bot == $bot->me()->username)) {
       return $bot->commands[$bot->req->command->cmd]($bot->req);
@@ -115,6 +117,7 @@ class Keyword {
    * @return Response|false
    */
   public static function process($bot) {
+    if(!isset($bot->req->message)) return false;
     foreach($bot->keywords as $word => $callable) {
       if(stristr($bot->req->message->text, $word)) return $callable($bot->req);
     } return false;
@@ -127,6 +130,7 @@ class Inline {
    * @return Response|false
    */
   public static function process($bot) {
+    if(!isset($bot->req->inline_query)) return false;
     preg_match("/^\w+/", $bot->req->inline_query->query, $match);
     $word = $match[0];
     foreach($bot->inlines as $inline => $callable) {

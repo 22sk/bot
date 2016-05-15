@@ -4,7 +4,7 @@
  * @author Samuel Kaiser <samuel.kaiser01@gmail.com>
  * @since 14.05.2016
  */
-var_dump(file_get_contents("php://input"));
+echo(file_get_contents("php://input"));
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -53,6 +53,5 @@ $bot->register(Bot::KEYWORD, array("hitler", "nazi"), function($req) {
   return Response::build($req, array("text" => "D:"));
 });
 
-var_dump($bot->commands);
 
 $bot->run();
