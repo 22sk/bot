@@ -29,6 +29,17 @@ class Bot {
   public function __construct($url, $req = null) {
     $this->url = $url;
     $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
+
+    $this->register(Bot::COMMAND, "help", function($req) {
+      $text = "All commands are listed below:\n";
+      foreach($this->commands as $name => $value) {
+        $text.="/".$name.(isset($value['help']) ? ": ".$value['help'] : '')."\n";
+      }
+      return Response::build($req, array(
+        "text" => $text,
+        "parse_mode" => "Markdown"
+      ));
+    }, "Prints this message");
   }
 
   const COMMAND = "commands",
@@ -39,18 +50,22 @@ class Bot {
    * @see Bot::COMMAND, Bot::KEYWORD, Bot::INLINE
    * @param string|array $register
    * @param callable $callable
+   * @param string|null $help
    */
-  public function register($name, $register, $callable) {
+  public function register($name, $register, $callable, $help = null) {
     if(gettype($register) != 'array') {
       $array = &$this->$name;
-      $array[$register] = $callable;
-    } else foreach($register as $r) $this->register($name, $r, $callable);
+      $array[$register]['callable'] = $callable;
+      $array[$register]['help']     = $help;
+    } else foreach($register as $r) $this->register($name, $r, $callable, $help);
   }
 
   public function run() {
+    $this->echo = array("request" => $this->req);
     if($res = Command::process($this)) $this->send($res);
     if($res = Keyword::process($this)) $this->send($res);
     if($res =  Inline::process($this)) $this->send($res);
+    echo json_encode($this->echo, JSON_PRETTY_PRINT);
   }
 
   /**
@@ -58,7 +73,6 @@ class Bot {
    * @return mixed
    */
   public function send($response) {
-    echo json_encode($response->content, JSON_PRETTY_PRINT);
     $context = stream_context_create( array(
       'http' => array(
         // http://www.php.net/manual/de/context.http.php
@@ -69,8 +83,10 @@ class Bot {
       )
     ));
     $url = $this->url . $response->method;
-    $response = file_get_contents($url, false, $context);
-    return json_decode($response);
+    $result = json_decode(file_get_contents($url, false, $context));
+    $this->echo['responses']['response'][] = $response->content;
+    $this->echo['responses']['result'][] = $result;
+    return $result;
   }
 }
 
@@ -102,7 +118,7 @@ class Command {
     if(!isset($bot->req->message)) return false;
     if($bot->req->command->valid and array_key_exists($bot->req->command->cmd, $bot->commands)
       and (empty($bot->req->command->bot) or $bot->req->command->bot == $bot->me()->username)) {
-      return $bot->commands[$bot->req->command->cmd]($bot->req);
+      return $bot->commands[$bot->req->command->cmd]['callable']($bot->req);
     } return false;
   }
 }
@@ -119,8 +135,8 @@ class Keyword {
    */
   public static function process($bot) {
     if(!isset($bot->req->message)) return false;
-    foreach($bot->keywords as $word => $callable) {
-      if(stristr($bot->req->message->text, $word)) return $callable($bot->req);
+    foreach($bot->keywords as $word => $value) {
+      if(stristr($bot->req->message->text, $word)) return $value['callable']($bot->req);
     } return false;
   }
 }
@@ -134,10 +150,10 @@ class Inline {
     if(empty($bot->req->inline_query)) return false;
     preg_match("/^\w+/", $bot->req->inline_query->query, $match);
     $word = $match[0];
-    foreach($bot->inlines as $inline => $callable) {
-      if(strcasecmp($word, $inline)) return $callable($bot->req);
+    foreach($bot->inlines as $inline => $value) {
+      if(strcasecmp($word, $inline)) return $value['callable']($bot->req);
     } if(array_key_exists('default', $bot->inlines)) {
-      return $bot->inlines['default']($bot->req);
+      return $bot->inlines['default']['callable']($bot->req);
     }
     return false;
   }
