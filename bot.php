@@ -58,6 +58,7 @@ class Bot {
    * @return mixed
    */
   public function send($response) {
+    echo json_encode($response->content, JSON_PRETTY_PRINT);
     $context = stream_context_create( array(
       'http' => array(
         // http://www.php.net/manual/de/context.http.php
@@ -130,12 +131,14 @@ class Inline {
    * @return Response|false
    */
   public static function process($bot) {
-    if(!isset($bot->req->inline_query)) return false;
+    if(empty($bot->req->inline_query)) return false;
     preg_match("/^\w+/", $bot->req->inline_query->query, $match);
     $word = $match[0];
     foreach($bot->inlines as $inline => $callable) {
-      if(strcasecmp($word, $inline)) $callable($bot->req);
-    } if(array_key_exists('default', $bot->inlines)) $bot->inlines['default']($bot->req);
+      if(strcasecmp($word, $inline)) return $callable($bot->req);
+    } if(array_key_exists('default', $bot->inlines)) {
+      return $bot->inlines['default']($bot->req);
+    }
     return false;
   }
 }

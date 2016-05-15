@@ -53,5 +53,22 @@ $bot->register(Bot::KEYWORD, array("hitler", "nazi"), function($req) {
   return Response::build($req, array("text" => "D:"));
 });
 
+$bot->register(Bot::INLINE, "default", function($req) {
+  return new Response("answerInlineQuery", array(
+    "inline_query_id" => $req->inline_query->id,
+    "results" => array(
+      array(
+        "type" => "article",
+        "id" => uniqid(),
+        "title" => "Hey!",
+        "input_message_content" => array(
+          "message_text" => $req->inline_query->query,
+          "parse_mode" => "Markdown"
+        )
+      )
+    )
+  ));
+});
+
 
 $bot->run();
