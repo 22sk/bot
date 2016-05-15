@@ -12,7 +12,8 @@ if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')){
   http_response_code(403); exit("Unauthorized URL");
 }
 
-require("bot.inc");
+require_once("bot.php");
+
 $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")));
 
 $commands = array (
@@ -46,6 +47,12 @@ $commands = array (
   }
 );
 
-foreach($commands as $key => $command) $bot->register($key, $command);
+foreach($commands as $key => $command) $bot->register(Bot::COMMAND, $key, $command);
+
+$bot->register(Bot::KEYWORD, array("hitler", "nazi"), function($req) {
+  return Response::build($req, array("text" => "D:"));
+});
+
+var_dump($bot->commands);
 
 $bot->run();

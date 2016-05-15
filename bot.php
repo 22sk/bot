@@ -7,9 +7,19 @@
 class Bot {
   /** @var Request  */ public $req;
   /** @var Response */ public $res;
-  /** @var array    */ private $commands;
 
-  const NAME = "sk22testbot";
+  /** @var array */ private $commands = array();
+  /** @var array */ private $keywords = array();
+  /** @var array */ private $inlines  = array();
+
+  private $me;
+
+  public function __get($name) { return $this->$name; }
+
+  public function me($update = false) {
+    if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", array()))->result;
+    return $this->me;
+  }
 
   /**
    * Creates new Bot.
@@ -21,19 +31,25 @@ class Bot {
     $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
   }
 
+  const COMMAND = "commands",
+        KEYWORD = "keywords",
+        INLINE  = "inlines";
   /**
-   * @param string $command
+   * @param string $name
+   * @see Bot::COMMAND, Bot::KEYWORD, Bot::INLINE
+   * @param string|array $register
    * @param callable $callable
    */
-  public function register($command, $callable) {
-    $this->commands[$command] = $callable;
+  public function register($name, $register, $callable) {
+    if(gettype($register) == 'array') foreach($register as $r) $this->register($name, $r, $callable);
+    $array = &$this->$name;
+    $array[$register] = $callable;
   }
 
   public function run() {
-    if($this->req->command->valid and array_key_exists($this->req->command->cmd, $this->commands)
-       and (empty($this->req->command->bot) or $this->req->command->bot == self::NAME)) {
-      $this->send($this->commands[$this->req->command->cmd]($this->req));
-    }
+    if($res = Command::process($this)) $this->send($res);
+    if($res = Keyword::process($this)) $this->send($res);
+    if($res =  Inline::process($this)) $this->send($res);
   }
 
   /**
@@ -58,14 +74,8 @@ class Bot {
 
 class Command {
   /**
-   * Used to separate a Message into an array containing all necessary information.
-   * @param string $msg
-   *   Message to generate the Command from.
-   * @param bool $del_message
-   *   Set to true to not include the Message object in the returned array.
-   *   Is always true if a string is passed.
-   * @return array|bool
-   *   Array including all information or false if cannot be parsed to a Command.
+   * Used to separate a message into an Command containing all necessary information.
+   * @param string $msg Message to generate the Command from.
    */
   public $valid;
   public $text, $cmd, $bot, $args;
@@ -81,19 +91,62 @@ class Command {
       $this->valid = true;
     }
   }
+
+  /**
+   * @param Bot $bot
+   * @return Response|false
+   */
+  public static function process($bot) {
+    if($bot->req->command->valid and array_key_exists($bot->req->command->cmd, $bot->commands)
+      and (empty($bot->req->command->bot) or $bot->req->command->bot == $bot->me()->username)) {
+      return $bot->commands[$bot->req->command->cmd]($bot->req);
+    } return false;
+  }
+}
+
+class Keyword {
+  private $keywords;
+  public function __construct($keyword, $_) {
+    foreach(func_get_args() as $word) array_push($this->keywords, $word);
+  }
+
+  /**
+   * @param Bot $bot
+   * @return Response|false
+   */
+  public static function process($bot) {
+    foreach($bot->keywords as $word => $callable) {
+      if(stristr($bot->req->message->text, $word)) return $callable($bot->req);
+    } return false;
+  }
+}
+
+class Inline {
+  /**
+   * @param Bot $bot
+   * @return Response|false
+   */
+  public static function process($bot) {
+    preg_match("/^\w+/", $bot->req->inline_query->query, $match);
+    $word = $match[0];
+    foreach($bot->inlines as $inline => $callable) {
+      if(strcasecmp($word, $inline)) $callable($bot->req);
+    } if(array_key_exists('default', $bot->inlines)) $bot->inlines['default']($bot->req);
+    return false;
+  }
 }
 
 /** @see https://core.telegram.org/bots/api#available-methods */
 class Response {
-  const TO_CHAT   = 0,
-        TO_SENDER = 1,
-        REPLY_TO_MESSAGE = 2,
-        REPLY_IN_GROUP = 3,
-        REPLY_TO_REPLIED = 4;
+  public $method;
+  public $content;
+
   public function __construct($method, $content) {
     $this->method = $method;
     $this->content = $content;
   }
+
+  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
 
   /**
    * @see Response::TO_CHAT, Response::TO_SENDER, Response::REPLY_TO_MESSAGE, Response::REPLY_TO_REPLIED
@@ -107,7 +160,7 @@ class Response {
    */
   public static function build($req, $add = null, $method = "sendMessage",
                                $type = Response::REPLY_IN_GROUP, $bypass = true) {
-    $array = array ();
+    $array = array();
     switch ($type) {
       case self::REPLY_TO_MESSAGE:
         $array['reply_to_message_id'] = $req->message->message_id;
@@ -128,9 +181,6 @@ class Response {
     $array = array_merge($array, $add);
     return new Response($method, $array);
   }
-
-  public $method;
-  public $content;
 }
 
 /** @see https://core.telegram.org/bots/api#update */
@@ -165,3 +215,4 @@ function obj2obj($instance, $className) {
     strstr(strstr(serialize($instance), '"'), ':')
   ));
 }
+
