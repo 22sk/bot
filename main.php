@@ -93,4 +93,22 @@ $bot->register("inline", "default", function($req) {
   ));
 });
 
+$bot->register("inline", "hello", function($req) {
+  return new Response("answerInlineQuery", array(
+    "inline_query_id" => $req->inline_query->id,
+    "results" => array(
+      array(
+        "type" => "article",
+        "id" => uniqid(),
+        "title" => "Hello World!",
+        "input_message_content" => array(
+          "message_text" => "Hello World",
+          "parse_mode" => "Markdown"
+        )
+      )
+    )
+  ));
+});
+
+
 $bot->run();
