@@ -18,8 +18,8 @@ $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")))
 $commands = array (
   "start" => array(
     "callable" => function($req) {
-      return (new Message("I'm here! ".json_decode("\ud83d\ude04")." What can I do for you? "
-        .json_decode("\ud83d\ude0a")."\n". "Check out /help if you want to know more! ".json_decode("\ud83d\ude09"),
+      return (new Message("I'm here! 😄 What can I do for you? 😊\n".
+      "Check out /help if you want to know more! 😁",
         $req))->parse_mode("Markdown");
     },
     "help" => "Prints the welcome message"
@@ -112,6 +112,5 @@ Inline::register($bot, "hello", function($req) {
     )
   ));
 });
-
 
 $bot->run();
