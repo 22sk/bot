@@ -27,7 +27,9 @@ $commands = array (
   ),
   "ping" => array(
     "callable" => function($req) {
-      return Response::build($req, array("text" => "Hauptsache schneller als @Levon30bot! ;D"));
+      return Response::build($req, array(
+        "text" => "*Pong!* ".(time()-$req->message->date)."s", "parse_mode" => "Markdown"
+      ));
     },
     "help" => "Pong!"
   ),
@@ -67,6 +69,13 @@ $commands = array (
       ));
     },
     "help" => "Prints information about this bot's creator and it's source code"
+  ),
+
+  "debug" => array(
+    "callable" => function($req) use($bot) {
+      $bot->send(Response::build($req, array("text" => "Hey!")));
+      return Response::build($req, array("text" => "```\n".$bot->echo."\n```"));
+    }
   )
 );
 
