@@ -3,27 +3,11 @@
 /**
  * @author Samuel Kaiser <samuel.kaiser01@gmail.com>
  * @since 14.05.2016
- *
- * @property Request  $req
- * @property Response $res
  */
 if(file_exists('addons.php')) include('addons.php');
 
 class Bot {
-  /** @var Request  */ private $req;
-  /** @var Response */ private $res;
-
-  public function __get($name) { return $this->$name; }
-
-  /**
-   * Get the bot's user data
-   * @param bool $update Declare if you want the bot to update the existing data
-   * @return stdClass
-   */
-  public function me($update = false) {
-    if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", array()))->result;
-    return $this->me;
-  } private $me;
+  public $req;
 
   /**
    * Creates a new Bot.
@@ -39,7 +23,7 @@ class Bot {
       foreach($this->command as $name => $value) {
         $text.="/".$name.(isset($value['help']) ? ": ".$value['help'] : '')."\n";
       }
-      return Response::build($req, array(
+      return Builder::build($req, array(
         "text" => $text,
         "parse_mode" => "Markdown"
       ));
@@ -47,13 +31,14 @@ class Bot {
   }
 
   /**
-   * @param string $type Processable's class name
-   * @param string|array $name
-   * @param callable $callable
-   * @param string|null $help
-   * @param bool $hidden
-   * @return bool False if class does not exist
+   * Get the bot's user data
+   * @param bool $update Declare if you want the bot to update the existing data
+   * @return stdClass
    */
+  public function me($update = false) {
+    if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", array()))->result;
+    return $this->me;
+  }
 
   public function run() {
     $this->echo = array("request" => $this->req);
@@ -63,7 +48,7 @@ class Bot {
         /** @var Processable $class */
         $res = $class::process($this);
         // $res = forward_static_call(array($class, 'process'), $this);
-        if($this->res = $res instanceof Response) $this->send($res);
+        if($res instanceof Response) $this->send($res);
       }
     }
     echo json_encode($this->echo, JSON_PRETTY_PRINT);
@@ -92,53 +77,6 @@ class Bot {
   }
 }
 
-/** @see https://core.telegram.org/bots/api#available-methods */
-class Response {
-  public $method, $content;
-
-  public function __construct($method, $content) {
-    $this->method = $method;
-    $this->content = $content;
-  }
-
-  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
-
-  /**
-   * @see Response::TO_CHAT, Response::TO_SENDER, Response::REPLY_TO_MESSAGE, Response::REPLY_TO_REPLIED
-   * @param Request $req    The Request to generate the Response from
-   * @param array   $add    Data to add to the generated Response
-   * @param string  $method The API method that should be used
-   * @param integer $type   Type of response (class constants)
-   * @param bool    $bypass
-   *   If reply_to_message is non-existent, false is returned, if bypass is set to false.
-   *   Else, the original message is used instead.
-   * @return Response
-   */
-  // TODO: Ability to build other types of responses
-  public static function build($req, $add = null, $method = "sendMessage",
-                               $type = Response::REPLY_IN_GROUP, $bypass = true) {
-    $array = array();
-    switch ($type) {
-      case self::REPLY_TO_MESSAGE:
-        $array['reply_to_message_id'] = $req->message->message_id;
-        $array['chat_id'] = $req->message->chat->id;
-        break;
-      case self::REPLY_IN_GROUP:
-        if($req->message->chat->type != 'private') $array['reply_to_message_id'] = $req->message->message_id;
-        $array['chat_id'] = $req->message->chat->id;
-        break;
-      case self::REPLY_TO_REPLIED:
-        if(isset($req->message->reply_to_message)) $array['reply_to_message_id'] = $req->message->reply_to_message->id;
-        else if(!$bypass) return false;
-        $array['chat_id'] = $req->message->chat->id;
-        break;
-      case self::TO_CHAT:   $array['chat_id'] = $req->message->chat->id; break;
-      case self::TO_SENDER: $array['chat_id'] = $req->message->from->id; break;
-    }
-    $array = array_merge($array, $add);
-    return new Response($method, $array);
-  }
-}
 
 /** @see https://core.telegram.org/bots/api#update */
 class Request {
@@ -169,6 +107,109 @@ function obj2obj($instance, $className) {
   ));
 }
 
+/** @see https://core.telegram.org/bots/api#available-methods */
+class Response {
+  public $method, $content;
+
+  public function __construct($method, $content) {
+    $this->method = $method;
+    $this->content = $content;
+  }
+
+  public function __call($name, $args) { $this->content[$name] = $args[0]; return $this; }
+}
+/*
+const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
+**
+   * @see Response::TO_CHAT, Response::TO_SENDER, Response::REPLY_TO_MESSAGE, Response::REPLY_TO_REPLIED
+   * @param Request $req    The Request to generate the Response from
+   * @param array   $add    Data to add to the generated Response
+   * @param string  $method The API method that should be used
+   * @param integer $type   Type of response (class constants)
+   * @param bool    $bypass
+   *   If reply_to_message is non-existent, false is returned, if bypass is set to false.
+   *   Else, the original message is used instead.
+   * @return Response
+   *
+// TODO: Ability to build other types of responses
+public static function build($req, $add = null, $method = "sendMessage",
+                             $type = Response::REPLY_IN_GROUP, $bypass = true) {
+  $array = array();
+  switch ($type) {
+    case self::REPLY_TO_MESSAGE:
+      $array['reply_to_message_id'] = $req->message->message_id;
+      $array['chat_id'] = $req->message->chat->id;
+      break;
+    case self::REPLY_IN_GROUP:
+      if($req->message->chat->type != 'private') $array['reply_to_message_id'] = $req->message->message_id;
+      $array['chat_id'] = $req->message->chat->id;
+      break;
+    case self::REPLY_TO_REPLIED:
+      if(isset($req->message->reply_to_message)) $array['reply_to_message_id'] = $req->message->reply_to_message->id;
+      else if(!$bypass) return false;
+      $array['chat_id'] = $req->message->chat->id;
+      break;
+    case self::TO_CHAT:   $array['chat_id'] = $req->message->chat->id; break;
+    case self::TO_SENDER: $array['chat_id'] = $req->message->from->id; break;
+  }
+  $array = array_merge($array, $add);
+  return new Response($method, $array);
+} */
+
+/**
+ * @method chat_id(integer $chat_id)
+ * @method text(string $text)
+ * @method parse_mode(string $parse_mode)
+ * @method disable_web_page_preview(bool $disable_web_page_preview)
+ * @method disable_notification(bool $disable_notification)
+ * @method reply_to_message_id(integer $reply_to_message_id)
+ * @method reply_markup(array $reply_markup)
+ */
+class Message extends Response {
+  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
+
+  /**
+   * Message constructor.
+   * @param $text
+   * @param Request $req Needed, as chat_id is not given
+   * @param array $add Additional data
+   */
+  public function __construct($text, $req = null, $add = null) {
+    parent::__construct($this->method, $add);
+    $this->content['text'] = $text;
+    $this->req = $req;
+    $this->to(self::REPLY_IN_GROUP);
+
+  }
+
+  /** @param integer $mode */
+  public function to($mode) {
+    if(!isset($this->req->message)) return false;
+    $message = $this->req->message;
+    switch ($mode) {
+      case self::REPLY_TO_MESSAGE:
+        $this->content['reply_to_message_id'] = $message->message_id;
+        $this->content['chat_id'] = $message->chat->id;
+        break;
+      case self::REPLY_IN_GROUP:
+        if($message->chat->type != 'private') $this->content['reply_to_message_id'] = $message->message_id;
+        $this->content['chat_id'] = $message->chat->id;
+        break;
+      case self::REPLY_TO_REPLIED:
+        if(isset($message->reply_to_message))
+          $this->content['reply_to_message_id'] = $message->reply_to_message->id;
+        else $this->content['chat_id'] = $message->chat->id;
+        break;
+      case self::TO_CHAT:   $this->content['chat_id'] = $message->chat->id; break;
+      case self::TO_SENDER: $array['chat_id'] = $message->from->id; break;
+    } return $this;
+  }
+
+  public $method = "sendMessage";
+  public function method($method) {
+    $this->method = $method; return $this;
+  }
+}
 
 abstract class Processable {
   /**
@@ -221,7 +262,7 @@ class Command extends Processable {
     $command->cmd = strtolower($command->cmd);
     if($command->valid
       and array_key_exists($command->cmd, $bot->command)
-      and (empty($command->bot) or $command->bot == $bot->me()->username)) {
+      and (empty($command->bot) or strcasecmp($command->bot, $bot->me()->username) == 0)) {
       return $bot->command[$command->cmd]['callable']($bot->req);
     } return false;
   }

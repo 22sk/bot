@@ -18,74 +18,53 @@ $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")))
 $commands = array (
   "start" => array(
     "callable" => function($req) {
-      return Response::build($req, array(
-        "text" => "I'm here! ".json_decode("\ud83d\ude04")." What can I do for you? ".json_decode("\ud83d\ude0a")."\n".
-        "Check out /help if you want to know more! ".json_decode("\ud83d\ude09")
-      ));
+      return (new Message("I'm here! ".json_decode("\ud83d\ude04")." What can I do for you? "
+        .json_decode("\ud83d\ude0a")."\n". "Check out /help if you want to know more! ".json_decode("\ud83d\ude09"),
+        $req))->parse_mode("Markdown");
     },
     "help" => "Prints the welcome message"
   ),
   "ping" => array(
     "callable" => function($req) {
-      return Response::build($req, array(
-        "text" => "*Pong!* ".(time()-$req->message->date)."s", "parse_mode" => "Markdown"
-      ));
-    },
-    "help" => "Pong!"
-  ),
-  "pong" => array(
-    "callable" => function($req) {
-      return Response::build($req, array(
-        "text" => "*Ping!* ".($req->message->date-time())."s", "parse_mode" => "Markdown"
-      ));
+      return (new Message("*Pong!* ".(time()-$req->message->date)."s", $req))->parse_mode("Markdown");
     },
     "help" => "Pong!"
   ),
   "hello" => array(
     "callable" => function($req) {
-      return Response::build($req, array("text" => "hello you. :3"));
+      return (new Message("hello you. :3", $req))->parse_mode("Markdown");
     },
     "help" => "Hey!"
   ),
 
   "date" => array(
     "callable" => function($req) {
-      return Response::build($req, array (
-        "text" => "I'm glad you asked! It's ".date("l").", the ".date('d').date('S')." of ".date('F')." ".date('Y')
-          .", ".date('H').":".date('i').":".date('s'),
-        "chat_id" => $req->message->chat->id
-      ));
+      return new Message("I'm glad you asked! It's ".date("l").", the "
+        .date('d').date('S')." of ".date('F')." ".date('Y') .", ".date('H').":".date('i').":".date('s'), $req);
     },
     "help" => "Prints the current date and time"
   ),
 
   "echo" => array(
     "callable" => function($req) {
-      return Response::build($req, array (
-        "text" => $req->command->args,
-        "parse_mode" => "Markdown"
-      ));
+      return (new Message($req->command->args, $req))->parse_mode("Markdown");
     },
     "help" => "I'm a parrot!"
   ),
 
   "about" => array(
     "callable" => function($req) {
-      return Response::build($req, array(
-        "text" => "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
-        "parse_mode" => "Markdown"
-      ));
+      return (new Message(
+        "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
+        $req))->parse_mode("Markdown");
     },
     "help" => "Prints information about this bot's creator and it's source code"
   ),
 
   "debug" => array(
     "callable" => function($req) use($bot) {
-      $bot->send(Response::build($req, array("text" => "Hey!")));
-      return Response::build($req, array(
-        "text" => "```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```",
-        "parse_mode" => "Markdown"
-      ));
+      $bot->send(new Message("Hey!", $req));
+      return (new Message("```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```", $req))->parse_mode("Markdown");
     },
     "help" => "Prints all information received from and sent to the Telegram API"
   )
@@ -95,7 +74,7 @@ foreach($commands as $key => $command) Command::register($bot, $key, $command['c
   isset($command['help']) ? $command['help'] : null, isset($command['hidden']) ? $command['hidden'] : false);
 
 Keyword::register($bot, array("hitler", "nazi"), function($req) {
-  return Response::build($req, array("text" => "D:"));
+  return new Message("D:", $req);
 });
 
 Inline::register($bot, "default", function($req) {
