@@ -20,7 +20,7 @@ $commands = array (
     "callable" => function($req) {
       return Response::build($req, array(
         "text" => "I'm here! ".json_decode("\ud83d\ude04")." What can I do for you? ".json_decode("\ud83d\ude0a")."\n".
-        "Check out /help want to know more! ".json_decode("\ud83d\ude09")
+        "Check out /help if you want to know more! ".json_decode("\ud83d\ude09")
       ));
     },
     "help" => "Prints the welcome message"
@@ -70,14 +70,15 @@ $commands = array (
   )
 );
 
-foreach($commands as $key => $command) $bot->register("command", $key, $command['callable'], $command['help']);
+foreach($commands as $key => $command) Command::register($bot, $key, $command['callable'], $command['help']);
 
-$bot->register("keyword", array("hitler", "nazi"), function($req) {
+Keyword::register($bot, array("hitler", "nazi"), function($req) {
   return Response::build($req, array("text" => "D:"));
 });
 
-$bot->register("inline", "default", function($req) {
+Inline::register($bot, "default", function($req) {
   return new Response("answerInlineQuery", array(
+    "cache_time" => 0,
     "inline_query_id" => $req->inline_query->id,
     "results" => array(
       array(
@@ -93,8 +94,9 @@ $bot->register("inline", "default", function($req) {
   ));
 });
 
-$bot->register("inline", "hello", function($req) {
+Inline::register($bot, "hello", function($req) {
   return new Response("answerInlineQuery", array(
+    "cache_time" => 0,
     "inline_query_id" => $req->inline_query->id,
     "results" => array(
       array(
