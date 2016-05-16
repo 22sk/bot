@@ -62,9 +62,14 @@ class Bot {
 
   public function run() {
     $this->echo = array("request" => $this->req);
-    if($res = Command::process($this)) $this->send($res);
-    if($res = Keyword::process($this)) $this->send($res);
-    if($res =  Inline::process($this)) $this->send($res);
+    // Execute process() for all classes that implement Processable
+    foreach($classes = get_declared_classes() as $class) {
+      $reflect = new ReflectionClass($class);
+      if($reflect->implementsInterface('Processable')) {
+        $res = forward_static_call(array($class, 'process'), $this);
+        if($res instanceof Response) $this->send($res);
+      }
+    }
     echo json_encode($this->echo, JSON_PRETTY_PRINT);
   }
 
