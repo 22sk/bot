@@ -74,7 +74,7 @@ $commands = array (
   "debug" => array(
     "callable" => function($req) use($bot) {
       $bot->send(Response::build($req, array("text" => "Hey!")));
-      return Response::build($req, array("text" => "```\n".$bot->echo."\n```"));
+      return Response::build($req, array("text" => "```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```"));
     }
   )
 );
