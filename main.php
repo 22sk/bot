@@ -70,13 +70,13 @@ $commands = array (
   )
 );
 
-foreach($commands as $key => $command) $bot->register(Bot::COMMAND, $key, $command['callable'], $command['help']);
+foreach($commands as $key => $command) $bot->register("command", $key, $command['callable'], $command['help']);
 
-$bot->register(Bot::KEYWORD, array("hitler", "nazi"), function($req) {
+$bot->register("keyword", array("hitler", "nazi"), function($req) {
   return Response::build($req, array("text" => "D:"));
 });
 
-$bot->register(Bot::INLINE, "default", function($req) {
+$bot->register("inline", "default", function($req) {
   return new Response("answerInlineQuery", array(
     "inline_query_id" => $req->inline_query->id,
     "results" => array(

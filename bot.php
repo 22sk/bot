@@ -8,9 +8,7 @@ class Bot {
   /** @var Request  */ public $req;
   /** @var Response */ public $res;
 
-  /** @var array */ private $commands = array();
-  /** @var array */ private $keywords = array();
-  /** @var array */ private $inlines  = array();
+  /** @var array */ private $processables;
 
   private $me;
 
@@ -30,9 +28,9 @@ class Bot {
     $this->url = $url;
     $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
 
-    $this->register(Bot::COMMAND, "help", function($req) {
+    $this->register("command", "help", function($req) {
       $text = "All commands are listed below:\n";
-      foreach($this->commands as $name => $value) {
+      foreach($this->processables['command'] as $name => $value) {
         $text.="/".$name.(isset($value['help']) ? ": ".$value['help'] : '')."\n";
       }
       return Response::build($req, array(
@@ -42,22 +40,24 @@ class Bot {
     }, "Prints this message");
   }
 
+
   const COMMAND = "commands",
         KEYWORD = "keywords",
         INLINE  = "inlines";
   /**
-   * @param string $name
-   * @see Bot::COMMAND, Bot::KEYWORD, Bot::INLINE
-   * @param string|array $register
+   * @param string $type Processable's class name
+   * @param string|array $name
    * @param callable $callable
    * @param string|null $help
    */
-  public function register($name, $register, $callable, $help = null) {
-    if(gettype($register) != 'array') {
-      $array = &$this->$name;
-      $array[$register]['callable'] = $callable;
-      $array[$register]['help']     = $help;
-    } else foreach($register as $r) $this->register($name, $r, $callable, $help);
+  public function register($type, $name, $callable, $help = null) {
+    if(!class_exists($type)) return false;
+    if(gettype($name) != 'array') {
+      $array = &$this->processables[$type];
+      $array[$name]['callable'] = $callable;
+      $array[$name]['help']     = $help;
+    } else foreach($name as $r) $this->register($type, $r, $callable, $help);
+    return true;
   }
 
   public function run() {
@@ -87,75 +87,6 @@ class Bot {
     $this->echo['responses']['response'][] = $response->content;
     $this->echo['responses']['result'][] = $result;
     return $result;
-  }
-}
-
-class Command {
-  /**
-   * Used to separate a message into an Command containing all necessary information.
-   * @param string $msg Message to generate the Command from.
-   */
-  public $valid;
-  public $text, $cmd, $bot, $args;
-  
-  public function __construct($msg) {
-    $keys = array('text', 'cmd', 'bot', 'args');
-    // Writing the command's information into $array
-    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
-    $this->valid = false;
-    if (!empty($array)) {
-      // Setting object's values
-      for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
-      $this->valid = true;
-    }
-  }
-
-  /**
-   * @param Bot $bot
-   * @return Response|false
-   */
-  public static function process($bot) {
-    if(!isset($bot->req->message)) return false;
-    if($bot->req->command->valid and array_key_exists($bot->req->command->cmd, $bot->commands)
-      and (empty($bot->req->command->bot) or $bot->req->command->bot == $bot->me()->username)) {
-      return $bot->commands[$bot->req->command->cmd]['callable']($bot->req);
-    } return false;
-  }
-}
-
-class Keyword {
-  private $keywords;
-  public function __construct($keyword, $_) {
-    foreach(func_get_args() as $word) array_push($this->keywords, $word);
-  }
-
-  /**
-   * @param Bot $bot
-   * @return Response|false
-   */
-  public static function process($bot) {
-    if(!isset($bot->req->message)) return false;
-    foreach($bot->keywords as $word => $value) {
-      if(stristr($bot->req->message->text, $word)) return $value['callable']($bot->req);
-    } return false;
-  }
-}
-
-class Inline {
-  /**
-   * @param Bot $bot
-   * @return Response|false
-   */
-  public static function process($bot) {
-    if(empty($bot->req->inline_query)) return false;
-    preg_match("/^\w+/", $bot->req->inline_query->query, $match);
-    $word = $match[0];
-    foreach($bot->inlines as $inline => $value) {
-      if(strcasecmp($word, $inline)) return $value['callable']($bot->req);
-    } if(array_key_exists('default', $bot->inlines)) {
-      return $bot->inlines['default']['callable']($bot->req);
-    }
-    return false;
   }
 }
 
@@ -237,5 +168,71 @@ function obj2obj($instance, $className) {
     $className,
     strstr(strstr(serialize($instance), '"'), ':')
   ));
+}
+
+interface Processable {
+  /**
+   * @param Bot $bot
+   * @return Response|false
+   */
+  public static function process($bot);
+}
+
+class Command implements Processable {
+  /**
+   * Used to separate a message into an Command containing all necessary information.
+   * @param string $msg Message to generate the Command from.
+   */
+  public $valid;
+  public $text, $cmd, $bot, $args;
+
+  public function __construct($msg) {
+    $keys = array('text', 'cmd', 'bot', 'args');
+    // Writing the command's information into $array
+    preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
+    $this->valid = false;
+    if (!empty($array)) {
+      // Setting object's values
+      for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
+      $this->valid = true;
+    }
+  }
+
+  public static function process($bot) {
+    if(!isset($bot->req->message)) return false;
+    if($bot->req->command->valid and array_key_exists($bot->req->command->cmd, $bot->processables['command'])
+      and (empty($bot->req->command->bot) or $bot->req->command->bot == $bot->me()->username)) {
+      return $bot->processables['command'][$bot->req->command->cmd]['callable']($bot->req);
+    } return false;
+  }
+}
+
+class Keyword implements Processable {
+  private $keywords;
+  public function __construct($keyword, $_) {
+    foreach(func_get_args() as $word) array_push($this->keywords, $word);
+  }
+
+  public static function process($bot) {
+    if(!isset($bot->req->message)) return false;
+    foreach($bot->processables['keyword'] as $word => $value) {
+      if(stristr($bot->req->message->text, $word)) return $value['callable']($bot->req);
+    } return false;
+  }
+}
+
+class Inline implements Processable {
+
+  public static function process($bot) {
+    if(empty($bot->req->inline_query)) return false;
+    preg_match("/^\w+/", $bot->req->inline_query->query, $match);
+    $word = $match[0];
+    foreach($bot->processables['inline'] as $inline => $value) {
+      if(strcasecmp($word, $inline)) return $value['callable']($bot->req);
+    } if(array_key_exists('default', $bot->inlines)) {
+      return $bot->processables['inline']['default']['callable']($bot->req);
+    }
+    return false;
+  }
 }
 
