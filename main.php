@@ -11,7 +11,7 @@ if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')){
   http_response_code(403); exit("Unauthorized URL");
 }
 
-require_once("bot.php");
+require("bot.php");
 
 $bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")));
 
