@@ -33,6 +33,14 @@ $commands = array (
     },
     "help" => "Pong!"
   ),
+  "pong" => array(
+    "callable" => function($req) {
+      return Response::build($req, array(
+        "text" => "*Ping!* ".($req->message->date-time())."s", "parse_mode" => "Markdown"
+      ));
+    },
+    "help" => "Pong!"
+  ),
   "hello" => array(
     "callable" => function($req) {
       return Response::build($req, array("text" => "hello you. :3"));
@@ -78,11 +86,13 @@ $commands = array (
         "text" => "```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```",
         "parse_mode" => "Markdown"
       ));
-    }
+    },
+    "help" => "Prints all information received from and sent to the Telegram API"
   )
 );
 
-foreach($commands as $key => $command) Command::register($bot, $key, $command['callable'], $command['help']);
+foreach($commands as $key => $command) Command::register($bot, $key, $command['callable'],
+  isset($command['help']) ? $command['help'] : null, isset($command['hidden']) ? $command['hidden'] : false);
 
 Keyword::register($bot, array("hitler", "nazi"), function($req) {
   return Response::build($req, array("text" => "D:"));
