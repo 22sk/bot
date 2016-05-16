@@ -68,7 +68,8 @@ class Bot {
     $url = $this->url . $response->method;
     $result = json_decode(file_get_contents($url, false, $context));
     $i = isset($this->echo['responses']) ? count($this->echo['responses']) : 0;
-    $this->echo['responses'][$i]['response'] = $response->content;
+    $this->echo['responses'][$i]['response']['method'] = $response->method;
+    $this->echo['responses'][$i]['response']['content'] = $response->content;
     $this->echo['responses'][$i]['result'] = $result;
     return $result;
   }
