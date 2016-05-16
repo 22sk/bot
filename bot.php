@@ -23,10 +23,7 @@ class Bot {
       foreach($this->command as $name => $value) {
         $text.="/".$name.(isset($value['help']) ? ": ".$value['help'] : '')."\n";
       }
-      return Builder::build($req, array(
-        "text" => $text,
-        "parse_mode" => "Markdown"
-      ));
+      return (new Message($text, $req))->parse_mode("Markdown");
     }, "Prints this message");
   }
 
