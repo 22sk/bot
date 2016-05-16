@@ -3,12 +3,16 @@
 /**
  * @author Samuel Kaiser <samuel.kaiser01@gmail.com>
  * @since 14.05.2016
+ *
+ * @property Request  $req
+ * @property Response $res
+ * @property array $processables
  */
 class Bot {
-  /** @var Request  */ public $req;
-  /** @var Response */ public $res;
+  /** @var Request  */ private $req;
+  /** @var Response */ private $res;
 
-  /** @var array */ private $processables;
+  /** @var array */    private $processables;
 
   private $me;
 
@@ -49,6 +53,7 @@ class Bot {
    * @param string|array $name
    * @param callable $callable
    * @param string|null $help
+   * @return bool False if class does not exist
    */
   public function register($type, $name, $callable, $help = null) {
     if(!class_exists($type)) return false;
@@ -67,7 +72,7 @@ class Bot {
       $reflect = new ReflectionClass($class);
       if($reflect->implementsInterface('Processable')) {
         $res = forward_static_call(array($class, 'process'), $this);
-        if($res instanceof Response) $this->send($res);
+        if($this->res = $res instanceof Response) $this->send($res);
       }
     }
     echo json_encode($this->echo, JSON_PRETTY_PRINT);
@@ -89,8 +94,9 @@ class Bot {
     ));
     $url = $this->url . $response->method;
     $result = json_decode(file_get_contents($url, false, $context));
-    $this->echo['responses']['response'][] = $response->content;
-    $this->echo['responses']['result'][] = $result;
+    $i = isset($this->echo['responses']) ? count($this->echo['responses']) : 0;
+    $this->echo['responses'][$i]['response'] = $response->content;
+    $this->echo['responses'][$i]['result'] = $result;
     return $result;
   }
 }
@@ -109,14 +115,16 @@ class Response {
 
   /**
    * @see Response::TO_CHAT, Response::TO_SENDER, Response::REPLY_TO_MESSAGE, Response::REPLY_TO_REPLIED
-   * @param integer $type   Type of response (class constants)
    * @param Request $req    The Request to generate the Response from
    * @param array   $add    Data to add to the generated Response
+   * @param string  $method The API method that should be used
+   * @param integer $type   Type of response (class constants)
    * @param bool    $bypass
    *   If reply_to_message is non-existent, false is returned, if bypass is set to false.
    *   Else, the original message is used instead.
    * @return Response
    */
+  // TODO: Ability to build other types of responses
   public static function build($req, $add = null, $method = "sendMessage",
                                $type = Response::REPLY_IN_GROUP, $bypass = true) {
     $array = array();
