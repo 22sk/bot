@@ -67,7 +67,7 @@ $commands = array (
       return (new Message("```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```", $req))->parse_mode("Markdown");
     },
     "help" => "Prints all information received from and sent to the Telegram API"
-  )
+  ),
 );
 
 foreach($commands as $key => $command) Command::register($bot, $key, $command['callable'],
@@ -77,40 +77,35 @@ Keyword::register($bot, array("hitler", "nazi"), function($req) {
   return new Message("D:", $req);
 });
 
-Inline::register($bot, "default", function($req) {
-  return new Response("answerInlineQuery", array(
-    "cache_time" => 0,
-    "inline_query_id" => $req->inline_query->id,
-    "results" => array(
-      array(
-        "type" => "article",
-        "id" => uniqid(),
-        "title" => "Hey!",
-        "input_message_content" => array(
-          "message_text" => $req->inline_query->query,
-          "parse_mode" => "Markdown"
-        )
+InlineQuery::register($bot, "default", function($req) {
+  return (new Inline(array(
+    array(
+      "type" => "article",
+      "id" => uniqid(),
+      "title" => "Hey!",
+      "input_message_content" => array(
+        "message_text" => $req->inline_query->query,
+        "parse_mode" => "Markdown"
       )
     )
-  ));
+  ), $req))->cache_time(0);
 });
 
-Inline::register($bot, "hello", function($req) {
-  return new Response("answerInlineQuery", array(
-    "cache_time" => 0,
-    "inline_query_id" => $req->inline_query->id,
-    "results" => array(
-      array(
-        "type" => "article",
-        "id" => uniqid(),
-        "title" => "Hello World!",
-        "input_message_content" => array(
-          "message_text" => "Hello World",
-          "parse_mode" => "Markdown"
-        )
+InlineQuery::register($bot, "hello", function($req) {
+  return (new Inline(array(
+    array(
+      "type" => "article",
+      "id" => uniqid(),
+      "title" => "Hello World!",
+      "input_message_content" => array(
+        "message_text" => "Hello World",
+        "parse_mode" => "Markdown"
       )
     )
-  ));
+  ), $req));
 });
 
+function str_clean($str) {
+  return preg_replace('/[^A-Za-z0-9\-\s]/', '', strtolower($str));
+}
 $bot->run();

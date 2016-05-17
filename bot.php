@@ -4,7 +4,9 @@
  * @author Samuel Kaiser <samuel.kaiser01@gmail.com>
  * @since 14.05.2016
  */
-if(file_exists('addons.php')) include('addons.php');
+
+include "addons".DIRECTORY_SEPARATOR."processables.php";
+include "addons".DIRECTORY_SEPARATOR."responses.php";
 
 class Bot {
   public $req;
@@ -129,12 +131,23 @@ class Response {
  * @method $this reply_to_message_id(integer $reply_to_message_id)
  * @method $this reply_markup(array $reply_markup)
  */
-class Sendable extends Response {
-  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
-
-  public function __construct($req, $add = null) {
+abstract class ResponseBuilder extends Response {
+  public $name;
+  public function __construct($value, $req, $add = null) {
     parent::__construct($this->method, $add);
     $this->req = $req;
+    if(!empty($this->name)) {
+      $name = $this->name;
+      $this->$name($value);
+    }
+  }
+}
+
+abstract class Sendable extends ResponseBuilder {
+  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
+
+  public function __construct($value, $req, $add = null) {
+    parent::__construct($value, $req, $add);
     $this->to(self::REPLY_IN_GROUP);
   }
 
@@ -162,6 +175,7 @@ class Sendable extends Response {
   }
 }
 
+
 /**
  * @method $this chat_id(integer $chat_id)
  * @method $this text(string $text)
@@ -170,18 +184,9 @@ class Sendable extends Response {
  */
 class Message extends Sendable {
   public $method = "sendMessage";
-
-  /**
-   * Message constructor.
-   * @param $text
-   * @param Request $req Needed, if chat_id is not given
-   * @param array $add Additional data
-   */
-  public function __construct($text, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->text($text);
-  }
+  public $name = "text";
 }
+
 /**
  * @method $this message_id(integer $message_id)
  * @method $this chat_id(integer $chat_id) Defaults to the chat where the request was sent from.
@@ -190,10 +195,8 @@ class Message extends Sendable {
  */
 class Forward extends Sendable {
   public $method = "forwardMessage";
-  public function __construct($message_id, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->message_id($message_id);
-  }
+  public $name = "message_id";
+
   public function to($mode) {
     $message = $this->req->message;
     switch($mode) {
@@ -262,7 +265,7 @@ class Command extends Processable {
 }
 
 
-class Inline extends Processable {
+class InlineQuery extends Processable {
   public static function register($bot, $name, $callable, $help = null, $hidden = false) {
     return parent::register($bot, $name, $callable, $help, $hidden);
   }

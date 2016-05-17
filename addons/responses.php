@@ -4,29 +4,13 @@
  * @since 16.05.2016
  */
 
-class Keyword extends Processable {
-  public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-    return parent::register($bot, $name, $callable, $help, $hidden);
-  }
-
-  public static function process($bot) {
-    if(empty($bot->req->message)) return false;
-    foreach($bot->keyword as $word => $value) {
-      if(stristr($bot->req->message->text, $word)) return $value['callable']($bot->req);
-    } return false;
-  }
-}
-
 /**
  * @method $this photo(string $photo)
  * @method $this caption(string $caption)
  */
 class Photo extends Sendable {
   public $method = "sendPhoto";
-  public function __construct($photo, $req, $add = null) {
-    parent::__construct($this->method, $add);
-    $this->photo($photo);
-  }
+  public $name = "photo";
 }
 
 /**
@@ -37,10 +21,7 @@ class Photo extends Sendable {
  */
 class Audio extends Sendable {
   public $method = "sendPhoto";
-  public function __construct($audio, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->audio($audio);
-  }
+  public $name = "audio";
 }
 
 /**
@@ -49,10 +30,7 @@ class Audio extends Sendable {
  */
 class Document extends Sendable {
   public $method = "sendDocument";
-  public function __construct($document, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->document($document);
-  }
+  public $name = "document";
 }
 
 /**
@@ -60,10 +38,7 @@ class Document extends Sendable {
  */
 class Sticker extends Sendable {
   public $method = "sendSticker";
-  public function __construct($sticker, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->sticker($sticker);
-  }
+  public $name = "sticker";
 }
 
 /**
@@ -75,10 +50,7 @@ class Sticker extends Sendable {
  */
 class Video extends Sendable {
   public $method = "sendVideo";
-  public function __construct($video, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->video($video);
-  }
+  public $name = "video";
 }
 
 /**
@@ -87,10 +59,7 @@ class Video extends Sendable {
  */
 class Voice extends Sendable {
   public $method = "sendVoice";
-  public function __construct($voice, $req, $add = null) {
-    parent::__construct($req, $add);
-    $this->voice($voice);
-  }
+  public $name = "voice";
 }
 
 /**
@@ -100,8 +69,32 @@ class Voice extends Sendable {
 class Location extends Sendable {
   public $method = "sendLocation";
   public function __construct($latitude, $longitude, $req, $add = null) {
-    parent::__construct($req, $add);
+    parent::__construct(null, $req);
     $this->latitude($latitude);
     $this->longitude($longitude);
+  }
+}
+
+/**
+ * @method $this results(array $results)
+ * @method $this inline_query_id(string $inline_query_id)
+ * @method $this cache_time(integer $cache_time)
+ * @method $this is_personal(bool $is_personal)
+ * @method $this next_offset(string $next_offset)
+ * @method $this switch_pm_text(string $switch_pm_text)
+ * @method $this switch_pm_parameter(string $switch_pm_parameter)
+ */
+class Inline extends ResponseBuilder {
+  const TO_SENDER = 0;
+  public $method = "answerInlineQuery";
+  public $name = "results";
+  public function __construct($results, $req, $add = null) {
+    parent::__construct($results, $add);
+    $this->to(self::TO_SENDER);
+  }
+  public function to($mode) {
+    switch($mode) {
+      case self::TO_SENDER: $this->inline_query_id($this->req->inline_query->id); break;
+    } return $this;
   }
 }
