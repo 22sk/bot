@@ -5,7 +5,7 @@
  * @since 14.05.2016
  */
 
-include "addons".DIRECTORY_SEPARATOR."processables.php";
+include "addons" . DIRECTORY_SEPARATOR . "processors.php";
 include "addons".DIRECTORY_SEPARATOR."responses.php";
 
 class Bot {
@@ -43,8 +43,8 @@ class Bot {
     $this->echo = array("request" => $this->req);
     // Execute process() for all classes that implement Processable
     foreach($classes = get_declared_classes() as $class) {
-      if(is_subclass_of($class, 'Processable')) {
-        /** @var Processable $class */
+      if(is_subclass_of($class, 'Processor')) {
+        /** @var Processor $class */
         $res = $class::process($this);
         // $res = forward_static_call(array($class, 'process'), $this);
         if($res instanceof Response) $this->send($res);
@@ -125,89 +125,8 @@ class Response {
   public function __call($name, $args) { $this->content[$name] = $args[0]; return $this; }
   public function __set($name, $value) { $this->content[$name] = $value; }
 }
-/**
- * @method $this chat_id(integer $chat_id)
- * @method $this disable_notification(bool $disable_notification)
- * @method $this reply_to_message_id(integer $reply_to_message_id)
- * @method $this reply_markup(array $reply_markup)
- */
-abstract class ResponseBuilder extends Response {
-  public $name;
-  public function __construct($value, $req, $add = null) {
-    parent::__construct($this->method, $add);
-    $this->req = $req;
-    if(!empty($this->name)) {
-      $name = $this->name;
-      $this->$name($value);
-    }
-  }
-}
 
-abstract class Sendable extends ResponseBuilder {
-  const REPLY_IN_GROUP = 0, TO_CHAT = 1, REPLY_TO_MESSAGE = 2, REPLY_TO_REPLIED = 3, TO_SENDER = 4;
-
-  public function __construct($value, $req, $add = null) {
-    parent::__construct($value, $req, $add);
-    $this->to(self::REPLY_IN_GROUP);
-  }
-
-  /** @param integer $mode */
-  public function to($mode) {
-    if(!isset($this->req->message)) return false;
-    $message = &$this->req->message;
-    switch ($mode) {
-      case self::REPLY_TO_MESSAGE:
-        $this->reply_to_message_id($message->message_id);
-        $this->chat_id($message->chat->id);
-        break;
-      case self::REPLY_IN_GROUP:
-        if($message->chat->type != 'private') $this->reply_to_message_id($message->message_id);
-        $this->chat_id($message->chat->id);
-        break;
-      case self::REPLY_TO_REPLIED:
-        if(isset($message->reply_to_message))
-          $this->reply_to_message_id($message->reply_to_message->id);
-        else $this->chat_id($message->chat->id);
-        break;
-      case self::TO_CHAT:   $this->chat_id($message->chat->id); break;
-      case self::TO_SENDER: $this->chat_id($message->from->id); break;
-    } return $this;
-  }
-}
-
-
-/**
- * @method $this chat_id(integer $chat_id)
- * @method $this text(string $text)
- * @method $this parse_mode(string $parse_mode)
- * @method $this disable_web_page_preview(bool $disable_web_page_preview)
- */
-class Message extends Sendable {
-  public $method = "sendMessage";
-  public $name = "text";
-}
-
-/**
- * @method $this message_id(integer $message_id)
- * @method $this chat_id(integer $chat_id) Defaults to the chat where the request was sent from.
- * @method $this from_chat_id(integer $chat_id) Defaults to $chat_id
- * @method $this disable_notification(bool $disable_notification)
- */
-class Forward extends Sendable {
-  public $method = "forwardMessage";
-  public $name = "message_id";
-
-  public function to($mode) {
-    $message = $this->req->message;
-    switch($mode) {
-      case self::TO_CHAT:   $this->content['chat_id'] = $message->chat->id; break;
-      case self::TO_SENDER: $array['chat_id'] = $message->from->id; break;
-    } return $this;
-  }
-}
-
-
-abstract class Processable {
+abstract class Processor {
   /**
    * @param Bot $bot
    * @return Response|false
@@ -228,7 +147,7 @@ abstract class Processable {
   }
 }
 
-class Command extends Processable {
+class Command extends Processor {
   /**
    * Used to separate a message into an Command containing all necessary information.
    * @param string $msg Message to generate the Command from.
@@ -261,24 +180,5 @@ class Command extends Processable {
       and (empty($command->bot) or strcasecmp($command->bot, $bot->me()->username) == 0)) {
       return $bot->command[$command->cmd]['callable']($bot->req);
     } return false;
-  }
-}
-
-
-class InlineQuery extends Processable {
-  public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-    return parent::register($bot, $name, $callable, $help, $hidden);
-  }
-
-  public static function process($bot) {
-    if(empty($bot->req->inline_query)) return false;
-    preg_match("/^\w+/", $bot->req->inline_query->query, $match);
-    $word = $match[0];
-    foreach($bot->inline as $inline => $value) {
-      if(strcasecmp($word, $inline) == 0) return $value['callable']($bot->req);
-    } if(array_key_exists('default', $bot->inlines)) {
-      return $bot->inline['default']['callable']($bot->req);
-    }
-    return false;
   }
 }
