@@ -34,8 +34,8 @@ namespace {
      * @return stdClass
      */
     public function me($update = false) {
-      if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", []))->result;
-      return $this->me;
+      if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", []));
+      return $this->me->ok ? $this->me->result : false;
     }
 
     public function processor_exists($type, $name) {
@@ -172,11 +172,11 @@ namespace processors {
      */
     public static function invalid_command_response($req, $name=null) {
       return (new \responses\Message(
-        "I don't know ".(empty($name)?"that command":"the command `".$name)."`. Sorry for that!", $req
+        "I don't know ".(empty($name)?"that command":"the command /".$name).". Sorry for that!", $req
       ))->parse_mode("Markdown");
     }
 
-    public function botname_equal($name) {
+    public function botname_equals($name) {
       return strcasecmp($this->bot, $name) == 0;
     }
 
@@ -189,9 +189,8 @@ namespace processors {
       // Writing the command's information into $array
       preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
       $this->valid = false;
-      if (!empty($array)) {
+      if(!empty($array)) {
         // Setting object's values
-
         for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
         $this->cmd = strtolower($this->cmd);
         $this->valid = true;
@@ -200,17 +199,18 @@ namespace processors {
 
     public static function process($bot) {
       if(empty($bot->req->message) || empty($bot->req->message->text)) return false; // Abort if request has no text
-      $command = new Command($bot->req->message->text); // Generating Command from message text
+      $command = new Command($bot->req->message->text); // Generate Command from message text
       $command->cmd = strtolower($command->cmd);
-      if(!$bot->processor_exists(self::get_class_type(), $command->cmd)) {
-        if($bot->req->message->chat->type == 'private')
-          $bot->send(self::invalid_command_response($bot->req, $command->cmd));
-        return false;
-      } elseif($command->valid
-        and (empty($command->bot) or $command->botname_equal($command->bot)))
-        // Executing the command if it exists and the bot is stated or no bot name is given
-        return $bot->command[$command->cmd]['callable']($bot->req, $command);
-      return false;
+      if($command->valid) {
+        if(!$bot->processor_exists(self::get_class_type(), $command->cmd)) {
+          if($command->botname_equals($bot->me()->username) or $bot->req->message->chat->type == 'private') {
+            $bot->send(self::invalid_command_response($bot->req, $command->cmd));
+          }
+          return false;
+        } elseif(empty($command->bot) or $command->botname_equals($bot->me()->username))
+          // Executing the command if it exists and the bot is stated or no bot name is given
+          return $bot->command[$command->cmd]['callable']($bot->req, $command);
+      } return false;
     }
   }
 
