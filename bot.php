@@ -22,7 +22,7 @@ namespace {
       processors\Command::register($this, "help", function($req) {
         $text = "All commands are listed below:\n";
         foreach($this->command as $name => $value) {
-          $text.="/".$name.(isset($value['help']) ? ": ".$value['help'] : '')."\n";
+          $text.="/".$name.(!empty($value['meta']['help']) ? ": ".$value['meta']['help'] : '')."\n";
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
       }, "Prints this message");
@@ -34,18 +34,21 @@ namespace {
      * @return stdClass
      */
     public function me($update = false) {
-      if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", array()))->result;
+      if($update or !isset($this->me)) $this->me = $this->send(new Response("getMe", []))->result;
       return $this->me;
     }
 
+    public function processor_exists($type, $name) {
+      return array_key_exists($name, $this->$type);
+    }
+
     public function run() {
-      $this->echo = array("request" => $this->req);
+      $this->echo = ["request" => $this->req];
       // Execute process() for all classes that implement Processable
       foreach($classes = get_declared_classes() as $class) {
         if(is_subclass_of($class, 'Processor')) {
           /** @var Processor $class */
           $res = $class::process($this);
-          // $res = forward_static_call(array($class, 'process'), $this);
           if($res instanceof Response) $this->send($res);
         }
       }
@@ -57,15 +60,15 @@ namespace {
      * @return mixed
      */
     public function send($response) {
-      $context = stream_context_create( array(
-        'http' => array(
+      $context = stream_context_create([
+        'http' => [
           // http://www.php.net/manual/de/context.http.php
           'method'  => 'POST',
           'header'  => 'Content-Type: application/json',
           'ignore_errors' => true,
           'content' => json_encode($response->content)
-        )
-      ));
+        ]
+      ]);
       $url = $this->url . $response->method;
       $result = json_decode(file_get_contents($url, false, $context));
       $i = isset($this->echo['responses']) ? count($this->echo['responses']) : 0;
@@ -96,16 +99,6 @@ namespace {
     }
   }
 
-// http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
-  function obj2obj($instance, $className) {
-    return unserialize(sprintf(
-      'O:%d:"%s"%s',
-      strlen($className),
-      $className,
-      strstr(strstr(serialize($instance), '"'), ':')
-    ));
-  }
-
   /** @see https://core.telegram.org/bots/api#available-methods */
   class Response {
     public $method, $content;
@@ -131,77 +124,123 @@ namespace {
      * @return Response|false
      */
     public static function process($bot) {}
-    public static function register($bot, $name, $callable, $help, $hidden) {
+
+    public static function get_class_type() {
+      $class = get_called_class();
+      $class = explode("\\", $class);
+      return strtolower(end($class));
+    }
+
+    /**
+     * @param Bot $bot
+     * @param string|array $name Use an array for registering different aliases
+     * @param callable $callable
+     * @param array $meta Information about the processor like help, hidden, syntax, ...
+     *                    Differs for every type of processor
+     * @return bool
+     */
+    public static function register($bot, $name, $callable, $meta) {
       if(gettype($name) != 'array') {
-        $class = get_called_class();
-        $class = explode("\\", $class);
-        $class = strtolower(end($class));
+        $class = self::get_class_type();
         $name = strtolower($name);
-        if(!isset($bot->$class)) $bot->$class = array();
+        if(!isset($bot->$class)) $bot->$class = [];
         $array = &$bot->$class;
+        $array[$name] = $meta;
         $array[$name]['callable'] = $callable;
-        if(!empty($help)) $array[$name]['help'] = $help;
-        if($hidden) $array[$name]['hidden'] = $hidden;
-      } elseif(gettype($name) == 'array') foreach($name as $r) self::register($bot, $r, $callable, $help, $hidden);
+      } elseif(gettype($name) == 'array') foreach($name as $r) self::register($bot, $r, $callable, $meta);
       else return false;
       return true;
     }
   }
+
+  // http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
+  function obj2obj($instance, $class) {
+    return unserialize(sprintf('O:%d:"%s"%s', strlen($class), $class, strstr(strstr(serialize($instance), '"'), ':')));
+  }
 }
-
-
 
 namespace processors {
 
   class Command extends \Processor {
-    /**
-     * Used to separate a message into an Command containing all necessary information.
-     * @param string $msg Message to generate the Command from.
-     */
     public $valid;
     public $text, $cmd, $bot, $args;
 
-    public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-      return parent::register($bot, $name, $callable, $help, $hidden);
+    /**
+     * @param \Request $req
+     * @param string|null $name
+     * @return \responses\Message A message that should be sent if the requested command is not registered
+     */
+    public static function invalid_command_response($req, $name=null) {
+      return (new \responses\Message(
+        "I don't know ".(empty($name)?"that command":"the command `".$name)."`. Sorry for that!", $req
+      ))->parse_mode("Markdown");
+    }
+
+    public function botname_equal($name) {
+      return strcasecmp($this->bot, $name) == 0;
+    }
+
+    public static function register($bot, $name, $callable, $help=null, $syntax=null, $hidden=false) {
+      return parent::register($bot, $name, $callable, ['help' => $help, 'syntax' => $syntax, 'hidden' => $hidden]);
     }
 
     public function __construct($msg) {
-      $keys = array('text', 'cmd', 'bot', 'args');
+      $keys = ['text', 'cmd', 'bot', 'args'];
       // Writing the command's information into $array
       preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
       $this->valid = false;
       if (!empty($array)) {
         // Setting object's values
+
         for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
+        $this->cmd = strtolower($this->cmd);
         $this->valid = true;
       }
     }
 
     public static function process($bot) {
-      if(empty($bot->req->message)) return false;
-      $command = new Command($bot->req->message->text);
+      if(empty($bot->req->message) || empty($bot->req->message->text)) return false; // Abort if request has no text
+      $command = new Command($bot->req->message->text); // Generating Command from message text
       $command->cmd = strtolower($command->cmd);
-      if($command->valid
-        and array_key_exists($command->cmd, $bot->command)
-        and (empty($command->bot) or strcasecmp($command->bot, $bot->me()->username) == 0)) {
+      if(!$bot->processor_exists(self::get_class_type(), $command->cmd)) {
+        if($bot->req->message->chat->type == 'private')
+          $bot->send(self::invalid_command_response($bot->req, $command->cmd));
+        return false;
+      } elseif($command->valid
+        and (empty($command->bot) or $command->botname_equal($command->bot)))
+        // Executing the command if it exists and the bot is stated or no bot name is given
         return $bot->command[$command->cmd]['callable']($bot->req, $command);
-      } return false;
+      return false;
     }
   }
 
   class InlineQuery extends \Processor {
-    public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-      return parent::register($bot, $name, $callable, $help, $hidden);
+    public $query, $cmd, $args;
+
+    public static function register($bot, $name, $callable, $help=null, $syntax=null, $hidden=false) {
+      return parent::register($bot, $name, $callable, [
+        'help' => $help, 'syntax' => $syntax, 'hidden' => $hidden
+      ]);
+    }
+
+    public function __construct($query) {
+      var_dump($query);
+      if(!empty($query)){
+        preg_match("/(\w+)\s*(.*)/", $query, $match);
+        $this->query = $match[0];
+        $this->cmd = $match[1];
+        $this->args = $match[2];
+      }
     }
 
     public static function process($bot) {
       if(empty($bot->req->inline_query)) return false;
-      preg_match("/^\w+/", $bot->req->inline_query->query, $match);
-      $word = $match[0];
-      foreach($bot->inline as $inline => $value) {
-        if(strcasecmp($word, $inline) == 0) return $value['callable']($bot->req);
-      } if(array_key_exists('default', $bot->inlines)) {
-        return $bot->inline['default']['callable']($bot->req);
+      $inlinequery = new InlineQuery($bot->req->inline_query->query);
+      foreach($bot->inlinequery as $name => $value) {
+        if(strcasecmp($inlinequery->cmd, $name) == 0)
+          return $value['callable']($bot->req, $inlinequery);
+      } if(array_key_exists('default', $bot->inlinequery)) {
+        return $bot->inlinequery['default']['callable']($bot->req);
       }
       return false;
     }
@@ -209,7 +248,7 @@ namespace processors {
 
   class Keyword extends \Processor {
     public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-      return parent::register($bot, $name, $callable, $help, $hidden);
+      return parent::register($bot, $name, $callable, ['help' => $help, 'hidden' => $hidden]);
     }
 
     public static function process($bot) {
@@ -222,6 +261,7 @@ namespace processors {
 }
 
 namespace responses {
+
   /**
    * @method $this chat_id(integer $chat_id)
    * @method $this disable_notification(bool $disable_notification)
