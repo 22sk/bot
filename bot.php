@@ -22,17 +22,24 @@ namespace {
       $this->url = $url;
       $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
 
-      processors\Command::register($this, "help", function($req) {
-        $text = "*All commands are listed below:*\n";
-        foreach($this->command as $name => $value) {
-          $text.="/".$name
-            .(!empty($value['syntax']) ? ' `'.$value['syntax'].'`' : '')
-            .(!empty($value['syntax']) ? ': ' : '')
-            .(!empty($value['help']) ? " ".$value['help'] : '')
-            ."\n";
+      processors\Command::register($this, "help", function($req, $command=null) {
+        if(empty($command->args)) {
+          $text = "*All commands are listed below:*\n";
+          foreach($this->command as $name => $value) {
+            $text.="/".$name
+              .(!empty($value['syntax']) ? ' `'.$value['syntax'].'`' : '')
+              .(!empty($value['description']) ? ' '.$value['description'] : '')
+              ."\n";
+          }
+        } else {
+          $name = strtolower(trim($command->args));
+          $cmd = $this->command[$name];
+          $text = '/'.$name.(!empty($cmd->syntax) ? ' `'.$cmd['syntax'].'`' : '')."\n"
+            .(!empty($cmd['description']) ? "Description: ".$cmd['description'] : '')."\n"
+            .(!empty($cmd['help'])? "\n".$cmd['help'] : '');
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
-      }, "Prints this message");
+      }, "Prints this message", "[command]", "Used to send help for a specific command or list all commands");
     }
 
     /**
@@ -174,21 +181,33 @@ namespace processors {
 
     /**
      * @param \Request $req
-     * @param string|null $name
      * @return \responses\Message A message that should be sent if the requested command is not registered
      */
-    public static function invalid_command_response($req, $name=null) {
+    public static function invalid_command($req, $command=null) {
       return (new \responses\Message(
-        "I don't know ".(empty($name)?"that command":"the command /".$name).". Sorry for that!", $req
+        "I don't know ".(empty($command)?"that command":"the command /".$command).". Sorry for that!", $req
       ))->parse_mode("Markdown");
+    }
+
+    /**
+     * @param \Bot $bot
+     * @param string $command
+     * @return mixed
+     */
+    public static function help($bot, $command) {
+      $cmd = (object)['args' => $command];
+      return $bot->command['help']['callable']($bot->req, $cmd);
     }
 
     public function botname_equals($name) {
       return strcasecmp($this->bot, $name) == 0;
     }
 
-    public static function register($bot, $name, $callable, $help=null, $syntax=null, $hidden=false) {
-      return parent::register($bot, $name, $callable, ['help' => $help, 'syntax' => $syntax, 'hidden' => $hidden]);
+    public static function register($bot, $name, $callable, $description=null,
+                                    $syntax=null, $help=null, $hidden=false) {
+      return parent::register($bot, $name, $callable, [
+        'description' => $description, 'help' => $help, 'syntax' => $syntax, 'hidden' => $hidden
+      ]);
     }
 
     public function __construct($msg) {
@@ -204,19 +223,33 @@ namespace processors {
       }
     }
 
+    /**
+     * @param \Bot $bot
+     * @param Command $command
+     * @param null|\Request $req
+     * @return mixed
+     */
+    private static function execute($bot, $command, $req=null) {
+      return $bot->command[$command->cmd]['callable'](isset($req) ? $req : $bot->req, $command);
+    }
+
     public static function process($bot) {
-      if(empty($bot->req->message) || empty($bot->req->message->text)) return false; // Abort if request has no text
+      if(empty($bot->req->message) or empty($bot->req->message->text)) return false; // Abort if request has no text
       $command = new Command($bot->req->message->text); // Generate Command from message text
       $command->cmd = strtolower($command->cmd);
       if($command->valid) {
         if(!$bot->processor_exists(self::get_class_type(), $command->cmd)) {
           if($command->botname_equals($bot->me()->username) or $bot->req->message->chat->type == 'private') {
-            $bot->send(self::invalid_command_response($bot->req, $command->cmd));
-          }
-          return false;
-        } elseif(empty($command->bot) or $command->botname_equals($bot->me()->username))
+            $bot->send(self::invalid_command($bot->req, $command->cmd));
+          } return false;
+        } elseif(empty($command->bot) or $command->botname_equals($bot->me()->username)) {
           // Executing the command if it exists and the bot is stated or no bot name is given
-          return $bot->command[$command->cmd]['callable']($bot->req, $command);
+          if($res = self::execute($bot, $command)) return $res;
+          else {
+            $bot->send(self::help($bot, $command->cmd));
+            return false;
+          }
+        }
       } return false;
     }
   }
