@@ -61,7 +61,7 @@ namespace {
       $this->echo = ["request" => $this->req];
       // Execute process() for all classes that implement Processable
       foreach($classes = get_declared_classes() as $class) {
-        if(is_subclass_of($class, 'Processor')) {
+        if(is_subclass_of($class, 'processors\Processor')) {
           /** @var processors\Processor $class */
           $res = $class::process($this);
           if($res instanceof Response) $this->send($res);
