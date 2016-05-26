@@ -46,8 +46,8 @@ $commands = array (
   ],
 
   "echo" => [
-    "callable" => function($req, $command) {
-      if(!empty($command->args)) return (new responses\Message($command->args, $req))->parse_mode("Markdown");
+    "callable" => function($req, $args) {
+      if(!empty($args)) return (new responses\Message($args, $req))->parse_mode("Markdown");
       else return false;
     },
     "help" => "I'm a parrot!",

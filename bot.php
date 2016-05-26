@@ -22,8 +22,8 @@ namespace {
       $this->url = $url;
       $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
 
-      processors\Command::register($this, "help", function($req, $command=null) {
-        if(empty($command->args)) {
+      processors\Command::register($this, "help", function($req, $args=null) {
+        if(empty($args)) {
           $text = "*All commands are listed below:*\n";
           foreach($this->command as $name => $value) {
             $text.="/".$name
@@ -32,14 +32,14 @@ namespace {
               ."\n";
           }
         } else {
-          $name = strtolower(trim($command->args));
+          $name = strtolower(trim($args));
           $cmd = $this->command[$name];
           $text = '/'.$name.(!empty($cmd['syntax']) ? ' `'.$cmd['syntax'].'`' : '')."\n"
             .(!empty($cmd['description']) ? '*'.$cmd['description'].'*' : '')."\n"
             .(!empty($cmd['help'])? "".$cmd['help'] : '');
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
-      }, "Prints the help message", "[command]", "Hey! You found me! Here, have a cookie: 🍪\n"
+      }, "Prints the help message", "[command]", "Oh, hey! You found me! Here, have a cookie: 🍪\n"
         ."Used to send help for a specific command or list all commands");
     }
 
@@ -62,7 +62,7 @@ namespace {
       // Execute process() for all classes that implement Processable
       foreach($classes = get_declared_classes() as $class) {
         if(is_subclass_of($class, 'Processor')) {
-          /** @var Processor $class */
+          /** @var processors\Processor $class */
           $res = $class::process($this);
           if($res instanceof Response) $this->send($res);
         }
@@ -133,10 +133,19 @@ namespace {
     public function __set($name, $value) { $this->content[$name] = $value; }
   }
 
+
+
+  // http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
+  function obj2obj($instance, $class) {
+    return unserialize(sprintf('O:%d:"%s"%s', strlen($class), $class, strstr(strstr(serialize($instance), '"'), ':')));
+  }
+}
+
+namespace processors {
   abstract class Processor {
     /**
-     * @param Bot $bot
-     * @return Response|false
+     * @param \Bot $bot
+     * @return \Response|false
      */
     public static function process($bot) {}
 
@@ -147,7 +156,7 @@ namespace {
     }
 
     /**
-     * @param Bot $bot
+     * @param \Bot $bot
      * @param string|array $name Use an array for registering different aliases
      * @param callable $callable
      * @param array $meta Information about the processor like help, hidden, syntax, ...
@@ -168,20 +177,13 @@ namespace {
     }
   }
 
-  // http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
-  function obj2obj($instance, $class) {
-    return unserialize(sprintf('O:%d:"%s"%s', strlen($class), $class, strstr(strstr(serialize($instance), '"'), ':')));
-  }
-}
-
-namespace processors {
-
-  class Command extends \Processor {
+  class Command extends Processor {
     public $valid;
     public $text, $cmd, $bot, $args;
 
     /**
      * @param \Request $req
+     * @param string $command
      * @return \responses\Message A message that should be sent if the requested command is not registered
      */
     public static function invalid_command($req, $command=null) {
@@ -196,8 +198,7 @@ namespace processors {
      * @return mixed
      */
     public static function help($bot, $command) {
-      $cmd = (object)['args' => $command];
-      return $bot->command['help']['callable']($bot->req, $cmd);
+      return $bot->command['help']['callable']($bot->req, $command);
     }
 
     public function botname_equals($name) {
@@ -219,7 +220,7 @@ namespace processors {
       if(!empty($array)) {
         // Setting object's values
         for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
-        $this->cmd = strtolower($this->cmd);
+        $this->cmd = trim(strtolower($this->cmd));
         $this->valid = true;
       }
     }
@@ -231,7 +232,7 @@ namespace processors {
      * @return mixed
      */
     private static function execute($bot, $command, $req=null) {
-      return $bot->command[$command->cmd]['callable'](isset($req) ? $req : $bot->req, $command);
+      return $bot->command[$command->cmd]['callable'](isset($req) ? $req : $bot->req, $command->args);
     }
 
     public static function process($bot) {
@@ -255,7 +256,7 @@ namespace processors {
     }
   }
 
-  class InlineQuery extends \Processor {
+  class InlineQuery extends Processor {
     public $query, $cmd, $args;
 
     public static function register($bot, $name, $callable, $help=null, $syntax=null, $hidden=false) {
@@ -287,7 +288,7 @@ namespace processors {
     }
   }
 
-  class Keyword extends \Processor {
+  class Keyword extends Processor {
     public static function register($bot, $name, $callable, $help = null, $hidden = false) {
       return parent::register($bot, $name, $callable, ['help' => $help, 'hidden' => $hidden]);
     }
