@@ -34,12 +34,13 @@ namespace {
         } else {
           $name = strtolower(trim($command->args));
           $cmd = $this->command[$name];
-          $text = '/'.$name.(!empty($cmd->syntax) ? ' `'.$cmd['syntax'].'`' : '')."\n"
-            .(!empty($cmd['description']) ? "Description: ".$cmd['description'] : '')."\n"
-            .(!empty($cmd['help'])? "\n".$cmd['help'] : '');
+          $text = '/'.$name.(!empty($cmd['syntax']) ? ' `'.$cmd['syntax'].'`' : '')."\n"
+            .(!empty($cmd['description']) ? '*'.$cmd['description'].'*' : '')."\n"
+            .(!empty($cmd['help'])? "".$cmd['help'] : '');
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
-      }, "Prints this message", "[command]", "Used to send help for a specific command or list all commands");
+      }, "Prints the help message", "[command]", "Hey! You found me! Here, have a cookie: 🍪"
+        ."Used to send help for a specific command or list all commands");
     }
 
     /**
