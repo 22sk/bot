@@ -49,7 +49,8 @@ $commands = array (
     "callable" => function($req, $command) {
       return (new responses\Message($command->args, $req))->parse_mode("Markdown");
     },
-    "help" => "I'm a parrot!"
+    "help" => "I'm a parrot!",
+    "syntax" => "<text>"
   ],
 
   "about" => [
@@ -58,7 +59,7 @@ $commands = array (
         "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
         $req))->parse_mode("Markdown");
     },
-    "help" => "Prints information about this bot's creator and it's source code"
+    "help" => "Prints information about this bot's creator and its source code"
   ],
 
   "debug" => [
@@ -73,7 +74,9 @@ $commands = array (
 
 
 foreach($commands as $key => $command) processors\Command::register($bot, $key, $command['callable'],
-  isset($command['help']) ? $command['help'] : null, isset($command['hidden']) ? $command['hidden'] : false);
+  isset($command['help']) ? $command['help'] : null,
+  isset($command['syntax']) ? $command['syntax'] : null,
+  isset($command['hidden']) ? $command['hidden'] : null);
 
 processors\Keyword::register($bot, ["hitler", "nazi"], function($req) {
   return new responses\Message("D:", $req);

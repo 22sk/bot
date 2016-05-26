@@ -7,6 +7,9 @@
 
 namespace {
 
+  /**
+   * Sends Responses and manages and runs Processors that produce Responses
+   */
   class Bot {
     public $req;
 
@@ -20,9 +23,13 @@ namespace {
       $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
 
       processors\Command::register($this, "help", function($req) {
-        $text = "All commands are listed below:\n";
+        $text = "*All commands are listed below:*\n";
         foreach($this->command as $name => $value) {
-          $text.="/".$name.(!empty($value['meta']['help']) ? ": ".$value['meta']['help'] : '')."\n";
+          $text.="/".$name
+            .(!empty($value['syntax']) ? ' `'.$value['syntax'].'`' : '')
+            .(!empty($value['syntax']) ? ': ' : '')
+            .(!empty($value['help']) ? " ".$value['help'] : '')
+            ."\n";
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
       }, "Prints this message");
