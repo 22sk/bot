@@ -39,7 +39,7 @@ namespace {
             .(!empty($cmd['help'])? "".$cmd['help'] : '');
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
-      }, "Prints the help message", "[command]", "Hey! You found me! Here, have a cookie: 🍪"
+      }, "Prints the help message", "[command]", "Hey! You found me! Here, have a cookie: 🍪\n"
         ."Used to send help for a specific command or list all commands");
     }
 
