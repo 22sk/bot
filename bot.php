@@ -7,11 +7,20 @@
 
 namespace {
 
+  $GLOBALS['processors'] = [
+    "Command",
+    "InlineQuery",
+    "Keyword"
+  ];
+
   /**
    * Sends Responses and manages and runs Processors that produce Responses
    */
   class Bot {
     public $req;
+    private $output;
+
+    public $processors;
 
     /**
      * Creates a new Bot.
@@ -22,25 +31,29 @@ namespace {
       $this->url = $url;
       $this->req = $req instanceof Request ? $req : (isset($req) ? Request::map($req) : Request::getRequest());
 
-      processors\Command::register($this, "help", function($req, $args=null) {
+      global $processors;
+      foreach($processors as $processor) self::register($processor);
+
+      processors\Command::register($this, "help", (new \registerables\Command(function($req, $args=null) {
         if(empty($args)) {
           $text = "*All commands are listed below:*\n";
           foreach($this->command as $name => $value) {
             $text.="/".$name
-              .(!empty($value['syntax']) ? ' `'.$value['syntax'].'`' : '')
-              .(!empty($value['description']) ? ' '.$value['description'] : '')
+              .(!empty($value->syntax) ? ' `'.$value->syntax.'`' : '')
+              .(!empty($value->description) ? ' '.$value->description : '')
               ."\n";
           }
         } else {
           $name = strtolower(trim($args));
           $cmd = $this->command[$name];
-          $text = '/'.$name.(!empty($cmd['syntax']) ? ' `'.$cmd['syntax'].'`' : '')."\n"
-            .(!empty($cmd['description']) ? '*'.$cmd['description'].'*' : '')."\n"
-            .(!empty($cmd['help'])? "".$cmd['help'] : '');
+          $text = '/'.$name.(!empty($cmd->syntax) ? ' `'.$cmd->syntax.'`' : '')."\n"
+            .(!empty($cmd->description) ? '*'.$cmd->description.'*' : '')."\n"
+            .(!empty($cmd->help)? "".$cmd->help : '');
         }
         return (new responses\Message($text, $req))->parse_mode("Markdown");
-      }, "Prints the help message", "[command]", "Oh, hey! You found me! Here, have a cookie: 🍪\n"
-        ."Used to send help for a specific command or list all commands");
+      }))->description("Prints the help message")->syntax("[command]")
+         ->help("Oh, hey! You found me! Here, have a cookie: ".json_decode('"\ud83c\udf6a"')."\n"
+         ."Used to send help for a specific command or list all commands."));
     }
 
     /**
@@ -58,16 +71,19 @@ namespace {
     }
 
     public function run() {
-      $this->echo = ["request" => $this->req];
-      // Execute process() for all classes that implement Processable
-      foreach($classes = get_declared_classes() as $class) {
-        if(is_subclass_of($class, 'processors\Processor')) {
-          /** @var processors\Processor $class */
-          $res = $class::process($this);
-          if($res instanceof Response) $this->send($res);
-        }
+      $this->output = ["request" => $this->req];
+      foreach($this->processors as $class) {
+        $class = 'processors\\'.$class;
+        /** @var processors\Processor $class */
+        $res = $class::process($this);
+        if($res instanceof Response) $this->send($res);
       }
-      echo json_encode($this->echo, JSON_PRETTY_PRINT);
+      echo json_encode($this->output, JSON_PRETTY_PRINT);
+    }
+
+    /** @param string $processor */
+    public function register($processor) {
+      $this->processors[] = $processor;
     }
 
     /**
@@ -87,9 +103,9 @@ namespace {
       $url = $this->url . $response->method;
       $result = json_decode(file_get_contents($url, false, $context));
       $i = isset($this->echo['responses']) ? count($this->echo['responses']) : 0;
-      $this->echo['responses'][$i]['response']['method'] = $response->method;
-      $this->echo['responses'][$i]['response']['content'] = $response->content;
-      $this->echo['responses'][$i]['result'] = $result;
+      $this->output['responses'][$i]['response']['method'] = $response->method;
+      $this->output['responses'][$i]['response']['content'] = $response->content;
+      $this->output['responses'][$i]['result'] = $result;
       return $result;
     }
   }
@@ -134,14 +150,17 @@ namespace {
   }
 
 
-
   // http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
   function obj2obj($instance, $class) {
     return unserialize(sprintf('O:%d:"%s"%s', strlen($class), $class, strstr(strstr(serialize($instance), '"'), ':')));
   }
+  function markdown_escape($string) {
+    return preg_replace('/(?=[*_`])/', '\\', $string);
+  }
 }
 
 namespace processors {
+
   abstract class Processor {
     /**
      * @param \Bot $bot
@@ -157,30 +176,26 @@ namespace processors {
 
     /**
      * @param \Bot $bot
-     * @param string|array $name Use an array for registering different aliases
-     * @param callable $callable
-     * @param array $meta Information about the processor like help, hidden, syntax, ...
-     *                    Differs for every type of processor
+     * @param string|array $name
+     * @param \registerables\Registerable $registerable
      * @return bool
      */
-    public static function register($bot, $name, $callable, $meta) {
-      if(gettype($name) != 'array') {
+    public static function register($bot, $name, $registerable) {
+      if(gettype($name) == 'array') {
+        foreach($name as $item) self::register($bot, $item, $registerable);
+        return true;
+      } else if($registerable instanceof \registerables\Registerable) {
         $class = self::get_class_type();
         $name = strtolower($name);
         if(!isset($bot->$class)) $bot->$class = [];
         $array = &$bot->$class;
-        $array[$name] = $meta;
-        $array[$name]['callable'] = $callable;
-      } elseif(gettype($name) == 'array') foreach($name as $r) self::register($bot, $r, $callable, $meta);
-      else return false;
-      return true;
+        $array[$name] = $registerable;
+        return true;
+      } return false;
     }
   }
 
   class Command extends Processor {
-    public $valid;
-    public $text, $cmd, $bot, $args;
-
     /**
      * @param \Request $req
      * @param string $command
@@ -198,46 +213,28 @@ namespace processors {
      * @return mixed
      */
     public static function help($bot, $command) {
-      return $bot->command['help']['callable']($bot->req, $command);
+      return $bot->command['help']->callable($bot->req, str_replace('/', '', $command));
     }
 
-    public function botname_equals($name) {
-      return strcasecmp($this->bot, $name) == 0;
-    }
-
-    public static function register($bot, $name, $callable, $description=null,
-                                    $syntax=null, $help=null, $hidden=false) {
-      return parent::register($bot, $name, $callable, [
-        'description' => $description, 'help' => $help, 'syntax' => $syntax, 'hidden' => $hidden
-      ]);
-    }
-
-    public function __construct($msg) {
-      $keys = ['text', 'cmd', 'bot', 'args'];
-      // Writing the command's information into $array
-      preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
-      $this->valid = false;
-      if(!empty($array)) {
-        // Setting object's values
-        for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
-        $this->cmd = trim(strtolower($this->cmd));
-        $this->valid = true;
-      }
+    public static function register($bot, $name, $registerable) {
+      return parent::register($bot, $name, $registerable);
     }
 
     /**
      * @param \Bot $bot
-     * @param Command $command
+     * @param \seperators\Command $command
      * @param null|\Request $req
      * @return mixed
      */
     private static function execute($bot, $command, $req=null) {
-      return $bot->command[$command->cmd]['callable'](isset($req) ? $req : $bot->req, $command->args);
+      return $bot->command[$command->cmd]->callable(isset($req) ? $req : $bot->req, $command->args);
     }
 
     public static function process($bot) {
-      if(empty($bot->req->message) or empty($bot->req->message->text)) return false; // Abort if request has no text
-      $command = new Command($bot->req->message->text); // Generate Command from message text
+      if(empty($bot->req->message) or empty($bot->req->message->text) or empty($bot->command))
+        return false; // Abort if request has no text
+
+      $command = new \seperators\Command($bot->req->message->text); // Generate Command from message text
       $command->cmd = strtolower($command->cmd);
       if($command->valid) {
         if(!$bot->processor_exists(self::get_class_type(), $command->cmd)) {
@@ -257,49 +254,117 @@ namespace processors {
   }
 
   class InlineQuery extends Processor {
-    public $query, $cmd, $args;
-
-    public static function register($bot, $name, $callable, $help=null, $syntax=null, $hidden=false) {
-      return parent::register($bot, $name, $callable, [
-        'help' => $help, 'syntax' => $syntax, 'hidden' => $hidden
-      ]);
-    }
-
-    public function __construct($query) {
-      var_dump($query);
-      if(!empty($query)){
-        preg_match("/(\w+)\s*(.*)/", $query, $match);
-        $this->query = $match[0];
-        $this->cmd = $match[1];
-        $this->args = $match[2];
-      }
-    }
 
     public static function process($bot) {
-      if(empty($bot->req->inline_query)) return false;
-      $inlinequery = new InlineQuery($bot->req->inline_query->query);
+      if(empty($bot->req->inline_query) or empty($bot->inlinequery)) return false;
+      $inlinequery = new \seperators\InlineQuery($bot->req->inline_query->query);
       foreach($bot->inlinequery as $name => $value) {
         if(strcasecmp($inlinequery->cmd, $name) == 0)
-          return $value['callable']($bot->req, $inlinequery);
+          return $value->callable($bot->req, $inlinequery);
       } if(array_key_exists('default', $bot->inlinequery)) {
-        return $bot->inlinequery['default']['callable']($bot->req);
+        return $bot->inlinequery['default']->callable($bot->req);
       }
       return false;
     }
   }
 
   class Keyword extends Processor {
-    public static function register($bot, $name, $callable, $help = null, $hidden = false) {
-      return parent::register($bot, $name, $callable, ['help' => $help, 'hidden' => $hidden]);
+    public static function register($bot, $name, $registerable) {
+      return parent::register($bot, $name, $registerable);
     }
 
     public static function process($bot) {
-      if(empty($bot->req->message)) return false;
-      foreach($bot->keyword as $word => $value) {
-        if(stristr($bot->req->message->text, $word)) return $value['callable']($bot->req);
+      if(empty($bot->req->message) or empty($bot->keyword)) return false;
+      $text = $bot->req->message->text;
+      foreach($bot->keyword as $name => $value) {
+        $regex = "/".($value->word?"\b":"")."($name)".($value->word?"\b":"")."/";
+        if(preg_match($regex, $text))
+          return $value->callable($bot->req);
       } return false;
     }
   }
+}
+
+namespace registerables {
+
+  /**
+   * Class Registerable
+   * @package registerables
+   * @method \Response callable(callable $callable)
+   */
+  class Registerable {
+    /** @var callable */ public $callable;
+    public function __call($name, $arguments) {
+      if($name == 'callable') return call_user_func_array($this->$name, $arguments);
+      else $this->$name = $arguments[0]; return $this;
+    }
+
+    public function __construct($callable, $meta=null) {
+      $this->callable = $callable;
+      if(!empty($meta)) foreach($meta as $item => $value) $this->$item = $value;
+    }
+  }
+
+  /**
+   * @method $this description(string $description)
+   * @method $this syntax(string $syntax)
+   * @method $this help(string $help)
+   * @method $this hidden(bool $hidden)
+   */
+  class Command extends Registerable {}
+
+  /**
+   * @method $this description(string $description)
+   * @method $this help(string $help)
+   * @method $this syntax(string $syntax)
+   * @method $this hidden(bool $hidden)
+   */
+  class InlineQuery extends Registerable {}
+
+  /**
+   * @method $this word(bool $word)
+   * @method $this description(string $description)
+   * @method $this help(string $help)
+   * @method $this hidden(bool $hidden)
+   */
+  class Keyword extends Registerable {}
+}
+
+namespace seperators {
+
+  class Command {
+    public $valid;
+    public $text, $cmd, $bot, $args;
+    public function __construct($msg) {
+      $keys = ['text', 'cmd', 'bot', 'args'];
+      // Writing the command's information into $array
+      preg_match("/^\/([^@\s]+)@?(?:(\S+)|)\s?(.*)$/i", $msg, $array);
+      $this->valid = false;
+      if(!empty($array)) {
+        // Setting object's values
+        for ($i=0; $i<count($array); $i++) $this->$keys[$i] = $array[$i];
+        $this->cmd = trim(strtolower($this->cmd));
+        $this->valid = true;
+      }
+    }
+    public function botname_equals($name) {
+      return strcasecmp($this->bot, $name) == 0;
+    }
+  }
+
+  class InlineQuery {
+    public $query, $cmd, $args;
+
+    public function __construct($query) {
+      if(!empty($query)){
+        preg_match("/(\w+)\s*(.*)/", $query, $match);
+        $this->query = $match[0];
+        $this->cmd   = $match[1];
+        $this->args  = $match[2];
+      }
+    }
+  }
+
 }
 
 namespace responses {
@@ -312,10 +377,11 @@ namespace responses {
    */
   abstract class ResponseBuilder extends \Response {
     public $name;
+
     public function __construct($value, $req, $add = null) {
       parent::__construct($this->method, $add);
       $this->req = $req;
-      if(!empty($this->name)) {
+      if (!empty($this->name)) {
         $name = $this->name;
         $this->$name($value);
       }
@@ -335,7 +401,7 @@ namespace responses {
      * @return $this
      */
     public function to($mode) {
-      if(!isset($this->req->message)) return false;
+      if (!isset($this->req->message)) return false;
       $message = &$this->req->message;
       switch ($mode) {
         case self::REPLY_TO_MESSAGE:
@@ -343,17 +409,22 @@ namespace responses {
           $this->chat_id($message->chat->id);
           break;
         case self::REPLY_IN_GROUP:
-          if($message->chat->type != 'private') $this->reply_to_message_id($message->message_id);
+          if ($message->chat->type != 'private') $this->reply_to_message_id($message->message_id);
           $this->chat_id($message->chat->id);
           break;
         case self::REPLY_TO_REPLIED:
-          if(isset($message->reply_to_message))
+          if (isset($message->reply_to_message))
             $this->reply_to_message_id($message->reply_to_message->id);
           else $this->chat_id($message->chat->id);
           break;
-        case self::TO_CHAT:   $this->chat_id($message->chat->id); break;
-        case self::TO_SENDER: $this->chat_id($message->from->id); break;
-      } return $this;
+        case self::TO_CHAT:
+          $this->chat_id($message->chat->id);
+          break;
+        case self::TO_SENDER:
+          $this->chat_id($message->from->id);
+          break;
+      }
+      return $this;
     }
   }
 
@@ -381,10 +452,15 @@ namespace responses {
 
     public function to($mode) {
       $message = $this->req->message;
-      switch($mode) {
-        case self::TO_CHAT:   $this->content['chat_id'] = $message->chat->id; break;
-        case self::TO_SENDER: $array['chat_id'] = $message->from->id; break;
-      } return $this;
+      switch ($mode) {
+        case self::TO_CHAT:
+          $this->content['chat_id'] = $message->chat->id;
+          break;
+        case self::TO_SENDER:
+          $array['chat_id'] = $message->from->id;
+          break;
+      }
+      return $this;
     }
   }
 
@@ -452,6 +528,7 @@ namespace responses {
    */
   class Location extends Sendable {
     public $method = "sendLocation";
+
     public function __construct($latitude, $longitude, $req, $add = null) {
       parent::__construct(null, $req);
       $this->latitude($latitude);
@@ -472,14 +549,19 @@ namespace responses {
     const TO_SENDER = 0;
     public $method = "answerInlineQuery";
     public $name = "results";
+
     public function __construct($results, $req, $add = null) {
-      parent::__construct($results, $add);
+      parent::__construct($results, $req, $add);
       $this->to(self::TO_SENDER);
     }
+
     public function to($mode) {
-      switch($mode) {
-        case self::TO_SENDER: $this->inline_query_id($this->req->inline_query->id); break;
-      } return $this;
+      switch ($mode) {
+        case self::TO_SENDER:
+          $this->inline_query_id($this->req->inline_query->id);
+          break;
+      }
+      return $this;
     }
   }
 }

@@ -8,106 +8,119 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 if(!array_key_exists('url', $_GET) or $_GET['url']!=getenv('API_URL')){
-  http_response_code(403); exit("Unauthorized URL");
+  http_response_code(403); exit("Unauthorized");
 }
 
 require("bot.php");
 
-$bot = new Bot(getenv('API_URL'), json_decode(file_get_contents("php://input")));
+$bot = new Bot(getenv('API_URL'));
 
-$commands = array (
-  "start" => [
-    "callable" => function($req) {
-      return (new responses\Message("I'm here! 😄 What can I do for you? 😊\n".
-      "Check out /help if you want to know more! 😁",
+use \processors\Command as cmd;
+/** REGISTER COMMANDS */ {
+
+  cmd::register($bot, "start", (new \registerables\Command(
+    function($req) {
+      return (new \responses\Message("I'm here! What can I do for you?\n".
+        "Check out /help if you want to know more!",
         $req))->parse_mode("Markdown");
-    },
-    "help" => "Prints the welcome message"
-  ],
-  "ping" => [
-    "callable" => function($req) {
-      return (new responses\Message("*Pong!* ".(time()-$req->message->date)."s", $req))->parse_mode("Markdown");
-    },
-    "help" => "Pong!"
-  ],
-  "hello" => [
-    "callable" => function($req) {
-      return (new responses\Message("hello you. :3", $req))->parse_mode("Markdown");
-    },
-    "help" => "Hey!"
-  ],
+    }
+  ))->description("Prints the welcome message"));
 
-  "date" => [
-    "callable" => function($req) {
-      return new responses\Message("I'm glad you asked! It's ".date("l").", the "
+  cmd::register($bot, "ping", (new \registerables\Command(
+    function($req) {
+      return (new \responses\Message("*Pong!* ".(time()-$req->message->date)."s", $req))->parse_mode("Markdown");
+    }
+  ))->description("Pong!"));
+
+  cmd::register($bot, "hello",  (new \registerables\Command(
+    function($req) {
+      return (new \responses\Message("hello you. :3", $req))->parse_mode("Markdown");
+    }
+  ))->description("Hey!"));
+
+  cmd::register($bot, "date", (new \registerables\Command(
+    function($req) {
+      return new \responses\Message("I'm glad you asked! It's ".date("l").", the "
         .date('d').date('S')." of ".date('F')." ".date('Y') .", ".date('H').":".date('i').":".date('s'), $req);
-    },
-    "help" => "Prints the current date and time"
-  ],
+    }
+  ))->description("Prints the current date and time"));
 
-  "echo" => [
-    "callable" => function($req, $args) {
-      if(!empty($args)) return (new responses\Message($args, $req))->parse_mode("Markdown");
+  cmd::register($bot, "echo", (new \registerables\Command(
+    function($req, $args) {
+      if(!empty($args)) return (new \responses\Message($args, $req))->parse_mode("Markdown");
       else return false;
-    },
-    "help" => "I'm a parrot!",
-    "syntax" => "<text>"
-  ],
+    }
+  ))->description("I'm a parrot!")->syntax("<text>"));
 
-  "about" => [
-    "callable" => function($req) {
-      return (new responses\Message(
+  cmd::register($bot, "about", (new \registerables\Command(
+    function($req) {
+      return (new \responses\Message(
         "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
         $req))->parse_mode("Markdown");
-    },
-    "help" => "Prints information about this bot's creator and its source code"
-  ],
+    }
+  ))->description("Prints information about this bot's creator and its source code"));
 
-  "debug" => [
-    "callable" => function($req) use($bot) {
-      $bot->send(new responses\Message("Hey!", $req));
-      return (new responses\Message("```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```", $req))
+  cmd::register($bot, "debug", (new \registerables\Command(
+    function($req) use($bot) {
+      $bot->send(new \responses\Message("Hey!", $req));
+      return (new \responses\Message("```\n".json_encode($bot->echo, JSON_PRETTY_PRINT)."\n```", $req))
         ->parse_mode("Markdown");
-    },
-    "help" => "Prints all information received from and sent to the Telegram API"
-  ],
-);
+    }
+  ))->description("Prints all information received from and sent to the Telegram API"));
 
+  cmd::register($bot, "user", (new \registerables\Command(
+    function($req) {
+      $text = "";
+      $user = (empty($req->message->reply_to_message)) ? $req->message->from : $req->message->reply_to_message->from;
+      foreach((array)$user as $item => $value) $text.=markdown_escape($item).": `".markdown_escape($value)."`\n";
+      return (new \responses\Message($text, $req))->parse_mode('Markdown');
+    }
+  )));
 
-foreach($commands as $key => $command) processors\Command::register($bot, $key, $command['callable'],
-  isset($command['help']) ? $command['help'] : null,
-  isset($command['syntax']) ? $command['syntax'] : null,
-  isset($command['hidden']) ? $command['hidden'] : null);
-
-processors\Keyword::register($bot, ["hitler", "nazi"], function($req) {
-  return new responses\Message("D:", $req);
-});
-
-processors\InlineQuery::register($bot, "default", function($req) {
-  return (new responses\Inline([[
-    "type" => "article",
-    "id" => uniqid(),
-    "title" => "Hey!",
-    "input_message_content" => [
-      "message_text" => $req->inline_query->query,
-      "parse_mode" => "Markdown"
-    ]
-  ]], $req));
-});
-
-processors\InlineQuery::register($bot, "hello", function($req) {
-  return (new responses\Inline([[
-    "type" => "article",
-    "id" => uniqid(),
-    "title" => "Hello World!",
-    "input_message_content" => [
-      "message_text" => "Hello World",
-      "parse_mode" => "Markdown"
-    ]
-  ]], $req));
-});
-
-function str_clean($str) {
-  return preg_replace('/[^A-Za-z0-9\-\s]/', '', strtolower($str));
+  cmd::register($bot, "chat", (new \registerables\Command(
+    function($req) {
+      $text = "";
+      $chat = $req->message->chat;
+      foreach((array)$chat as $item => $value) $text.=markdown_escape($item).": `".markdown_escape($value)."`\n";
+      return (new \responses\Message($text, $req))->parse_mode('Markdown');
+    }
+  )));
 }
+
+use processors\Keyword as kwd;
+/** REGISTER KEYWORDS */ {
+
+  kwd::register($bot, ["hitler", "nazi"], (new \registerables\Keyword(function($req) {
+    return new responses\Message("D:", $req);
+  }))->word(true));
+}
+
+use processors\InlineQuery as iln;
+/** REGISTER INLINE QUERYS */ {
+
+  iln::register($bot, "default", new \registerables\InlineQuery(function($req) {
+    return (new responses\Inline([[
+      "type" => "article",
+      "id" => uniqid(),
+      "title" => "Hey!",
+      "input_message_content" => [
+        "message_text" => $req->inline_query->query,
+        "parse_mode" => "Markdown"
+      ]
+    ]], $req));
+  }));
+
+  iln::register($bot, "hello", new \registerables\InlineQuery(function($req) {
+    return (new responses\Inline([[
+      "type" => "article",
+      "id" => uniqid(),
+      "title" => "Hello World!",
+      "input_message_content" => [
+        "message_text" => "Hello World",
+        "parse_mode" => "Markdown"
+      ]
+    ]], $req));
+  }));
+}
+
 $bot->run();
