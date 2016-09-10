@@ -1,4 +1,3 @@
 # Telegram Bot
-by [22sk](https://telegram.me/samuelk22)
 
-Documentation pending.
+Discontinued. Can be very buggy, so I don't recommend using it!
