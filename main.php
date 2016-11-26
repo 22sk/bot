@@ -34,7 +34,7 @@ use \processors\Command as cmd;
 
   cmd::register($bot, "hello",  (new \registerables\Command(
     function($req) {
-      return (new \responses\Message("hello you. :3", $req))->parse_mode("Markdown");
+      return (new \responses\Message("hello. (:", $req));
     }
   ))->description("Hey!"));
 
@@ -47,7 +47,7 @@ use \processors\Command as cmd;
 
   cmd::register($bot, "echo", (new \registerables\Command(
     function($req, $args) {
-      if(!empty($args)) return (new \responses\Message($args, $req))->parse_mode("Markdown");
+      if (!empty($args)) return (new \responses\Message($args, $req))->parse_mode("Markdown");
       else return false;
     }
   ))->description("I'm a parrot!")->syntax("<text>"));
@@ -55,7 +55,7 @@ use \processors\Command as cmd;
   cmd::register($bot, "about", (new \registerables\Command(
     function($req) {
       return (new \responses\Message(
-        "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegram-bot).",
+        "Bot made by @samuelk22. View source code on [GitHub](https://github.com/22sk/telegrambot.php).",
         $req))->parse_mode("Markdown");
     }
   ))->description("Prints information about this bot's creator and its source code"));
@@ -90,7 +90,7 @@ use \processors\Command as cmd;
 use processors\Keyword as kwd;
 /** REGISTER KEYWORDS */ {
 
-  kwd::register($bot, ["hitler", "nazi"], (new \registerables\Keyword(function($req) {
+  kwd::register($bot, ["hi", "hello"], (new \registerables\Keyword(function($req) {
     return new responses\Message("D:", $req);
   }))->word(true));
 }
